@@ -43,7 +43,7 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/aii-admin-cli.git
+   git clone https://github.com/Aii-Group/AII-Admin-Cli.git
    ```
 
 2. Navigate to the project directory:
