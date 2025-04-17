@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .login {
+    @apply w-full min-w-960 h-[100vh] flex;
+  }
+  .login__banner {
+    @apply relative w-[60%] h-[100vh] bg-slate-100 dark:bg-black box-border;
+  }
+  .system__logo {
+    @apply absolute top-16 left-16 flex items-center;
+  }
+  .system__logo > img {
+    @apply w-36 h-36;
+  }
+  .system__logo > span {
+    @apply text-24 font-bold px-16;
+  }
+  .login__form {
+    @apply relative w-[40%] box-border;
+  }
+  .setting {
+    @apply absolute top-16 right-16;
+  }
+  .form {
+    @apply absolute w-full flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+  }
+  .login__form__title {
+    @apply text-24 font-bold mb-16 text-center;
+  }
+
+  .header {
+    @apply flex items-center justify-between box-border w-full h-60 px-24 py-10 bg-light-colorBgContainer dark:bg-dark-colorBgContainer dark:border-b dark:border-dark-colorBorder shadow-boxShadowDrawerDown;
+  }
+
+  .main {
+    @apply overflow-auto box-border;
+  }
+
+  .sidebar {
+    @apply relative h-[calc(100vh-80px)] box-border rounded-[8px];
+  }
+
+  .collapse-btn {
+    @apply absolute w-6 h-100 top-1/2 -right-9 -translate-y-1/2 cursor-pointer z-50;
+  }
+  .collapse-btn-expand:hover::before,
+  .collapse-btn-fold:hover::after {
+    @apply transform rotate-[10deg] origin-center transition-all duration-300 ease-in-out;
+  }
+  .collapse-btn-fold:hover::before,
+  .collapse-btn-expand:hover::after {
+    @apply transform -rotate-[10deg] origin-center transition-all duration-300 ease-in-out;
+  }
+  .collapse-btn::before,
+  .collapse-btn::after {
+    @apply content-[''] absolute -left-1 w-6 h-50 rounded-[3px] bg-light-colorBorder dark:bg-dark-colorBorder shadow-xl transform rotate-[0] transition-all duration-300 ease-in-out;
+  }
+  .collapse-btn::before {
+    @apply top-2;
+  }
+  .collapse-btn::after {
+    @apply bottom-2;
+  }
+
+  .tab-bar {
+    @apply w-full px-4 mb-10 py-4 h-48 flex rounded-[8px] bg-light-colorBgContainer dark:bg-dark-colorBgContainer dark:border dark:border-dark-colorBorder;
+  }
+  .tab-close-btn {
+    @apply w-0 h-0 transform origin-center transition-all duration-300 ease-in-out;
+  }
+  .tab {
+    @apply h-full leading-[40px] px-16 relative cursor-pointer rounded-tl-[8px] rounded-tr-[8px] transition-all duration-300 ease-in-out;
+  }
+  .tab:hover {
+    @apply text-light-colorPrimary dark:text-dark-colorPrimary;
+  }
+  .tab:hover > .tab-close-btn {
+    @apply w-14 h-14;
+  }
+  .tab::before,
+  .tab::after {
+    @apply content-[''] absolute bottom-0 h-2 w-0 bg-transparent transition-all duration-300 ease-in-out;
+  }
+  .tab::before {
+    @apply left-1/2;
+  }
+  .tab::after {
+    @apply right-1/2;
+  }
+  .tab-active {
+    @apply border-b-light-colorPrimary dark:border-b-dark-colorPrimary transition-all duration-300 ease-in-out bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg;
+  }
+  .tab-active::before,
+  .tab-active::after {
+    @apply bg-light-colorPrimary dark:bg-dark-colorPrimary  w-[calc(50%)] transition-all duration-300 ease-in-out;
+  }
+  .tab-active::before {
+    @apply origin-right;
+  }
+  .tab-active::after {
+    @apply origin-left;
+  }
+
+  .wrapper {
+    @apply px-16 py-24 rounded-[8px] bg-white dark:bg-dark-colorBgContainer dark:border dark:border-dark-colorBorder;
+  }
+
+  .primary-text-btn {
+    @apply text-light-colorPrimary dark:text-dark-colorPrimary;
+  }
+  .error-text-btn {
+    @apply text-light-colorError dark:text-dark-colorError;
+  }
+  .warning-text-btn {
+    @apply text-light-colorWarning dark:text-dark-colorWarning;
+  }
+  .success-text-btn {
+    @apply text-light-colorSuccess dark:text-dark-colorSuccess;
+  }
+}
+
+#nprogress .bar {
+  @apply !bg-light-colorPrimary dark:!bg-dark-colorPrimary;
+}
+
+.page-enter {
+  @apply opacity-0 scale-110;
+}
+
+.page-enter-active {
+  @apply opacity-100 scale-100 transition-all duration-300;
+}
+
+.page-exit {
+  @apply opacity-100 scale-100;
+}
+
+.page-exit-active {
+  @apply opacity-0 scale-90 transition-all duration-300;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  @apply animate-none mix-blend-normal;
+}
+
+::view-transition-old(root),
+.dark::view-transition-new(root) {
+  @apply z-[1];
+}
+
+::view-transition-new(root),
+.dark::view-transition-old(root) {
+  @apply z-[9999];
+}
