@@ -7,6 +7,10 @@ declare global {
     $message: MessageInstance
     $modal: HookAPI
     $notification: NotificationInstance
+    microApp: any
+    __MICRO_APP_ENVIRONMENT__?: boolean
+    __MICRO_APP_NAME__?: string
+    __MICRO_APP_BASE_ROUTE__?: String
   }
   export namespace System {
     interface UserState {
@@ -85,5 +89,27 @@ declare global {
   export interface Navigator {
     msSaveOrOpenBlob: (blob: Blob, fileName: string) => void
     browserLanguage: string
+  }
+}
+
+declare module 'micro-app' {
+  export interface MicroAppProps {
+    name: string
+    url: string
+    baseroute?: string
+    data?: Record<string, any>
+    onCreated?: () => void
+    onMounted?: () => void
+    onUnmounted?: () => void
+    onError?: (error: Error) => void
+    onDataChange?: (data: Record<string, any>) => void
+  }
+
+  export interface MicroAppElement extends HTMLElement {
+    name: string
+    url: string
+    baseroute?: string
+    data?: Record<string, any>
+    dispatch: (data: Record<string, any>) => void
   }
 }

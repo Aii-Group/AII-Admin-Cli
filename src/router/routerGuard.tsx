@@ -31,7 +31,9 @@ const RouterGuard: React.FC<RouterGuardProps> = (props) => {
 
   if (!meta?.requiredAuth) return <>{props.children}</>
 
-  if (!accessToken) return <Navigate to="/login" replace />
+  if (!window.__MICRO_APP_ENVIRONMENT__) {
+    if (!accessToken) return <Navigate to="/login" replace />
+  }
 
   const staticRouter = ['/', '404', '403']
   const routerList = loaderData?.concat(staticRouter)

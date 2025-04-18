@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="./public/favicon.png" alt="Admin CLI React Logo" width="100" />
+  <img src="./public/favicon.png" alt="AII Logo" width="100" />
   <h1>AII Admin CLI</h1>
 </div>
-
----
 
 #### Description
 
@@ -66,7 +64,7 @@
 
 5. Open your browser and visit:
    ```
-   http://localhost:3000
+   http://localhost:3001
    ```
 
 ---

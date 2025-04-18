@@ -3,6 +3,8 @@ import { create } from 'zustand'
 import { ThemeEnum } from '@/enums/themeEnum'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
+const storagePrefix = `[${import.meta.env.VITE_TITLE || 'AII'}]`
+
 export const useUserStore = create<System.UserState>()(
   persist(
     (set) => ({
@@ -14,7 +16,7 @@ export const useUserStore = create<System.UserState>()(
       setUserInfo: (userInfo: System.UserInfo) => set({ userInfo }),
     }),
     {
-      name: 'user-storage',
+      name: `${storagePrefix}-user-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -33,10 +35,16 @@ export const useMenuStore = create<System.MenuState>()(
         },
       ],
       setMenu: (menu: System.MenuOptions[]) => set({ menu }),
-      appendMenu: (menu: System.MenuOptions[]) => set((state) => ({ menu: [...state.menu, ...menu] })),
+      appendMenu: (menu: System.MenuOptions[]) =>
+        set((state) => {
+          const newMenuItems = menu.filter(
+            (newItem) => !state.menu.some((existingItem) => existingItem.key === newItem.key),
+          )
+          return { menu: [...state.menu, ...newMenuItems] }
+        }),
     }),
     {
-      name: 'menu-storage',
+      name: `${storagePrefix}-menu-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -55,7 +63,7 @@ export const useMenuCollapseStore = create<System.CollapseState>()(
         })),
     }),
     {
-      name: 'collapse-storage',
+      name: `${storagePrefix}-collapse-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -75,7 +83,7 @@ export const useThemeStore = create<System.ThemeState>()(
       setColor: (color: System.Color) => set({ color }),
     }),
     {
-      name: 'theme-storage',
+      name: `${storagePrefix}-theme-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -106,7 +114,7 @@ export const useTabStore = create<System.TabState>()(
       setTabs: (tabs: System.Tab[]) => set({ tabs }),
     }),
     {
-      name: 'tab-storage',
+      name: `${storagePrefix}-tab-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -119,7 +127,7 @@ export const useLanguageStore = create<System.LanguageState>()(
       setLanguage: (language: string) => set({ language }),
     }),
     {
-      name: 'language-storage',
+      name: `${storagePrefix}-language-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),
@@ -132,7 +140,7 @@ export const useFullscreenStore = create<System.FullscreenState>()(
       setFullscreen: (fullscreen: boolean) => set({ fullscreen }),
     }),
     {
-      name: 'fullscreen-storage',
+      name: `${storagePrefix}-fullscreen-storage`,
       storage: createJSONStorage(() => localStorage),
     },
   ),

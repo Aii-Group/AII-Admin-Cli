@@ -1,3 +1,4 @@
+/*! scopecss-disable */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,3 +38,4 @@ body,
   background-color: var(--background-dark);
   color: var(--text-dark);
 }
+/*! scopecss-enable */

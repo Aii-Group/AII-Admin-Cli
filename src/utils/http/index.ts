@@ -9,10 +9,12 @@ import { useUserStore } from '@/stores/system'
 import { ResultData } from './interface'
 import { AxiosCanceler } from './helper/axiosCancel'
 
+import { isMicroAppEnv } from '@/utils/micro'
+
 const defaultConfig = {
-  baseURL: '/api',
+  baseURL: '/',
   timeout: 10000,
-  withCredentials: true,
+  withCredentials: !isMicroAppEnv,
 }
 const axiosCanceler = new AxiosCanceler()
 const userInfo = useUserStore.getState().userInfo

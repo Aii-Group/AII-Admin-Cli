@@ -1,3 +1,4 @@
+/*! scopecss-disable */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -38,8 +39,8 @@
     @apply overflow-auto box-border;
   }
 
-  .sidebar {
-    @apply relative h-[calc(100vh-80px)] box-border rounded-[8px];
+  .sidebar-inline {
+    @apply relative h-[calc(100vh-80px)] box-border rounded-[8px] dark:!border dark:!border-dark-colorBorder;
   }
 
   .collapse-btn {
@@ -65,7 +66,7 @@
   }
 
   .tab-bar {
-    @apply w-full px-4 mb-10 py-4 h-48 flex rounded-[8px] bg-light-colorBgContainer dark:bg-dark-colorBgContainer dark:border dark:border-dark-colorBorder;
+    @apply w-full px-4 mb-10 py-4 h-48 flex rounded-[8px] bg-light-colorBgContainer dark:!bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
   }
   .tab-close-btn {
     @apply w-0 h-0 transform origin-center transition-all duration-300 ease-in-out;
@@ -104,7 +105,7 @@
   }
 
   .wrapper {
-    @apply px-16 py-24 rounded-[8px] bg-white dark:bg-dark-colorBgContainer dark:border dark:border-dark-colorBorder;
+    @apply px-16 py-24 rounded-[8px] bg-white dark:bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
   }
 
   .primary-text-btn {

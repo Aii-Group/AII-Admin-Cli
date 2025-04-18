@@ -6,14 +6,13 @@ import { useUserStore, useThemeStore, useLanguageStore, useMenuStore } from '@/s
 import { enableTransitions } from '@/utils/system'
 import Logo from '@/assets/png/logo.png'
 import Banner from '@/assets/svg/banner.svg?react'
-import { login, getMenu } from '@/api/mock'
+import { login } from '@/api/mock'
 
 const Login: React.FC = () => {
   const { t } = useTranslation()
   const { setUserInfo } = useUserStore()
   const { theme, setTheme } = useThemeStore()
   const { language, setLanguage } = useLanguageStore()
-  const { appendMenu } = useMenuStore()
   const navigate = useNavigate()
 
   const onChangeTheme = async (event: unknown) => {
@@ -50,13 +49,6 @@ const Login: React.FC = () => {
     const loginRes = await login(values)
     if (loginRes.success && loginRes.data) {
       setUserInfo(loginRes.data)
-      getMenuData()
-    }
-  }
-  const getMenuData = async () => {
-    const menuRes = await getMenu()
-    if (menuRes.success) {
-      appendMenu(menuRes.data ?? [])
       navigate('/')
     }
   }
