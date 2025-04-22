@@ -5,6 +5,8 @@ import { Link, Location, useLocation } from 'react-router-dom'
 import { useTabStore } from '@/stores/system'
 import { CloseOutlined } from '@ant-design/icons'
 
+import { isExternalLink } from '@/utils/system'
+
 const TabBar: React.FC = () => {
   const { t } = useTranslation()
   const location: Location = useLocation()
@@ -27,7 +29,10 @@ const TabBar: React.FC = () => {
     <div className="tab-bar">
       {tabs.map((tab, index) => {
         return (
-          <Link key={index} to={tab.path}>
+          <Link
+            key={index}
+            to={tab.link && isExternalLink(tab.link) ? `${tab.path}?src=${encodeURIComponent(tab.link)}` : tab.path}
+          >
             <div className={`tab ${tab.path === location.pathname ? ' tab-active' : ''} `}>
               <span className="px-10">{t(`Menu.${tab.code}`)}</span>
               {tab.closeable && (

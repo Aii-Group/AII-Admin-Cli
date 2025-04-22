@@ -65,6 +65,28 @@ export default [
               },
             ],
           },
+          {
+            key: 'External_Link',
+            label: 'External Link',
+            icon: 'link',
+            path: '/iframe',
+            children: [
+              {
+                key: 'Baidu',
+                label: 'Baidu',
+                path: '/iframe/baidu',
+                link: 'https://www.baidu.com/',
+                filePath: '/iframe/index',
+              },
+              {
+                key: 'React',
+                label: 'React',
+                path: '/iframe/react',
+                link: 'https://zh-hans.react.dev/',
+                filePath: '/iframe/index',
+              },
+            ],
+          },
         ],
       }
     },

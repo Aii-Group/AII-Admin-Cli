@@ -10,6 +10,9 @@ Menu:
   Table: 'Table'
   Basic_Table: 'Basic Table'
   Advanced_Table: 'Advanced Table'
+  External_Link: 'External Link'
+  Baidu: 'Baidu'
+  React: 'React'
 
 Common:
   User_Info: 'User Info'

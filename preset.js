@@ -114,6 +114,4 @@ const preset = {
   transitionTimingFunction: lightTokens.timingFunction || darkTokens.timingFunction,
 }
 
-console.log(preset)
-
 export default preset

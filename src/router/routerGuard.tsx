@@ -26,7 +26,7 @@ const RouterGuard: React.FC<RouterGuardProps> = (props) => {
   const { meta } = props
 
   useEffect(() => {
-    props?.meta?.code && addTab(props.meta)
+    meta?.code && addTab(meta)
   }, [meta])
 
   if (!meta?.requiredAuth) return <>{props.children}</>

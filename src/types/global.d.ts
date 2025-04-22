@@ -33,6 +33,7 @@ declare global {
       filePath?: string
       label: string
       icon?: string
+      link?: string
       children?: MenuOptions[]
     }
     interface CollapseState {
@@ -63,6 +64,7 @@ declare global {
       code: string
       path: string
       closeable?: boolean
+      link?: string
     }
     interface TabState {
       tabs: Tab[]

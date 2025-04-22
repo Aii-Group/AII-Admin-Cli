@@ -10,6 +10,9 @@ Menu:
   Table: '表格'
   Basic_Table: '基础表格'
   Advanced_Table: '高级表格'
+  External_Link: '外部链接'
+  Baidu: '百度'
+  React: 'React'
 
 Common:
   User_Info: '用户信息'

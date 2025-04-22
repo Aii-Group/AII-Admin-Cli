@@ -31,7 +31,8 @@ export const resetLogout = () => {
 
 export const renderMenuItems = (menuList: System.MenuOptions[], t: TFunction): MenuItem[] => {
   return menuList.map((item) => {
-    const { key, path, icon, children } = item
+    const { key, path, icon, children, link } = item
+
     if (children && children.length > 0) {
       return {
         key,
@@ -40,9 +41,13 @@ export const renderMenuItems = (menuList: System.MenuOptions[], t: TFunction): M
         children: renderMenuItems(children, t),
       }
     }
+
     return {
       key,
-      label: React.createElement(Link, { to: path }, t(`Menu.${key}`)),
+      label: link
+        ? React.createElement(Link, { to: `${path}?src=${encodeURIComponent(link)}` }, t(`Menu.${key}`))
+        : React.createElement(Link, { to: path }, t(`Menu.${key}`)),
+      // label: React.createElement(Link, { to: path }, t(`Menu.${key}`)),
       icon: icon ? React.createElement(SvgIcon, { icon }) : null,
       path,
     }
@@ -83,3 +88,7 @@ export const getBrowserLang = () => {
 
 export const enableTransitions = () =>
   'startViewTransition' in document && window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+
+export const isExternalLink = (path: string): boolean => {
+  return /^(https?:\/\/)/.test(path)
+}

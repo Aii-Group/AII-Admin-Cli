@@ -13,7 +13,7 @@ import { useThemeStore, useLanguageStore } from './stores/system'
 
 const IconConfig = { ...DEFAULT_ICON_CONFIGS, prefix: 'icon', size: 18 }
 
-import { isMicroAppEnv, microAppData } from '@/utils/micro'
+import { isMicroAppEnv } from '@/utils/micro'
 
 function App() {
   const { setTheme } = useThemeStore()
@@ -24,7 +24,6 @@ function App() {
   useEffect(() => {
     isMicroAppEnv &&
       window.microApp.addGlobalDataListener((data: any) => {
-        console.log('microAppData', data)
         if (data.language) {
           setLanguage(data.language)
         }

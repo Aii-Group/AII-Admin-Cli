@@ -38,12 +38,14 @@ const generateRoutes = (menuList: any[]): any[] => {
       element: LazyLoad(
         lazy(() => (component ? component() : Promise.reject('Component not found'))),
         {
-          requiredAuth: true,
+          requiredAuth: !item.link,
           closeable: item.key !== 'Dashboard',
           code: item.key,
           path: item.path,
+          link: item.link,
         },
       ),
+
       nodeRef: createRef(),
     }
   })
@@ -61,7 +63,20 @@ export const routes = [
     children: [
       {
         element: <Layout />,
-        children: generateRoutes(menu),
+        children: [
+          ...generateRoutes(menu),
+          // {
+          //   path: '/iframe',
+          //   element: LazyLoad(
+          //     lazy(() => import('@/pages/iframe')),
+          //     {
+          //       requiredAuth: false,
+          //       closeable: false,
+          //       code: 'Iframe',
+          //     },
+          //   ),
+          // },
+        ],
       },
     ],
   },
@@ -69,6 +84,7 @@ export const routes = [
     path: '/login',
     element: <Login />,
   },
+
   {
     path: '/403',
     element: <Error403 />,
