@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import { XProvider } from '@ant-design/x'
-import { RouterProvider } from 'react-router-dom'
 
-import { router } from '@/router'
+import AppRouter from '@/router'
 import AppProvider from '@/components/AppProvider'
 import { DrawerProvider } from '@/components/AiiDrawer'
 import { DEFAULT_ICON_CONFIGS, IconProvider } from '@icon-park/react'
@@ -44,7 +43,7 @@ function App() {
       <AppProvider>
         <IconProvider value={IconConfig}>
           <DrawerProvider>
-            <RouterProvider router={router} />
+            <AppRouter />
           </DrawerProvider>
         </IconProvider>
       </AppProvider>
