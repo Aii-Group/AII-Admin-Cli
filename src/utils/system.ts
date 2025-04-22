@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 
 import SvgIcon from '@/components/SvgIcon'
 import { languageEnums } from '@/enums/languageEnum'
-import { useFullscreenStore, useMenuStore, useTabStore, useUserStore } from '@/stores/system'
+import { useFullscreenStore, useMenuStore, useTabStore, useUserStore, useMenuCollapseStore } from '@/stores/system'
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -26,6 +26,7 @@ export const resetLogout = () => {
       filePath: '/dashboard/index',
     },
   ])
+  useMenuCollapseStore.getState().setOpenedKeys([])
   useFullscreenStore.getState().setFullscreen(false)
 }
 
@@ -44,10 +45,10 @@ export const renderMenuItems = (menuList: System.MenuOptions[], t: TFunction): M
 
     return {
       key,
-      label: link
-        ? React.createElement(Link, { to: `${path}?src=${encodeURIComponent(link)}` }, t(`Menu.${key}`))
-        : React.createElement(Link, { to: path }, t(`Menu.${key}`)),
-      // label: React.createElement(Link, { to: path }, t(`Menu.${key}`)),
+      label:
+        link && isExternalLink(link)
+          ? React.createElement(Link, { to: `${path}?src=${encodeURIComponent(link)}` }, t(`Menu.${key}`))
+          : React.createElement(Link, { to: path }, t(`Menu.${key}`)),
       icon: icon ? React.createElement(SvgIcon, { icon }) : null,
       path,
     }
