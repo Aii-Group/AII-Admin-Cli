@@ -7,8 +7,6 @@ import { Location, useLocation } from 'react-router-dom'
 import { findActiveKey, renderMenuItems } from '@/utils/system'
 import { useMenuCollapseStore, useMenuStore } from '@/stores/system'
 
-import { getMenu } from '@/api/mock'
-
 type MenuItem = Required<MenuProps>['items'][number]
 
 const Sidebar: React.FC = () => {
@@ -16,24 +14,13 @@ const Sidebar: React.FC = () => {
   const location: Location = useLocation()
   const { collapsed, collapseMenuOpenedKeys, setOpenedKeys, expandMenuOpenedKeys, toggleCollapsed } =
     useMenuCollapseStore()
-  const { menu, appendMenu } = useMenuStore()
+  const { menu } = useMenuStore()
   const [selectedKeys, setSelectedKeys] = useState<string[]>([location.pathname])
   const menuItems: MenuItem[] = useMemo(() => renderMenuItems(menu, t), [menu, i18n.language])
 
   const onOpenChange: MenuProps['onOpenChange'] = (keys) => {
     setOpenedKeys(keys)
   }
-
-  const getMenuData = async () => {
-    const menuRes = await getMenu()
-    if (menuRes.success) {
-      appendMenu(menuRes.data ?? [])
-    }
-  }
-
-  useEffect(() => {
-    getMenuData()
-  }, [])
 
   useEffect(() => {
     setSelectedKeys(findActiveKey(menu, location.pathname))

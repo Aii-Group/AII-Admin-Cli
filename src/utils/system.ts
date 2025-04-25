@@ -18,13 +18,13 @@ export const resetLogout = () => {
   })
   useTabStore.getState().setTabs([])
   useMenuStore.getState().setMenu([
-    {
-      key: 'Dashboard',
-      label: 'Dashboard',
-      icon: 'dashboard',
-      path: '/dashboard',
-      filePath: '/dashboard/index',
-    },
+    // {
+    //   key: 'Dashboard',
+    //   label: 'Dashboard',
+    //   icon: 'dashboard',
+    //   path: '/dashboard',
+    //   filePath: '/dashboard/index',
+    // },
   ])
   useMenuCollapseStore.getState().setOpenedKeys([])
   useFullscreenStore.getState().setFullscreen(false)

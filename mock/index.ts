@@ -46,6 +46,13 @@ export default [
         success: true,
         data: [
           {
+            key: 'Dashboard',
+            label: 'Dashboard',
+            icon: 'dashboard',
+            path: '/dashboard',
+            filePath: '/dashboard/index',
+          },
+          {
             key: 'Table',
             label: 'Table',
             icon: 'table',

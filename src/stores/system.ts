@@ -26,13 +26,13 @@ export const useMenuStore = create<System.MenuState>()(
   persist(
     (set) => ({
       menu: [
-        {
-          key: 'Dashboard',
-          label: 'Dashboard',
-          icon: 'dashboard',
-          path: '/dashboard',
-          filePath: '/dashboard/index',
-        },
+        // {
+        //   key: 'Dashboard',
+        //   label: 'Dashboard',
+        //   icon: 'dashboard',
+        //   path: '/dashboard',
+        //   filePath: '/dashboard/index',
+        // },
       ],
       setMenu: (menu: System.MenuOptions[]) => set({ menu }),
       appendMenu: (menu: System.MenuOptions[]) =>

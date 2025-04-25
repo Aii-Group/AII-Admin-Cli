@@ -1,4 +1,5 @@
 import { createRef, lazy } from 'react'
+import { Spin } from 'antd'
 
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom'
 
@@ -47,7 +48,6 @@ const AppRouter = () => {
             link: item.link,
           },
         ),
-
         nodeRef: createRef(),
       }
     })
@@ -68,6 +68,7 @@ const AppRouter = () => {
           children: [...generateRoutes(menu)],
         },
       ],
+      HydrateFallback: () => <Spin className="router-spin" />,
     },
     {
       path: '/login',
