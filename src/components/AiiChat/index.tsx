@@ -91,6 +91,16 @@ const MarkdownComponents: Components = {
       </a>
     )
   },
+  table: ({ children }) => <table className="w-full border-collapse">{children}</table>,
+  thead: ({ children }) => <thead className="bg-gray-100/50 dark:bg-gray-800/50">{children}</thead>,
+  tbody: ({ children }) => <tbody className="divide-y divide-gray-200 dark:divide-gray-700">{children}</tbody>,
+  tr: ({ children }) => <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/20">{children}</tr>,
+  th: ({ children }) => (
+    <th className="px-4 py-2 text-left font-semibold text-sm bg-gray-50 dark:bg-gray-900/50 border-b">{children}</th>
+  ),
+  td: ({ children }) => (
+    <td className="px-4 py-2 text-sm border-b hover:bg-gray-50 dark:hover:bg-gray-800/20">{children}</td>
+  ),
 }
 
 const BubbleItem: React.FC<BubbleItemProps> = memo(({ message, id, status, interruptedMessages }) => {
