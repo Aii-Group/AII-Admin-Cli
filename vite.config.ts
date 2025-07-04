@@ -8,6 +8,8 @@ import { viteMockServe } from 'vite-plugin-mock'
 import react from '@vitejs/plugin-react-swc'
 import ViteYaml from '@modyfi/vite-plugin-yaml'
 
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+
 // https://vite.dev/config/
 export default defineConfig({
   base: '/',
@@ -27,6 +29,10 @@ export default defineConfig({
     },
   },
   plugins: [
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+    }),
     react(),
     ViteYaml(),
     viteMockServe({

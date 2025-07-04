@@ -1,5 +1,6 @@
 import { message, Modal, notification } from 'antd'
-const AppProvider = (props: { children: JSX.Element }) => {
+
+const AppProvider = (props: { children: React.ReactNode }) => {
   const [messageApi, messageContextHolder] = message.useMessage()
   const [modalApi, modalContextHolder] = Modal.useModal()
   const [notificationApi, notificationContextHolder] = notification.useNotification()

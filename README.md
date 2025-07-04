@@ -19,9 +19,8 @@
    - [AiiDrawer](#aiidrawer)
    - [AppProvider](#appprovider)
 4. [Menu Format](#menu-format)
-5. [Dynamic Route Generation](#dynamic-route-generation)
-6. [Contributing](#contributing)
-7. [License](#license)
+5. [Contributing](#contributing)
+6. [License](#license)
 
 ---
 
@@ -291,95 +290,6 @@ const menu = [
     ],
   },
 ]
-```
-
----
-
-### Dynamic Route Generation
-
-The dynamic route generation is based on the menu configuration. The routes are generated dynamically using the `generateRoutes` function.
-
-**Example**:
-
-```tsx
-import { createRef, lazy } from 'react'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
-import LazyLoad from './lazyLoad'
-import Layout from '@/layouts/index'
-import Login from '@/pages/login'
-import Error403 from '@/pages/error-page/403'
-import Error404 from '@/pages/error-page/404'
-import { useMenuStore } from '@/stores/system'
-
-const menu = useMenuStore.getState().menu
-
-const modules = import.meta.glob('@/pages/**/*.tsx')
-
-const components = Object.keys(modules).reduce<Record<string, any>>((prev, cur) => {
-  prev[cur.replace('/src/pages', '')] = modules[cur]
-  return prev
-}, {}) as Record<string, () => Promise<any>>
-
-const generateRoutes = (menuList: any[]): any[] => {
-  return menuList.map((item) => {
-    const component = components[`${item.filePath}.tsx`]
-    if (item.children && item.children.length > 0) {
-      return {
-        path: item.path,
-        children: generateRoutes(item.children),
-      }
-    }
-
-    return {
-      path: item.path,
-      element: LazyLoad(
-        lazy(() => (component ? component() : Promise.reject('Component not found'))),
-        {
-          requiredAuth: true,
-          closeable: item.key !== 'Dashboard',
-          code: item.key,
-          path: item.path,
-        },
-      ),
-      nodeRef: createRef(),
-    }
-  })
-}
-
-export const routes = [
-  {
-    path: '/',
-    element: <Navigate to="/dashboard" />,
-  },
-  {
-    path: '/',
-    id: 'root',
-    children: [
-      {
-        element: <Layout />,
-        children: generateRoutes(menu),
-      },
-    ],
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/403',
-    element: <Error403 />,
-  },
-  {
-    path: '/404',
-    element: <Error404 />,
-  },
-  {
-    path: '*',
-    element: <Error404 />,
-  },
-]
-
-export const router = createBrowserRouter(routes)
 ```
 
 ---

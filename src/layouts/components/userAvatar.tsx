@@ -1,10 +1,12 @@
-import { Avatar, Dropdown } from 'antd'
 import type { MenuProps } from 'antd'
-import { useNavigate } from 'react-router-dom'
-import { User, Logout } from '@icon-park/react'
+import { Avatar, Dropdown } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { resetLogout } from '@/utils/system'
+
 import Logo from '@/assets/png/logo.png'
+import { resetLogout } from '@/utils/system'
+import { Logout, User } from '@icon-park/react'
+import { useNavigate } from '@tanstack/react-router'
+
 const UserAvatar: React.FC = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -39,7 +41,7 @@ const UserAvatar: React.FC = () => {
       okText: t('Common.Logout'),
       onOk() {
         resetLogout()
-        navigate('/login')
+        navigate({ to: '/login' })
       },
     })
   }

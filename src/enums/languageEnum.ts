@@ -1,4 +1,4 @@
-export enum languageEnums {
-  ZH = 'zh',
-  EN = 'en',
-}
+export const languageEnums = {
+  ZH: 'zh',
+  EN: 'en',
+} as const

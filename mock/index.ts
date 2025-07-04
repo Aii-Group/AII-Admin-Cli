@@ -22,6 +22,7 @@ export default [
             userId: '1008',
             userName: 'admin',
             accessToken: Mock.Random.guid(),
+            permissions: ['Dashboard', 'Basic_Table', 'Advanced_Table'],
           },
         }
       } else {
@@ -81,14 +82,14 @@ export default [
               {
                 key: 'Baidu',
                 label: 'Baidu',
-                path: '/iframe/baidu',
+                path: '/iframe/Baidu',
                 link: 'https://www.baidu.com/',
                 filePath: '/iframe/index',
               },
               {
                 key: 'React',
                 label: 'React',
-                path: '/iframe/react',
+                path: '/iframe/React',
                 link: 'https://zh-hans.react.dev/',
                 filePath: '/iframe/index',
               },

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, memo } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 import OpenAI from 'openai'
 import remarkGfm from 'remark-gfm'
@@ -9,13 +9,13 @@ import { useTranslation } from 'react-i18next'
 import type { Components } from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 
-import { Check, Copy, Refresh, Pencil, Down, Send, TwoEllipses } from '@icon-park/react'
 import { useThemeStore } from '@/stores/system'
 import Robot from '@/assets/svg/robot.svg?react'
 import { Bubble, Sender, useXAgent, useXChat } from '@ant-design/x'
+import { Check, Copy, Down, Send, TwoEllipses } from '@icon-park/react'
 import { materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-import type { CodeBlockProps, BubbleItemProps } from './AiiChat.types'
+import type { BubbleItemProps, CodeBlockProps } from './AiiChat.types'
 
 import './index.css'
 

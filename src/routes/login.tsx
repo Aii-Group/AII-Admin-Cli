@@ -1,15 +1,24 @@
-import { Button, Checkbox, Form, Input, Flex } from 'antd'
-// import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { User, Lock, Earth, SunOne, Moon } from '@icon-park/react'
-import { useUserStore, useThemeStore, useLanguageStore, useMenuStore } from '@/stores/system'
-import { enableTransitions } from '@/utils/system'
+import { Button, Checkbox, Flex, Form, Input } from 'antd'
+
 import Logo from '@/assets/png/logo.png'
+import { getMenu, login } from '@/api/mock'
+import { enableTransitions } from '@/utils/system'
 import Banner from '@/assets/svg/banner.svg?react'
-import { login, getMenu } from '@/api/mock'
-import { useNavigate } from '@tanstack/react-router'
+import { Earth, Lock, Moon, SunOne, User } from '@icon-park/react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useLanguageStore, useMenuStore, useThemeStore, useUserStore } from '@/stores/system'
+
+export const Route = createFileRoute('/login')({
+  component: () => <Login />,
+  staticData: {
+    code: 'Login',
+    langCode: 'Common.Login',
+  },
+})
 
 const Login: React.FC = () => {
+  const [form] = Form.useForm()
   const { t } = useTranslation()
   const { setUserInfo } = useUserStore()
   const { theme, setTheme } = useThemeStore()
@@ -58,7 +67,7 @@ const Login: React.FC = () => {
     const menuRes = await getMenu()
     if (menuRes.success) {
       appendMenu(menuRes.data ?? [])
-      navigate({ to: '/app' })
+      navigate({ to: '/' })
     }
   }
   return (
@@ -122,4 +131,3 @@ const Login: React.FC = () => {
     </div>
   )
 }
-export default Login

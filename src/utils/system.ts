@@ -2,7 +2,7 @@ import React from 'react'
 
 import { MenuProps } from 'antd'
 import { TFunction } from 'i18next'
-import { Link } from 'react-router-dom'
+import { Link, type LinkProps } from '@tanstack/react-router'
 
 import SvgIcon from '@/components/SvgIcon'
 import { languageEnums } from '@/enums/languageEnum'
@@ -47,8 +47,16 @@ export const renderMenuItems = (menuList: System.MenuOptions[], t: TFunction): M
       key,
       label:
         link && isExternalLink(link)
-          ? React.createElement(Link, { to: `${path}?src=${encodeURIComponent(link)}` }, t(`Menu.${key}`))
-          : React.createElement(Link, { to: path }, t(`Menu.${key}`)),
+          ? React.createElement(
+              Link,
+              {
+                to: 'iframe/$name',
+                params: { name: key },
+                search: { url: link },
+              } as const satisfies LinkProps,
+              t(`Menu.${key}`),
+            )
+          : React.createElement(Link, { to: path } as const satisfies LinkProps, t(`Menu.${key}`)),
       icon: icon ? React.createElement(SvgIcon, { icon }) : null,
       path,
     }

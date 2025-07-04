@@ -21,6 +21,7 @@ declare global {
       userId?: string
       userName?: string
       accessToken?: string
+      permissions?: string[]
     }
     interface MenuState {
       menu: MenuOptions[]

@@ -19,14 +19,16 @@
         "moduleDetection": "force",
         "noEmit": true,
         "jsx": "react-jsx",
-        "types": ["node"],
+        "jsxImportSource": "react",
+        "types": ["node", "react", "react-dom"],
 
         /* Linting */
         "strict": true,
         "noUnusedLocals": false,
         "noUnusedParameters": false,
+        "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"]
+    "include": ["src", "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"]
 }

@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
+
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
-import FullMode from './FullMode'
+
 import { useFullscreenStore } from '@/stores/system'
+
+import FullMode from './FullMode'
 
 const Layouts: React.FC = () => {
   const handle = useFullScreenHandle()

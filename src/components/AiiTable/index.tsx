@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, memo } from 'react'
+import { useEffect, useState, useMemo, memo } from 'react'
 import { Table, Pagination, Dropdown, Divider, Button, Space } from 'antd'
 import type { TableProps, MenuProps } from 'antd'
 import type { OperationColumnProps, OperationItemProps, AiiTableProps, BatchOperationRowProps } from './AiiTable.types'
@@ -297,7 +297,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                 pageSizeChanged(parseInt(key))
               },
             }}
-            dropdownRender={(menu) => <div className="text-center">{menu}</div>}
+            popupRender={(menu) => <div className="text-center">{menu}</div>}
           >
             <div className="flex items-center cursor-pointer">
               <span>{`${t('Common.PageSize_show')}: ${pagination?.pageSize}`}</span>

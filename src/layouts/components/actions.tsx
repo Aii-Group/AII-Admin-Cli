@@ -1,13 +1,12 @@
-import { Button, Space, Image } from 'antd'
+import { Button, Space } from 'antd'
+import { useTranslation } from 'react-i18next'
 
+import { Welcome } from '@ant-design/x'
+import AiiChat from '@/components/AiiChat'
+import Robot from '@/assets/svg/robot.svg?react'
+import { useDrawer } from '@/components/AiiDrawer'
 import { useFullscreenStore, useLanguageStore, useThemeStore } from '@/stores/system'
 import { FullScreenOne, MessageEmoji, Moon, OffScreenOne, Remind, SunOne, Translate } from '@icon-park/react'
-
-import { useDrawer } from '@/components/AiiDrawer'
-import AiiChat from '@/components/AiiChat'
-import { Welcome } from '@ant-design/x'
-import { useTranslation } from 'react-i18next'
-import Robot from '@/assets/svg/robot.svg?react'
 
 interface ActionItem {
   key: string

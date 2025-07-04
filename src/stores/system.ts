@@ -12,6 +12,7 @@ export const useUserStore = create<System.UserState>()(
         userId: '',
         userName: '',
         accessToken: '',
+        permissions: [],
       },
       setUserInfo: (userInfo: System.UserInfo) => set({ userInfo }),
     }),

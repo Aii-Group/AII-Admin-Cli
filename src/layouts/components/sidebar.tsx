@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import { Menu, MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { Location, useLocation } from 'react-router-dom'
 
+import { useLocation } from '@tanstack/react-router'
 import { findActiveKey, renderMenuItems } from '@/utils/system'
 import { useMenuCollapseStore, useMenuStore } from '@/stores/system'
 
