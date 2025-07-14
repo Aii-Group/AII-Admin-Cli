@@ -31,26 +31,30 @@ const R403Route = R403RouteImport.update({
   path: '/403',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticationTableBasicRoute = AuthenticationTableBasicRouteImport.update({
-  id: '/table/basic',
-  path: '/table/basic',
-  getParentRoute: () => AuthenticationRoute,
-} as any)
-const AuthenticationTableAdvancedRoute = AuthenticationTableAdvancedRouteImport.update({
-  id: '/table/advanced',
-  path: '/table/advanced',
-  getParentRoute: () => AuthenticationRoute,
-} as any)
-const AuthenticationIframeNameRoute = AuthenticationIframeNameRouteImport.update({
-  id: '/iframe/$name',
-  path: '/iframe/$name',
-  getParentRoute: () => AuthenticationRoute,
-} as any)
-const AuthenticationDashboardDashboardRoute = AuthenticationDashboardDashboardRouteImport.update({
-  id: '/_dashboard/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticationRoute,
-} as any)
+const AuthenticationTableBasicRoute =
+  AuthenticationTableBasicRouteImport.update({
+    id: '/table/basic',
+    path: '/table/basic',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
+const AuthenticationTableAdvancedRoute =
+  AuthenticationTableAdvancedRouteImport.update({
+    id: '/table/advanced',
+    path: '/table/advanced',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
+const AuthenticationIframeNameRoute =
+  AuthenticationIframeNameRouteImport.update({
+    id: '/iframe/$name',
+    path: '/iframe/$name',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
+const AuthenticationDashboardDashboardRoute =
+  AuthenticationDashboardDashboardRouteImport.update({
+    id: '/_dashboard/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/403': typeof R403Route
@@ -80,9 +84,21 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/403' | '/login' | '/dashboard' | '/iframe/$name' | '/table/advanced' | '/table/basic'
+  fullPaths:
+    | '/403'
+    | '/login'
+    | '/dashboard'
+    | '/iframe/$name'
+    | '/table/advanced'
+    | '/table/basic'
   fileRoutesByTo: FileRoutesByTo
-  to: '/403' | '/login' | '/dashboard' | '/iframe/$name' | '/table/advanced' | '/table/basic'
+  to:
+    | '/403'
+    | '/login'
+    | '/dashboard'
+    | '/iframe/$name'
+    | '/table/advanced'
+    | '/table/basic'
   id:
     | '__root__'
     | '/403'
@@ -168,11 +184,15 @@ const AuthenticationRouteChildren: AuthenticationRouteChildren = {
   AuthenticationTableBasicRoute: AuthenticationTableBasicRoute,
 }
 
-const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(AuthenticationRouteChildren)
+const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
+  AuthenticationRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   R403Route: R403Route,
   AuthenticationRoute: AuthenticationRouteWithChildren,
   LoginRoute: LoginRoute,
 }
-export const routeTree = rootRouteImport._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>()
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
