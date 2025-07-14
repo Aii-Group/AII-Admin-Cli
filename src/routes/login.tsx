@@ -4,7 +4,7 @@ import { Button, Checkbox, Flex, Form, Input } from 'antd'
 import Logo from '@/assets/png/logo.png'
 import { getMenu, login } from '@/api/mock'
 import { enableTransitions } from '@/utils/system'
-import Banner from '@/assets/svg/banner.svg?react'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import { Earth, Lock, Moon, SunOne, User } from '@icon-park/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useLanguageStore, useMenuStore, useThemeStore, useUserStore } from '@/stores/system'
@@ -77,7 +77,7 @@ const Login: React.FC = () => {
           <img src={Logo} />
           <span>{t('System.System_Name')}</span>
         </div>
-        <Banner className="w-[70%] h-full m-auto" />
+        <DotLottieReact src="../../public/banner.json" autoplay loop className="w-[50%] h-full m-auto" />
       </div>
       <div className="login__form">
         <div className="setting">
