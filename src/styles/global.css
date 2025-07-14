@@ -37,6 +37,7 @@
 
   .main {
     @apply overflow-auto box-border;
+    height: calc(100vh - 138px);
   }
 
   .sidebar-inline {
@@ -91,7 +92,7 @@
     @apply right-1/2;
   }
   .tab-active {
-    @apply border-b-light-colorPrimary dark:border-b-dark-colorPrimary transition-all duration-300 ease-in-out bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg;
+    @apply text-light-colorPrimary dark:text-dark-colorPrimary border-b-light-colorPrimary dark:border-b-dark-colorPrimary transition-all duration-300 ease-in-out bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg;
   }
   .tab-active::before,
   .tab-active::after {
@@ -105,7 +106,7 @@
   }
 
   .wrapper {
-    @apply px-16 py-24 rounded-[8px] bg-white dark:bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
+    @apply px-16 py-24 rounded-borderRadiusLG bg-white dark:bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
   }
 
   .primary-text-btn {
@@ -124,22 +125,6 @@
 
 #nprogress .bar {
   @apply !bg-light-colorPrimary dark:!bg-dark-colorPrimary;
-}
-
-.page-enter {
-  @apply opacity-0 scale-110;
-}
-
-.page-enter-active {
-  @apply opacity-100 scale-100 transition-all duration-500;
-}
-
-.page-exit {
-  @apply opacity-100 scale-100;
-}
-
-.page-exit-active {
-  @apply opacity-0 scale-90 transition-all duration-500;
 }
 
 ::view-transition-old(root),

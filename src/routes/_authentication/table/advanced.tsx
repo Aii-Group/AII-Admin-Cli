@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import { Form, Input, Modal, Tooltip } from 'antd'
+import { Form, Input, Tooltip, Modal } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
 import { DataType } from '@/interface'
@@ -109,7 +109,6 @@ const Advanced: React.FC = () => {
   ]
 
   const onOperationClick = (key: string, record: any) => {
-    console.log(key, record)
     switch (key) {
       case 'EDIT':
         modal.edit.openModal({
@@ -135,6 +134,18 @@ const Advanced: React.FC = () => {
         showDrawer(<div>11111</div>, {
           title: 'COPY',
           width: 600,
+        })
+        break
+      case 'DELETE':
+        window.$modal.confirm({
+          title: '删除',
+          content: '删除选中项',
+          onOk: () => {
+            console.log('onOk')
+          },
+          onCancel: () => {
+            console.log('onCancel')
+          },
         })
         break
       default:
@@ -193,7 +204,7 @@ const Advanced: React.FC = () => {
   ]
 
   const searchItem = [
-    <Form.Item name="username" rules={[{ required: true, message: '' }]}>
+    <Form.Item name="username">
       <Input placeholder="Name" />
     </Form.Item>,
     <Form.Item name="age">
@@ -207,6 +218,18 @@ const Advanced: React.FC = () => {
     </Form.Item>,
     <Form.Item name="phone">
       <Input placeholder="Phone" />
+    </Form.Item>,
+    <Form.Item name="mobile">
+      <Input placeholder="Mobile" />
+    </Form.Item>,
+    <Form.Item name="createTime">
+      <Input placeholder="Create Time" />
+    </Form.Item>,
+    <Form.Item name="status">
+      <Input placeholder="Status" />
+    </Form.Item>,
+    <Form.Item name="birthday">
+      <Input placeholder="Birthday" />
     </Form.Item>,
   ]
 
@@ -243,11 +266,7 @@ const Advanced: React.FC = () => {
         />
       </div>
       {modalTypeEnums?.length &&
-        modalTypeEnums.map((type) => (
-          <Modal key={type} open={modal[type].isOpen} {...modal[type].modalOptions}>
-            {modal[type].modalOptions.content}
-          </Modal>
-        ))}
+        modalTypeEnums.map((type) => <Modal key={type} open={modal[type].isOpen} {...modal[type].modalOptions} />)}
     </>
   )
 }

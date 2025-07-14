@@ -1,9 +1,13 @@
-import { useEffect, useState, useMemo, memo } from 'react'
-import { Table, Pagination, Dropdown, Divider, Button, Space } from 'antd'
-import type { TableProps, MenuProps } from 'antd'
-import type { OperationColumnProps, OperationItemProps, AiiTableProps, BatchOperationRowProps } from './AiiTable.types'
+import { memo, useEffect, useMemo, useState } from 'react'
+
 import { useTranslation } from 'react-i18next'
-import { Down, DownloadFour, MoreOne, DocDetail, FileEditingOne, Copy, Delete } from '@icon-park/react'
+import type { MenuProps, TableProps } from 'antd'
+import { Button, Divider, Dropdown, Pagination, Space, Table } from 'antd'
+
+import { Copy, Delete, DocDetail, Down, DownloadFour, FileEditingOne, MoreOne } from '@icon-park/react'
+
+import type { AiiTableProps, BatchOperationRowProps, OperationColumnProps, OperationItemProps } from './AiiTable.types'
+
 import './index.css'
 
 const pageSizeOptions: System.Enum[] = [
@@ -52,7 +56,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     onOperationClick,
   } = props
 
-  const operationMenuEnums: OperationItemProps[] = [
+  const defaultOperationMenu: OperationItemProps[] = [
     {
       key: 'DETAIL',
       icon: <DocDetail />,
@@ -250,7 +254,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
       const menu: OperationItemProps[] = operations
         .map((op) => {
           if (typeof op === 'string') {
-            return operationMenuEnums?.find((item) => item?.key === op.toUpperCase())
+            return defaultOperationMenu?.find((item) => item?.key === op.toUpperCase())
           } else {
             return {
               key: op.key,

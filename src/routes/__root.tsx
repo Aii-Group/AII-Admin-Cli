@@ -24,14 +24,13 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     return (
       <>
         <Outlet />
-        <TanStackRouterDevtools />
+        {/* <TanStackRouterDevtools /> */}
       </>
     )
   },
   beforeLoad: (ctx) => {
-    console.log(ctx)
-    // if (location.pathname === '/') {
-    //   throw redirect({ to: '/dashboard' })
-    // }
+    if (location.pathname === '/') {
+      throw redirect({ to: '/dashboard' })
+    }
   },
 })

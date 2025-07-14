@@ -67,7 +67,7 @@ const Login: React.FC = () => {
     const menuRes = await getMenu()
     if (menuRes.success) {
       appendMenu(menuRes.data ?? [])
-      navigate({ to: '/' })
+      navigate({ to: '/dashboard' })
     }
   }
   return (

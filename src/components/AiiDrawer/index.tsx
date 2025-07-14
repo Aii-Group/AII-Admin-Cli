@@ -1,5 +1,7 @@
 import { createContext, useContext, useState } from 'react'
+
 import { Drawer } from 'antd'
+
 import type { AiiDrawerProps, DrawerContent, DrawerContextType, DrawerProviderProps } from './AiiDrawer.types'
 
 const DrawerContext = createContext<DrawerContextType>({
@@ -27,7 +29,7 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
   return (
     <DrawerContext.Provider value={{ showDrawer, closeDrawer }}>
       {children}
-      <Drawer title="全局 Drawer" placement="right" onClose={closeDrawer} open={open} width={400} {...drawerProps}>
+      <Drawer title="Drawer" placement="right" onClose={closeDrawer} open={open} width={400} {...drawerProps}>
         {content}
       </Drawer>
     </DrawerContext.Provider>
@@ -37,7 +39,7 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
 export const useDrawer = (): DrawerContextType => {
   const context = useContext(DrawerContext)
   if (!context) {
-    throw new Error('useDrawer 必须在 DrawerProvider 中使用')
+    throw new Error('useDrawer must be used in DrawerProvider')
   }
   return context
 }

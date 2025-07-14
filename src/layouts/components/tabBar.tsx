@@ -17,7 +17,7 @@ const TabBar: React.FC = () => {
       const lastTab = tabs[currentIndex - 1]
 
       if (lastTab && tab.path === location.pathname) {
-        navigate({ to: lastTab.path })
+        navigate({ to: lastTab.path, search: { url: lastTab.link ?? undefined } })
       }
     }
   }
@@ -26,7 +26,7 @@ const TabBar: React.FC = () => {
     <div className="tab-bar">
       {tabs.map((tab, index) => {
         return (
-          <Link key={index} to={tab.path} search={{ url: tab.link ?? '' }}>
+          <Link key={index} to={tab.path} search={{ url: tab.link ?? undefined }}>
             <div className={`tab ${tab.path === location.pathname ? ' tab-active' : ''} `}>
               <span className="px-10">{t(`Menu.${tab.code}`)}</span>
               {tab.closeable && (
