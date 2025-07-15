@@ -72,24 +72,26 @@ const Login: React.FC = () => {
   }
   return (
     <div className="login">
-      <div className="login__banner">
-        <div className="system__logo">
-          <img src={Logo} />
-          <span>{t('System.System_Name')}</span>
+      <div className="login-center-box">
+        <div className="login-banner">
+          <div className="system-logo">
+            <img src={Logo} />
+            <span>{t('System.System_Name')}</span>
+          </div>
+          <div className="lottie-wrapper">
+            <DotLottieReact src="/banner.json" autoplay loop />
+          </div>
         </div>
-        <DotLottieReact src="../../public/banner.json" autoplay loop className="w-[50%] h-full m-auto" />
-      </div>
-      <div className="login__form">
-        <div className="setting">
-          <Button
-            type="text"
-            icon={theme === 'light' ? <SunOne /> : <Moon />}
-            onClick={(event) => onChangeTheme(event)}
-          />
-          <Button type="text" icon={<Earth />} onClick={onChangeLanguage} />
-        </div>
-        <div className="form">
-          <div className="login__form__title">{t('System.Welcome')}</div>
+        <div className="login-form">
+          <div className="setting">
+            <Button
+              type="text"
+              icon={theme === 'light' ? <SunOne /> : <Moon />}
+              onClick={(event) => onChangeTheme(event)}
+            />
+            <Button type="text" icon={<Earth />} onClick={onChangeLanguage} />
+          </div>
+          <div className="login-form-title">{t('System.Welcome')}</div>
           <Form
             size="large"
             name="login"

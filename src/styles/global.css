@@ -6,29 +6,53 @@
   .login {
     @apply w-full min-w-960 h-[100vh] flex;
   }
-  .login__banner {
-    @apply relative w-[60%] h-[100vh] bg-slate-100 dark:bg-black box-border;
+
+  .login-center-box {
+    @apply w-900 h-480 flex gap-10 m-auto rounded-[40px] bg-white dark:bg-dark-colorBgContainer;
+    box-shadow:
+      -20px 20px 60px #cbcfd1,
+      20px -20px 60px #ffffff;
   }
-  .system__logo {
+
+  .dark .login-center-box {
+    box-shadow:
+      -20px 20px 60px #23272a,
+      20px -20px 60px #2d3236;
+  }
+
+  .login-banner {
+    @apply w-500 box-border;
+  }
+
+  .lottie-wrapper {
+    @apply w-full h-full p-40 bg-slate-100 dark:bg-black rounded-[40px];
+  }
+
+  .login-form {
+    @apply w-400 box-border m-auto pr-10;
+    .ant-form {
+      @apply !w-full box-border;
+    }
+  }
+
+  .login-form-title {
+    @apply text-24 font-bold mb-16 text-center;
+  }
+
+  .system-logo {
     @apply absolute top-16 left-16 flex items-center;
   }
-  .system__logo > img {
+
+  .system-logo > img {
     @apply w-36 h-36;
   }
-  .system__logo > span {
+
+  .system-logo > span {
     @apply text-24 font-bold px-16;
   }
-  .login__form {
-    @apply relative w-[40%] box-border;
-  }
+
   .setting {
     @apply absolute top-16 right-16;
-  }
-  .form {
-    @apply absolute w-full flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
-  }
-  .login__form__title {
-    @apply text-24 font-bold mb-16 text-center;
   }
 
   .header {
