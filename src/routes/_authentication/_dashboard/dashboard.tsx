@@ -53,11 +53,11 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="mt-10">
           <Paragraph>
-            👉 1️⃣ React 18 使用了新的 Concurrent Rendering（并发渲染）特性，这需要现代浏览器的事件调度机制，而 IE
+            👉 1️⃣ React 19 使用了新的 Concurrent Rendering（并发渲染）特性，这需要现代浏览器的事件调度机制，而 IE
             的性能和兼容性无法满足要求。
           </Paragraph>
           <Paragraph>
-            👉 2️⃣ React 18 默认启用了新的 createRoot API，取代了 ReactDOM.render，而 IE 在处理这些新 API
+            👉 2️⃣ React 19 默认启用了新的 createRoot API，取代了 ReactDOM.render，而 IE 在处理这些新 API
             时可能会出现问题。
           </Paragraph>
           <Paragraph>

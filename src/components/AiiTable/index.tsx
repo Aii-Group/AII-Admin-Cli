@@ -94,14 +94,30 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     title: t('Action.Operate'),
     key: 'operation',
     render: (record: any) => {
-      if (!operationMenu || operationMenu.length === 0) {
-        return null
+      let menu: OperationItemProps[] = []
+      if (typeof operations === 'function') {
+        menu = (operations as any)(record)
+          .map((op: any) =>
+            typeof op === 'string'
+              ? defaultOperationMenu?.find((item) => item?.key === op.toUpperCase())
+              : { key: op.key, icon: op.icon, label: op.label },
+          )
+          .filter((item: any) => !!item)
+      } else if (Array.isArray(operations)) {
+        menu = operations
+          .map((op) =>
+            typeof op === 'string'
+              ? defaultOperationMenu?.find((item) => item?.key === op.toUpperCase())
+              : { key: op.key, icon: op.icon, label: op.label },
+          )
+          .filter((item) => !!item)
       }
-      if (operationMenu.length > 2) {
+      if (!menu || menu.length === 0) return null
+      if (menu.length > 2) {
         return (
           <Dropdown
             menu={{
-              items: operationMenu,
+              items: menu,
               onClick: onMenuClick(record),
             }}
           >
@@ -115,7 +131,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
       }
       return (
         <Space>
-          {operationMenu.map((item) => (
+          {menu.map((item) => (
             <Button
               key={item?.key}
               type="text"
@@ -251,20 +267,6 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
 
   useEffect(() => {
     if (operations?.length) {
-      const menu: OperationItemProps[] = operations
-        .map((op) => {
-          if (typeof op === 'string') {
-            return defaultOperationMenu?.find((item) => item?.key === op.toUpperCase())
-          } else {
-            return {
-              key: op.key,
-              icon: op.icon,
-              label: op.label,
-            }
-          }
-        })
-        .filter((item): item is NonNullable<typeof item> => Boolean(item))
-      setOperationMenu(menu)
       columns?.push(operationColumn)
     }
   }, [operations])
