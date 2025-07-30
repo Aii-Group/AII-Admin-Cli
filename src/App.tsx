@@ -30,7 +30,7 @@ function App() {
         if (data.theme) {
           setTheme(data.theme)
         }
-      })
+      }, true)
   }, [])
 
   return (
