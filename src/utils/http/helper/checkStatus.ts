@@ -1,7 +1,8 @@
 import { message } from 'antd'
+
+import i18n from '@/utils/i18n'
 import router from '@/utils/router'
 import { resetLogout } from '@/utils/system'
-import i18n from '@/utils/i18n'
 import { isMicroAppEnv } from '@/utils/micro'
 
 /**
