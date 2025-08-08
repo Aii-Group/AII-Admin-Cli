@@ -43,11 +43,11 @@ AI 对话交互组件，支持 Markdown 渲染、代码高亮和思考过程展�
 import AiiChat from '@/components/AiiChat'
 
 function ChatPage() {
-  return (
-    <div className="chat-container">
-      <AiiChat />
-    </div>
-  )
+    return (
+        <div className="chat-container">
+            <AiiChat />
+        </div>
+    )
 }
 ```
 
@@ -67,7 +67,7 @@ function ChatPage() {
 
 ```typescript
 interface AiiDrawerProps extends DrawerProps {
-  // 继承 Ant Design Drawer 的所有 Props
+    // 继承 Ant Design Drawer 的所有 Props
 }
 ```
 
@@ -78,20 +78,20 @@ interface AiiDrawerProps extends DrawerProps {
 import { DrawerProvider } from '@/components/AiiDrawer'
 
 function App() {
-  return <DrawerProvider>{/* 应用内容 */}</DrawerProvider>
+    return <DrawerProvider>{/* 应用内容 */}</DrawerProvider>
 }
 
 // 2. 在组件中使用
 import { useDrawer } from '@/components/AiiDrawer'
 
 function MyComponent() {
-  const { showDrawer } = useDrawer()
+    const { showDrawer } = useDrawer()
 
-  const handleOpenDrawer = () => {
-    showDrawer(<div>抽屉内容</div>, { title: '示例抽屉', width: 500 })
-  }
+    const handleOpenDrawer = () => {
+        showDrawer(<div>抽屉内容</div>, { title: '示例抽屉', width: 500 })
+    }
 
-  return <Button onClick={handleOpenDrawer}>打开抽屉</Button>
+    return <Button onClick={handleOpenDrawer}>打开抽屉</Button>
 }
 ```
 
@@ -111,9 +111,9 @@ function MyComponent() {
 
 ```typescript
 interface AiiSearchProps {
-  items: React.ReactElement<typeof Form.Item>[] // 搜索字段
-  cols?: number // 列数
-  onSearch?: (value: any) => void // 搜索回调
+    items: React.ReactElement<typeof Form.Item>[] // 搜索字段
+    cols?: number // 列数
+    onSearch?: (value: any) => void // 搜索回调
 }
 ```
 
@@ -124,26 +124,26 @@ import AiiSearch from '@/components/AiiSearch'
 import { Form, Input, Select } from 'antd'
 
 function MySearch() {
-  const handleSearch = (values: any) => {
-    console.log('搜索参数:', values)
-  }
+    const handleSearch = (values: any) => {
+        console.log('搜索参数:', values)
+    }
 
-  return (
-    <AiiSearch onSearch={handleSearch}>
-      <Form.Item name="name" label="名称">
-        <Input />
-      </Form.Item>
-      <Form.Item name="status" label="状态">
-        <Select
-          options={[
-            { label: '启用', value: '1' },
-            { label: '禁用', value: '0' },
-          ]}
-        />
-      </Form.Item>
-      {/* 更多搜索字段 */}
-    </AiiSearch>
-  )
+    return (
+        <AiiSearch onSearch={handleSearch}>
+            <Form.Item name="name" label="名称">
+                <Input />
+            </Form.Item>
+            <Form.Item name="status" label="状态">
+                <Select
+                    options={[
+                        { label: '启用', value: '1' },
+                        { label: '禁用', value: '0' },
+                    ]}
+                />
+            </Form.Item>
+            {/* 更多搜索字段 */}
+        </AiiSearch>
+    )
 }
 ```
 
@@ -163,18 +163,18 @@ function MySearch() {
 
 ```typescript
 interface AiiTableProps<T> extends TableProps<T> {
-  pagination: {
-    total: number
-    current: number
-    pageSize: number
-  }
-  toolbar?: ToolbarProps[] // 工具栏配置
-  operations?: Array<'EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: ReactNode; label: string }>
-  onPageSizeChange: (pageSize: number) => void
-  onPageChange: (page: number) => void
-  onBatchDelete?: () => void
-  onBatchExport?: () => void
-  onOperationClick?: (key: string, record: any) => void
+    pagination: {
+        total: number
+        current: number
+        pageSize: number
+    }
+    toolbar?: ToolbarProps[] // 工具栏配置
+    operations?: Array<'EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: ReactNode; label: string }>
+    onPageSizeChange: (pageSize: number) => void
+    onPageChange: (page: number) => void
+    onBatchDelete?: () => void
+    onBatchExport?: () => void
+    onOperationClick?: (key: string, record: any) => void
 }
 ```
 
@@ -256,11 +256,11 @@ import AppProvider from '@/components/AppProvider'
 import { ConfigProvider } from 'antd'
 
 function App() {
-  return (
-    <ConfigProvider>
-      <AppProvider>{/* 应用内容 */}</AppProvider>
-    </ConfigProvider>
-  )
+    return (
+        <ConfigProvider>
+            <AppProvider>{/* 应用内容 */}</AppProvider>
+        </ConfigProvider>
+    )
 }
 ```
 
@@ -270,12 +270,12 @@ function App() {
 // 在任何组件中
 window.$message.success('操作成功')
 window.$modal.confirm({
-  title: '确认',
-  content: '确定要删除吗？',
+    title: '确认',
+    content: '确定要删除吗？',
 })
 window.$notification.info({
-  message: '通知',
-  description: '这是一条通知',
+    message: '通知',
+    description: '这是一条通知',
 })
 ```
 
@@ -295,7 +295,7 @@ window.$notification.info({
 
 ```typescript
 interface SvgIconProps extends React.SVGAttributes<SVGSVGElement> {
-  icon: string // 图标名称（assets/svg目录下的SVG文件名）
+    icon: string // 图标名称（assets/svg目录下的SVG文件名）
 }
 ```
 
@@ -305,12 +305,12 @@ interface SvgIconProps extends React.SVGAttributes<SVGSVGElement> {
 import SvgIcon from '@/components/SvgIcon'
 
 function MyComponent() {
-  return (
-    <div>
-      <SvgIcon icon="robot" width={24} height={24} />
-      <SvgIcon icon="user" className="text-primary" />
-    </div>
-  )
+    return (
+        <div>
+            <SvgIcon icon="robot" width={24} height={24} />
+            <SvgIcon icon="user" className="text-primary" />
+        </div>
+    )
 }
 ```
 

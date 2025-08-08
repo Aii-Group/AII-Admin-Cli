@@ -1,4 +1,4 @@
 export const languageEnums = {
-  ZH: 'zh',
-  EN: 'en',
+    ZH: 'zh',
+    EN: 'en',
 } as const

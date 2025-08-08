@@ -14,10 +14,10 @@
 1. [Features](#features)
 2. [Installation](#installation)
 3. [Components](#components)
-   - [AiiTable](#aiitable)
-   - [AiiSearch](#aiisearch)
-   - [AiiDrawer](#aiidrawer)
-   - [AppProvider](#appprovider)
+    - [AiiTable](#aiitable)
+    - [AiiSearch](#aiisearch)
+    - [AiiDrawer](#aiidrawer)
+    - [AppProvider](#appprovider)
 4. [Menu Format](#menu-format)
 5. [Contributing](#contributing)
 6. [License](#license)
@@ -39,32 +39,32 @@
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/Aii-Group/AII-Admin-Cli.git
-   ```
+    ```bash
+    git clone https://github.com/Aii-Group/AII-Admin-Cli.git
+    ```
 
 2. Navigate to the project directory:
 
-   ```bash
-   cd aii-admin-cli
-   ```
+    ```bash
+    cd aii-admin-cli
+    ```
 
 3. Install dependencies:
 
-   ```bash
-   pnpm install
-   ```
+    ```bash
+    pnpm install
+    ```
 
 4. Start the development server:
 
-   ```bash
-   pnpm dev
-   ```
+    ```bash
+    pnpm dev
+    ```
 
 5. Open your browser and visit:
-   ```
-   http://localhost:3001
-   ```
+    ```
+    http://localhost:3001
+    ```
 
 ---
 
@@ -90,25 +90,25 @@ import React from 'react'
 import AiiTable from '@/components/AiiTable'
 
 const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name' },
-  { title: 'Age', dataIndex: 'age', key: 'age' },
-  { title: 'Address', dataIndex: 'address', key: 'address' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Age', dataIndex: 'age', key: 'age' },
+    { title: 'Address', dataIndex: 'address', key: 'address' },
 ]
 
 const dataSource = [
-  { key: '1', name: 'John Doe', age: 32, address: 'New York' },
-  { key: '2', name: 'Jane Smith', age: 28, address: 'London' },
+    { key: '1', name: 'John Doe', age: 32, address: 'New York' },
+    { key: '2', name: 'Jane Smith', age: 28, address: 'London' },
 ]
 
 const App = () => (
-  <AiiTable
-    rowKey="key"
-    columns={columns}
-    dataSource={dataSource}
-    pagination={{ current: 1, pageSize: 10, total: 50 }}
-    toolbar={[{ label: 'Add', icon: <PlusOutlined />, onClick: () => console.log('Add clicked') }]}
-    operations={['DETAIL', 'EDIT', 'DELETE']}
-  />
+    <AiiTable
+        rowKey="key"
+        columns={columns}
+        dataSource={dataSource}
+        pagination={{ current: 1, pageSize: 10, total: 50 }}
+        toolbar={[{ label: 'Add', icon: <PlusOutlined />, onClick: () => console.log('Add clicked') }]}
+        operations={['DETAIL', 'EDIT', 'DELETE']}
+    />
 )
 
 export default App
@@ -134,12 +134,12 @@ import { Form, Input } from 'antd'
 import AiiSearch from '@/components/AiiSearch'
 
 const formItems = [
-  <Form.Item name="name" label="Name" key="name">
-    <Input placeholder="Enter name" />
-  </Form.Item>,
-  <Form.Item name="age" label="Age" key="age">
-    <Input placeholder="Enter age" />
-  </Form.Item>,
+    <Form.Item name="name" label="Name" key="name">
+        <Input placeholder="Enter name" />
+    </Form.Item>,
+    <Form.Item name="age" label="Age" key="age">
+        <Input placeholder="Enter age" />
+    </Form.Item>,
 ]
 
 const App = () => <AiiSearch items={formItems} onSearch={(values) => console.log('Search values:', values)} />
@@ -168,9 +168,9 @@ import React from 'react'
 import { DrawerProvider } from '@/components/AiiDrawer'
 
 const App = () => (
-  <DrawerProvider>
-    <YourApp />
-  </DrawerProvider>
+    <DrawerProvider>
+        <YourApp />
+    </DrawerProvider>
 )
 
 export default App
@@ -184,20 +184,20 @@ import { Button } from 'antd'
 import { useDrawer } from '@/components/AiiDrawer'
 
 const ExampleComponent = () => {
-  const { showDrawer, closeDrawer } = useDrawer()
+    const { showDrawer, closeDrawer } = useDrawer()
 
-  const handleOpenDrawer = () => {
-    showDrawer(
-      <div>
-        <h3>Drawer Content</h3>
-        <p>This is some content inside the drawer.</p>
-        <Button onClick={closeDrawer}>Close Drawer</Button>
-      </div>,
-      { title: 'Custom Drawer Title', width: 500 },
-    )
-  }
+    const handleOpenDrawer = () => {
+        showDrawer(
+            <div>
+                <h3>Drawer Content</h3>
+                <p>This is some content inside the drawer.</p>
+                <Button onClick={closeDrawer}>Close Drawer</Button>
+            </div>,
+            { title: 'Custom Drawer Title', width: 500 },
+        )
+    }
 
-  return <Button onClick={handleOpenDrawer}>Open Drawer</Button>
+    return <Button onClick={handleOpenDrawer}>Open Drawer</Button>
 }
 
 export default ExampleComponent
@@ -226,10 +226,10 @@ import AppProvider from '@/components/AppProvider'
 import App from './App'
 
 ReactDOM.render(
-  <AppProvider>
-    <App />
-  </AppProvider>,
-  document.getElementById('root'),
+    <AppProvider>
+        <App />
+    </AppProvider>,
+    document.getElementById('root'),
 )
 ```
 
@@ -241,15 +241,15 @@ window.$message.success('This is a success message!')
 
 // Show a confirmation modal
 window.$modal.confirm({
-  title: 'Confirm Action',
-  content: 'Are you sure you want to proceed?',
-  onOk: () => console.log('Confirmed'),
+    title: 'Confirm Action',
+    content: 'Are you sure you want to proceed?',
+    onOk: () => console.log('Confirmed'),
 })
 
 // Show a notification
 window.$notification.info({
-  message: 'Notification Title',
-  description: 'This is the content of the notification.',
+    message: 'Notification Title',
+    description: 'This is the content of the notification.',
 })
 ```
 
@@ -269,26 +269,26 @@ The menu format is an array of objects, where each object represents a menu item
 
 ```tsx
 const menu = [
-  {
-    key: 'Table',
-    label: 'Table',
-    icon: 'table',
-    path: '/table',
-    children: [
-      {
-        key: 'Basic_Table',
-        label: 'Basic Table',
-        path: '/table/basic',
-        filePath: '/table/basic',
-      },
-      {
-        key: 'Advanced_Table',
-        label: 'Advanced Table',
-        path: '/table/advanced',
-        filePath: '/table/advanced',
-      },
-    ],
-  },
+    {
+        key: 'Table',
+        label: 'Table',
+        icon: 'table',
+        path: '/table',
+        children: [
+            {
+                key: 'Basic_Table',
+                label: 'Basic Table',
+                path: '/table/basic',
+                filePath: '/table/basic',
+            },
+            {
+                key: 'Advanced_Table',
+                label: 'Advanced Table',
+                path: '/table/advanced',
+                filePath: '/table/advanced',
+            },
+        ],
+    },
 ]
 ```
 

@@ -13,15 +13,15 @@ import './index.css'
 import '../preset.js'
 
 if (isMicroAppEnv) {
-  console.log(
-    '%cIN MICRO APP ENVIRONMENT',
-    'color: white; background-color: #697eff; padding: 4px; border-radius: 4px;',
-  )
+    console.log(
+        '%cIN MICRO APP ENVIRONMENT',
+        'color: white; background-color: #697eff; padding: 4px; border-radius: 4px;',
+    )
 } else {
-  console.log(
-    '%cNOT IN MICRO APP ENVIRONMENT',
-    'color: white; background-color: #ff4d4f; padding: 4px; border-radius: 4px;',
-  )
+    console.log(
+        '%cNOT IN MICRO APP ENVIRONMENT',
+        'color: white; background-color: #ff4d4f; padding: 4px; border-radius: 4px;',
+    )
 }
 
 createRoot(document.getElementById('root')!).render(<App />)

@@ -145,27 +145,27 @@ pnpm format
 ### 8.1 文件路由命名规则
 
 1. **页面文件**：
-   - 使用 `.tsx` 扩展名
-   - 文件名即为路由路径，如 `login.tsx` 对应 `/login` 路由
-   - 特殊文件名：`__root.tsx` 作为根路由组件
+    - 使用 `.tsx` 扩展名
+    - 文件名即为路由路径，如 `login.tsx` 对应 `/login` 路由
+    - 特殊文件名：`__root.tsx` 作为根路由组件
 
 2. **动态路由**：
-   - 使用 `$` 前缀定义动态参数，如 `$userId.tsx` 对应 `/users/:userId`
-   - 多参数路由：`$userId.$postId.tsx` 对应 `/users/:userId/:postId`
+    - 使用 `$` 前缀定义动态参数，如 `$userId.tsx` 对应 `/users/:userId`
+    - 多参数路由：`$userId.$postId.tsx` 对应 `/users/:userId/:postId`
 
 3. **布局路由**：
-   - 使用下划线 `_` 前缀定义布局组件，如 `_authentication.tsx`
-   - 布局目录：`_authentication/` 目录下的文件共享该布局
+    - 使用下划线 `_` 前缀定义布局组件，如 `_authentication.tsx`
+    - 布局目录：`_authentication/` 目录下的文件共享该布局
 
 4. **嵌套路由**：
-   - 通过目录结构实现，如 `/routes/dashboard/profile.tsx` 对应 `/dashboard/profile`
-   - 目录内的 `index.tsx` 对应目录路由的默认页面
+    - 通过目录结构实现，如 `/routes/dashboard/profile.tsx` 对应 `/dashboard/profile`
+    - 目录内的 `index.tsx` 对应目录路由的默认页面
 
 5. **路由分组**：
-   - 使用括号 `()` 创建逻辑分组，不影响路由路径，如 `(auth)/login.tsx`
+    - 使用括号 `()` 创建逻辑分组，不影响路由路径，如 `(auth)/login.tsx`
 
 6. **私有路由**：
-   - 在布局文件中实现权限控制，通过 `redirect` 函数处理未授权访问
+    - 在布局文件中实现权限控制，通过 `redirect` 函数处理未授权访问
 
 ### 8.2 路由示例结构
 
@@ -188,7 +188,7 @@ pnpm format
 - 使用 Zustand 进行状态管理
 - 状态定义在 `/src/stores` 目录
 - 全局状态和局部状态分离
-- **实际项目中的状态字段定义优先于预设**，以实际开发需求为准。例如当前用户状态包含：`userId`、`userName`、`accessToken` 和 `permissions` 字段
+- **实际项目中的状态字段定义优先于预设**，以实际开发需求为准。例如当前用户状态包含：`userId`、`userName`、`token` 和 `permissions` 字段
 
 ## 10. HTTP 请求规范
 
@@ -203,13 +203,13 @@ pnpm format
 - 使用封装的请求方法：`get`/`post`/`put`/`delete`/`request`
 - 参数传递规范：
 
-  ```typescript
-  // GET 请求
-  commonService.get<T>('/api/user', { id: 1 })
+    ```typescript
+    // GET 请求
+    commonService.get<T>('/api/user', { id: 1 })
 
-  // POST 请求
-  commonService.post<T>('/api/user', { name: 'test' })
-  ```
+    // POST 请求
+    commonService.post<T>('/api/user', { name: 'test' })
+    ```
 
 - 所有请求必须指定返回类型 `T`，确保类型安全
 
@@ -217,13 +217,13 @@ pnpm format
 
 - **禁止修改默认拦截器逻辑**，如需扩展创建新的服务类继承 `HttpService`
 - 请求拦截器自动处理：
-  - 添加 `token` 请求头（从用户状态获取）
-  - 启动 NProgress 进度条
-  - 取消重复请求
+    - 添加 `token` 请求头（从用户状态获取）
+    - 启动 NProgress 进度条
+    - 取消重复请求
 - 响应拦截器自动处理：
-  - 关闭 NProgress 进度条
-  - 移除已完成请求的取消令牌
-  - 统一错误提示（通过 antd message）
+    - 关闭 NProgress 进度条
+    - 移除已完成请求的取消令牌
+    - 统一错误提示（通过 antd message）
 
 ### 10.4 请求取消机制
 
@@ -235,32 +235,32 @@ pnpm format
 
 - HTTP 状态码处理：通过 `checkStatus` 函数统一处理（401/403/404 等状态）
 - 业务错误码处理：
-  - 成功：`code === ResultEnum.SUCCESS` (默认 200)
-  - 登录失效：`code === ResultEnum.OVERDUE` (599)，自动处理登出逻辑
-  - 其他错误：自动显示 `data.msg` 错误信息
+    - 成功：`code === ResultEnum.SUCCESS` (默认 200)
+    - 登录失效：`code === ResultEnum.OVERDUE` (599)，自动处理登出逻辑
+    - 其他错误：自动显示 `data.msg` 错误信息
 
 ### 10.6 类型定义
 
 - 必须使用已定义的响应类型：
-  ```typescript
-  // 基础响应
-  interface Result {
-    code: string
-    msg: string
-    success: boolean
-  }
-  // 带数据响应
-  interface ResultData<T = any> extends Result {
-    data?: T
-  }
-  // 分页响应
-  interface ResPage<T> {
-    datalist: T[]
-    pageNum: number
-    pageSize: number
-    total: number
-  }
-  ```
+    ```typescript
+    // 基础响应
+    interface Result {
+        code: string
+        msg: string
+        success: boolean
+    }
+    // 带数据响应
+    interface ResultData<T = any> extends Result {
+        data?: T
+    }
+    // 分页响应
+    interface ResPage<T> {
+        datalist: T[]
+        pageNum: number
+        pageSize: number
+        total: number
+    }
+    ```
 - 请求参数建议使用接口定义，确保类型校验
 
 ### 10.7 特殊场景处理

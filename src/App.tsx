@@ -15,44 +15,44 @@ import { useLanguageStore, useThemeStore, useUserStore } from './stores/system'
 const IconConfig = { ...DEFAULT_ICON_CONFIGS, prefix: 'icon', size: 18 }
 
 function App() {
-  const { setTheme } = useThemeStore()
-  const { setLanguage } = useLanguageStore()
-  const { locale } = useLanguage()
-  const { themeAlgorithm, color } = useTheme()
-  const { userInfo } = useUserStore()
+    const { setTheme } = useThemeStore()
+    const { setLanguage } = useLanguageStore()
+    const { locale } = useLanguage()
+    const { themeAlgorithm, color } = useTheme()
+    const { userInfo } = useUserStore()
 
-  useEffect(() => {
-    isMicroAppEnv &&
-      window.microApp.addGlobalDataListener((data: any) => {
-        if (data.language) {
-          setLanguage(data.language)
-        }
-        if (data.theme) {
-          setTheme(data.theme)
-        }
-      }, true)
-  }, [])
+    useEffect(() => {
+        isMicroAppEnv &&
+            window.microApp.addGlobalDataListener((data: any) => {
+                if (data.language) {
+                    setLanguage(data.language)
+                }
+                if (data.theme) {
+                    setTheme(data.theme)
+                }
+            }, true)
+    }, [])
 
-  return (
-    <XProvider
-      locale={locale}
-      theme={{
-        token: { ...color, borderRadius: 8 },
-        algorithm: themeAlgorithm,
-      }}
-    >
-      <AppProvider>
-        <IconProvider value={IconConfig}>
-          <DrawerProvider>
-            <RouterProvider
-              router={router}
-              context={{ token: userInfo.accessToken, permissions: userInfo.permissions }}
-            />
-          </DrawerProvider>
-        </IconProvider>
-      </AppProvider>
-    </XProvider>
-  )
+    return (
+        <XProvider
+            locale={locale}
+            theme={{
+                token: { ...color, borderRadius: 8 },
+                algorithm: themeAlgorithm,
+            }}
+        >
+            <AppProvider>
+                <IconProvider value={IconConfig}>
+                    <DrawerProvider>
+                        <RouterProvider
+                            router={router}
+                            context={{ token: userInfo.token, permissions: userInfo.permissions }}
+                        />
+                    </DrawerProvider>
+                </IconProvider>
+            </AppProvider>
+        </XProvider>
+    )
 }
 
 export default App
