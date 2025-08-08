@@ -103,7 +103,8 @@ export default [
     {
         url: '/api/getTableData',
         method: 'post',
-        timeout: 1000,
+        timeout: 0,
+        statusCode: 200,
         response: ({
             body,
         }: {

@@ -233,9 +233,9 @@ const AiiChat: React.FC = () => {
                     if (delta && 'reasoning_content' in delta) {
                         reasoningContent += delta.reasoning_content || ''
                     }
-                    onUpdate(`THINKINGMSG:${reasoningContent || ''},MSG:${content || ''}`)
+                    onUpdate({ data: `THINKINGMSG:${reasoningContent || ''},MSG:${content || ''}` })
                 }
-                onSuccess(`THINKINGMSG:${reasoningContent},MSG:${content}`)
+                onSuccess([{ data: `THINKINGMSG:${reasoningContent},MSG:${content}` }])
             } catch (error) {
                 const err = error instanceof Error ? error : new Error('Unknown error')
                 onError(err)

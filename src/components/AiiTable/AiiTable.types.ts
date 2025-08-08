@@ -20,6 +20,7 @@ export interface OperationItemProps {
     icon?: React.ReactNode
     label: string | React.ReactNode
     danger?: boolean
+    [key: `data-${string}`]: string | number
 }
 
 export interface AiiTableProps<T> extends TableProps<T> {
@@ -29,17 +30,11 @@ export interface AiiTableProps<T> extends TableProps<T> {
         pageSize: number
     }
     toolbar?: ToolbarProps[]
-    operations?: Array<
-        | 'EDIT'
-        | 'DELETE'
-        | 'COPY'
-        | 'DETAIL'
-        | {
-              key: string
-              icon?: React.ReactNode
-              label: string
-          }
-    >
+    operations?:
+        | ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[]
+        | ((
+              record: T,
+          ) => ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[])
     onPageSizeChange: (pageSize: number) => void
     onPageChange: (page: number) => void
     onBatchDelete?: () => void

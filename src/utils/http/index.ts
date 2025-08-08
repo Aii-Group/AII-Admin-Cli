@@ -12,6 +12,7 @@ import { AxiosCanceler } from './helper/axiosCancel'
 import { isMicroAppEnv } from '@/utils/micro'
 import { resetLogout } from '@/utils/system'
 import router from '@/utils/router'
+import { checkStatus } from './helper/checkStatus'
 
 const defaultConfig = {
     baseURL: '/',
@@ -101,7 +102,7 @@ export class CommonService extends HttpService {
                     axiosCanceler.removePending(error.config)
                 }
                 if (error.code != 'ERR_CANCELED') {
-                    message.error(error.message)
+                    checkStatus(error.status as number)
                 }
                 return Promise.reject(error)
             },

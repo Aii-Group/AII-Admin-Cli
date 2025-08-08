@@ -67,9 +67,16 @@ Tips:
     Logout_Tips: 'Are you sure you want to log out?'
 
 Error_Status:
-    403: 'Sorry, you do not have permission to access this page'
+    400: 'Request failed! Please try again later'
+    401: 'Login expired! Will redirect to login page in 3 seconds'
+    403: 'Current account has no permission to access!'
     404: 'Sorry, the page you visited does not exist'
+    405: 'Request method error! Please try again later'
+    408: 'Request timeout! Please try again later'
     500: 'Sorry, the server is busy, please try again later'
+    502: 'Gateway error!'
+    503: 'Service unavailable!'
+    504: 'Gateway timeout!'
 
 Required:
     User_Name_Required: 'Please input your username'
