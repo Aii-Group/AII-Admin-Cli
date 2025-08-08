@@ -27,7 +27,7 @@ const AnimatedOutlet = forwardRef<HTMLDivElement>(() => {
             <CSSTransition
                 nodeRef={nodeRef}
                 key={pathname}
-                timeout={240}
+                timeout={300}
                 classNames="animate"
                 unmountOnExit
                 onExited={() => (isPresent.current = true)}

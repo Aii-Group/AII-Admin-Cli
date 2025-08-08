@@ -2,6 +2,7 @@ import { message } from 'antd'
 import router from '@/utils/router'
 import { resetLogout } from '@/utils/system'
 import i18n from '@/utils/i18n'
+import { isMicroAppEnv } from '@/utils/micro'
 
 /**
  * @description: 校验网络请求状态码
@@ -14,13 +15,19 @@ export const checkStatus = (status: number): void => {
             message.error(i18n.t('Error_Status.400'))
             break
         case 401:
-            message.error(i18n.t('Error_Status.401'))
-            setTimeout(() => {
-                resetLogout()
-                router.navigate({
-                    to: '/login',
+            if (!isMicroAppEnv) {
+                message.error(i18n.t('Error_Status.401'))
+                setTimeout(() => {
+                    resetLogout()
+                    router.navigate({
+                        to: '/login',
+                    })
+                }, 3000)
+            } else {
+                window.microApp.forceSetGlobalData({
+                    errorCode: 401,
                 })
-            }, 3000)
+            }
             break
         case 403:
             message.error(i18n.t('Error_Status.403'))

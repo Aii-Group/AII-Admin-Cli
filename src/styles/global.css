@@ -155,7 +155,7 @@
 }
 
 .animate-enter-active {
-    @apply opacity-100 scale-100 blur-[0] ease-in-out duration-[240ms];
+    @apply opacity-100 scale-100 blur-[0] ease-in-out duration-[300ms];
 }
 
 .animate-exit {
@@ -163,7 +163,7 @@
 }
 
 .animate-exit-active {
-    @apply opacity-0 scale-[0.8] blur-[2px] ease-in-out duration-[240ms];
+    @apply opacity-0 scale-[0.8] blur-[2px] ease-in-out duration-[300ms];
 }
 
 ::view-transition-old(root),
