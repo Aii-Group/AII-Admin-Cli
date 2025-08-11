@@ -22,7 +22,7 @@ export default [
                         userId: '1008',
                         userName: 'admin',
                         token: Mock.Random.guid(),
-                        permissions: ['Dashboard', 'Basic_Table', 'Advanced_Table'],
+                        permissions: ['Dashboard', 'Basic_Table', 'Advanced_Table', 'Tab'],
                     },
                 }
             } else {
@@ -52,6 +52,13 @@ export default [
                         icon: 'dashboard',
                         path: '/dashboard',
                         filePath: '/dashboard/index',
+                    },
+                    {
+                        key: 'Tab',
+                        label: 'Tab',
+                        icon: 'tab',
+                        path: '/tab',
+                        filePath: '/tab/index',
                     },
                     {
                         key: 'Table',

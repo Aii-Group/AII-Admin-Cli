@@ -15,6 +15,7 @@ import { Route as R403RouteImport } from './routes/403'
 import { Route as AuthenticationTableBasicRouteImport } from './routes/_authentication/table/basic'
 import { Route as AuthenticationTableAdvancedRouteImport } from './routes/_authentication/table/advanced'
 import { Route as AuthenticationIframeNameRouteImport } from './routes/_authentication/iframe/$name'
+import { Route as AuthenticationTabTabRouteImport } from './routes/_authentication/_tab/tab'
 import { Route as AuthenticationDashboardDashboardRouteImport } from './routes/_authentication/_dashboard/dashboard'
 
 const LoginRoute = LoginRouteImport.update({
@@ -49,6 +50,11 @@ const AuthenticationIframeNameRoute =
     path: '/iframe/$name',
     getParentRoute: () => AuthenticationRoute,
   } as any)
+const AuthenticationTabTabRoute = AuthenticationTabTabRouteImport.update({
+  id: '/_tab/tab',
+  path: '/tab',
+  getParentRoute: () => AuthenticationRoute,
+} as any)
 const AuthenticationDashboardDashboardRoute =
   AuthenticationDashboardDashboardRouteImport.update({
     id: '/_dashboard/dashboard',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/403': typeof R403Route
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticationDashboardDashboardRoute
+  '/tab': typeof AuthenticationTabTabRoute
   '/iframe/$name': typeof AuthenticationIframeNameRoute
   '/table/advanced': typeof AuthenticationTableAdvancedRoute
   '/table/basic': typeof AuthenticationTableBasicRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/403': typeof R403Route
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticationDashboardDashboardRoute
+  '/tab': typeof AuthenticationTabTabRoute
   '/iframe/$name': typeof AuthenticationIframeNameRoute
   '/table/advanced': typeof AuthenticationTableAdvancedRoute
   '/table/basic': typeof AuthenticationTableBasicRoute
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/_authentication': typeof AuthenticationRouteWithChildren
   '/login': typeof LoginRoute
   '/_authentication/_dashboard/dashboard': typeof AuthenticationDashboardDashboardRoute
+  '/_authentication/_tab/tab': typeof AuthenticationTabTabRoute
   '/_authentication/iframe/$name': typeof AuthenticationIframeNameRoute
   '/_authentication/table/advanced': typeof AuthenticationTableAdvancedRoute
   '/_authentication/table/basic': typeof AuthenticationTableBasicRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/login'
     | '/dashboard'
+    | '/tab'
     | '/iframe/$name'
     | '/table/advanced'
     | '/table/basic'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/403'
     | '/login'
     | '/dashboard'
+    | '/tab'
     | '/iframe/$name'
     | '/table/advanced'
     | '/table/basic'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/_authentication'
     | '/login'
     | '/_authentication/_dashboard/dashboard'
+    | '/_authentication/_tab/tab'
     | '/_authentication/iframe/$name'
     | '/_authentication/table/advanced'
     | '/_authentication/table/basic'
@@ -160,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticationIframeNameRouteImport
       parentRoute: typeof AuthenticationRoute
     }
+    '/_authentication/_tab/tab': {
+      id: '/_authentication/_tab/tab'
+      path: '/tab'
+      fullPath: '/tab'
+      preLoaderRoute: typeof AuthenticationTabTabRouteImport
+      parentRoute: typeof AuthenticationRoute
+    }
     '/_authentication/_dashboard/dashboard': {
       id: '/_authentication/_dashboard/dashboard'
       path: '/dashboard'
@@ -172,6 +191,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticationRouteChildren {
   AuthenticationDashboardDashboardRoute: typeof AuthenticationDashboardDashboardRoute
+  AuthenticationTabTabRoute: typeof AuthenticationTabTabRoute
   AuthenticationIframeNameRoute: typeof AuthenticationIframeNameRoute
   AuthenticationTableAdvancedRoute: typeof AuthenticationTableAdvancedRoute
   AuthenticationTableBasicRoute: typeof AuthenticationTableBasicRoute
@@ -179,6 +199,7 @@ interface AuthenticationRouteChildren {
 
 const AuthenticationRouteChildren: AuthenticationRouteChildren = {
   AuthenticationDashboardDashboardRoute: AuthenticationDashboardDashboardRoute,
+  AuthenticationTabTabRoute: AuthenticationTabTabRoute,
   AuthenticationIframeNameRoute: AuthenticationIframeNameRoute,
   AuthenticationTableAdvancedRoute: AuthenticationTableAdvancedRoute,
   AuthenticationTableBasicRoute: AuthenticationTableBasicRoute,

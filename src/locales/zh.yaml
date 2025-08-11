@@ -13,6 +13,7 @@ Menu:
     External_Link: '外部链接'
     Baidu: '百度'
     React: 'React'
+    Tab: '选项卡'
 
 Common:
     User_Info: '用户信息'

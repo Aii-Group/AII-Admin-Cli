@@ -3,11 +3,13 @@ import { Col, Row, Form, Space, Button, Tooltip } from 'antd'
 import { Down, Clear, Search } from '@icon-park/react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
+import classNames from 'classnames'
 
 interface AiiSearchProps {
     items: React.ReactElement<typeof Form.Item>[]
     cols?: number
     onSearch?: (value: any) => void
+    wrapper?: boolean
 }
 
 interface DynamicFieldsRowsProps {
@@ -58,7 +60,7 @@ const DynamicFieldsRows: React.FC<DynamicFieldsRowsProps> = memo(({ items, expan
 })
 
 const AiiSearch: React.FC<AiiSearchProps> = (props) => {
-    const { items, onSearch } = props
+    const { items, onSearch, wrapper = true } = props
     const { t } = useTranslation()
     const [form] = Form.useForm()
     const [expand, setExpand] = useState(false)
@@ -112,7 +114,7 @@ const AiiSearch: React.FC<AiiSearchProps> = (props) => {
     )
 
     return (
-        <div className={`wrapper mb-10 ${items.length < 4 ? 'pb-0' : ''}`}>
+        <div className={classNames('mb-10', { 'pb-0': items.length < 4, wrapper: wrapper })}>
             <Form form={form} name="advanced_search" onFinish={onFinish}>
                 <DynamicFieldsRows items={items} expand={expand} Operations={Operations} />
             </Form>

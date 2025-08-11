@@ -17,10 +17,12 @@
     - [AiiTable](#aiitable)
     - [AiiSearch](#aiisearch)
     - [AiiDrawer](#aiidrawer)
+    - [AiiTab](#aiitab)
     - [AppProvider](#appprovider)
-4. [Menu Format](#menu-format)
-5. [Contributing](#contributing)
-6. [License](#license)
+4. [State Management](#state-management)
+5. [Menu Format](#menu-format)
+6. [Contributing](#contributing)
+7. [License](#license)
 
 ---
 
@@ -252,6 +254,58 @@ window.$notification.info({
     description: 'This is the content of the notification.',
 })
 ```
+
+---
+
+### State Management
+
+This project uses Zustand for state management. We have several predefined stores for different purposes:
+
+1. **User Store**: Manages user authentication and information.
+2. **Menu Store**: Manages application menu structure.
+3. **Theme Store**: Manages application theme (light/dark mode).
+4. **Tab Store**: Manages opened tabs in the application.
+5. **Language Store**: Manages application language.
+6. **Fullscreen Store**: Manages fullscreen state.
+7. **Tab Content Store**: Manages content of tabs to preserve state when switching between tabs.
+
+All stores support local storage persistence, ensuring that the application state is preserved even after page refresh.
+
+You can create your own stores following the same pattern as these existing stores.
+
+---
+
+#### AiiTab
+
+`AiiTab` is a tab component that supports smooth animations and state preservation when switching between tabs. It uses Zustand for state management to ensure tab content is preserved when switching.
+
+**Key Features**:
+
+- **Smooth Animations**: Uses Framer Motion for smooth tab transitions.
+- **State Preservation**: Uses Zustand to preserve tab content state when switching.
+- **Dynamic Tabs**: Supports dynamic tab creation and management.
+
+**Usage Example**:
+
+```tsx
+import React from 'react'
+import AiiTab from '@/components/AiiTab'
+
+const tabs = [
+    { key: 'tab1', label: 'Tab 1', content: <div>Content for Tab 1</div> },
+    { key: 'tab2', label: 'Tab 2', content: <div>Content for Tab 2</div> },
+    { key: 'tab3', label: 'Tab 3', content: <div>Content for Tab 3</div> },
+]
+
+const App = () => <AiiTab tabs={tabs} />
+
+export default App
+```
+
+**Props**:
+
+- `tabs`: Array of tab objects, each with `key`, `label`, and `content` properties.
+- `onTabClick`: Optional callback function triggered when a tab is clicked.
 
 ---
 

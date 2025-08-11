@@ -81,7 +81,6 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     ]
 
     const [tableColumns, setTableColumns] = useState<TableProps<T>['columns']>([])
-    const [operationMenu, setOperationMenu] = useState<OperationItemProps[]>([])
 
     const onMenuClick = (record: any) => {
         const onClick: MenuProps['onClick'] = ({ key }) => {

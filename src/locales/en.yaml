@@ -13,6 +13,7 @@ Menu:
     External_Link: 'External Link'
     Baidu: 'Baidu'
     React: 'React'
+    Tab: 'Tab'
 
 Common:
     User_Info: 'User Info'
