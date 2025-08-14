@@ -90,13 +90,13 @@
     }
 
     .tab-bar {
-        @apply w-full px-4 mb-10 py-4 h-48 flex rounded-[8px] bg-light-colorBgContainer dark:!bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
+        @apply w-full px-4 mb-10 py-4 h-48 overflow-x-auto flex flex-nowrap rounded-[8px] bg-light-colorBgContainer dark:!bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder;
     }
     .tab-close-btn {
         @apply w-0 h-0 transform origin-center transition-all duration-300 ease-in-out;
     }
     .tab {
-        @apply h-full leading-[40px] px-16 relative cursor-pointer rounded-tl-[8px] rounded-tr-[8px] transition-all duration-300 ease-in-out;
+        @apply w-full h-full leading-[40px] box-border px-16 relative cursor-pointer rounded-tl-[8px] rounded-tr-[8px] transition-all duration-300 ease-in-out flex-shrink-0 whitespace-nowrap;
     }
     .tab:hover {
         @apply text-light-colorPrimary dark:text-dark-colorPrimary;

@@ -72,6 +72,9 @@ declare global {
             addTab: (tab: Tab) => void
             removeTab: (tab: Tab) => void
             setTabs: (tabs: Tab[]) => void
+            closeAllTabs: () => void
+            closeLeftTabs: (targetTab: Tab) => void
+            closeRightTabs: (targetTab: Tab) => void
         }
         interface LanguageState {
             language: string
