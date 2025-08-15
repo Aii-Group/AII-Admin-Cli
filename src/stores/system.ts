@@ -124,9 +124,7 @@ export const useTabStore = create<System.TabState>()(
                 set((state) => {
                     const currentIndex = state.tabs.findIndex((tab) => tab.code === targetTab.code)
                     if (currentIndex > 0) {
-                        // 保留目标标签页及其右侧的所有标签页
                         const rightTabs = state.tabs.slice(currentIndex)
-                        // 保留左侧不可关闭的标签页
                         const uncloseableLeftTabs = state.tabs.filter(
                             (tab, index) => index < currentIndex && !tab.closeable,
                         )

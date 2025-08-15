@@ -65,7 +65,7 @@ const AiiTab: React.FC<AiiTabProps> = (props) => {
                 />
             </div>
             <div className="aii-tab-content">
-                <AnimatePresence mode="wait">
+                <AnimatePresence>
                     {tabs.map((item) => (
                         <motion.div
                             key={item.key}
