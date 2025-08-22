@@ -43,6 +43,10 @@ Common:
     Copied: 'Copied'
     You: 'You'
     Assistant: 'Assistant'
+    Close_Current: 'Close Current'
+    Close_All: 'Close All'
+    Close_Left: 'Close Left'
+    Close_Right: 'Close Right'
 
 Message:
     Success: 'Success'

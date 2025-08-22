@@ -43,6 +43,10 @@ Common:
     Copied: '已复制'
     You: '你'
     Assistant: '助手'
+    Close_Current: '关闭当前'
+    Close_All: '关闭所有'
+    Close_Left: '关闭左侧'
+    Close_Right: '关闭右侧'
 
 Message:
     Success: '成功'
