@@ -21,6 +21,8 @@ function App() {
     const { themeAlgorithm, color } = useTheme()
     const { userInfo } = useUserStore()
 
+    console.log('test')
+
     useEffect(() => {
         isMicroAppEnv &&
             window.microApp.addGlobalDataListener((data: any) => {
