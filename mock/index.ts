@@ -88,8 +88,6 @@ interface PageResponse<T> {
     current?: number
     pageSize?: number
     totalPages?: number
-    hasNext?: boolean
-    hasPrev?: boolean
 }
 
 // ==================== 常量定义 ====================
@@ -288,8 +286,6 @@ const mockApis: MockMethod[] = [
                 current,
                 pageSize,
                 totalPages,
-                hasNext: current < totalPages,
-                hasPrev: current > 1,
             }
 
             return createSuccessResponse(responseData)

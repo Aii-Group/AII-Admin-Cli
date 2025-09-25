@@ -9,7 +9,8 @@
         "lint": "eslint .",
         "preview": "vite preview",
         "format": "prettier --write .",
-        "prepare": "husky"
+        "prepare": "husky",
+        "swagger-mock": "npx swagger-to-ts-axios generate -c mock-swagger.config.json"
     },
     "dependencies": {
         "@ant-design/charts": "^2.6.2",

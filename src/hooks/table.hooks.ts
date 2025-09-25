@@ -29,7 +29,7 @@ interface TableResponse<T> {
 // 分页参数基础接口
 interface PaginationParams {
     current: number
-    size: number
+    pageSize: number
 }
 
 // API方法类型
@@ -79,7 +79,7 @@ function useTable<T, P extends PaginationParams = PaginationParams>(
             ...(params || {}),
             ...(initParams || {}),
             current: paginationOverride?.current ?? pagination.current,
-            size: paginationOverride?.pageSize ?? pagination.pageSize,
+            pageSize: paginationOverride?.pageSize ?? pagination.pageSize,
         } as P
 
         if (initParams) setParams((prev) => ({ ...prev, ...initParams }))

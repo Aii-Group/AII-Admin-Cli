@@ -161,8 +161,4 @@ export interface PageResponse {
     pageSize?: number
     // 总页数
     totalPages?: number
-    // 是否有下一页
-    hasNext?: boolean
-    // 是否有上一页
-    hasPrev?: boolean
 }

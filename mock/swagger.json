@@ -706,18 +706,6 @@
                         "example": 100,
                         "minimum": 0,
                         "readOnly": true
-                    },
-                    "hasNext": {
-                        "type": "boolean",
-                        "description": "是否有下一页",
-                        "example": true,
-                        "readOnly": true
-                    },
-                    "hasPrev": {
-                        "type": "boolean",
-                        "description": "是否有上一页",
-                        "example": false,
-                        "readOnly": true
                     }
                 }
             }
