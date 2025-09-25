@@ -1,17 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import { Form, Input, Tooltip, Modal } from 'antd'
+import { Form, Input, Modal, Tooltip } from 'antd'
 import type { TableColumnsType, TableProps } from 'antd'
 
-import { DataType } from '@/interface/table'
-import { getTableData } from '@/api/mock'
+import apiClient from '@/utils/http'
 import useTable from '@/hooks/table.hooks'
 import AiiTable from '@/components/AiiTable'
 import AiiSearch from '@/components/AiiSearch'
 import { useModal } from '@/hooks/modal.hooks'
 import { useDrawer } from '@/components/AiiDrawer'
+import { createFileRoute } from '@tanstack/react-router'
 import { DownloadFour, Filter, Newlybuild, Refresh } from '@icon-park/react'
 
 export const Route = createFileRoute('/_authentication/table/advanced')({
@@ -42,11 +41,11 @@ const Advanced: React.FC = () => {
         selectedRows,
         onSelectChange,
         onSearch,
-    } = useTable(getTableData)
+    } = useTable(apiClient.getTableData)
 
     const modal = useModal(modalTypeEnums)
 
-    const rowSelection: TableRowSelection<DataType> = {
+    const rowSelection: TableRowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
     }
@@ -153,7 +152,7 @@ const Advanced: React.FC = () => {
         }
     }
 
-    const columns: TableColumnsType<DataType> = [
+    const columns: TableColumnsType<any> = [
         {
             title: 'Name',
             dataIndex: 'name',

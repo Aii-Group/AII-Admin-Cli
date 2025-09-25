@@ -8,14 +8,6 @@ export default {
             fontSize: ({ theme }) => ({
                 ...theme('spacing'),
             }),
-            animation: {
-                halfspin: 'halfspin 1s infinite',
-            },
-            keyframes: {
-                halfspin: {
-                    to: { transform: 'rotate(.5turn)' },
-                },
-            },
         },
         spacing: Array.from({ length: 1000 }).reduce((map, _, index) => {
             map[index] = `${index}px`

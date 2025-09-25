@@ -1,10 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
+
 import type { TableColumnsType } from 'antd'
-import AiiTable from '@/components/AiiTable'
-import { getTableData } from '@/api/mock'
+
+import apiClient from '@/utils/http'
 import useTable from '@/hooks/table.hooks'
-import { DataType } from '@/interface/table'
+import AiiTable from '@/components/AiiTable'
+import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authentication/table/basic')({
     component: () => <Basic />,
@@ -15,9 +16,11 @@ export const Route = createFileRoute('/_authentication/table/basic')({
 })
 
 const Basic: React.FC = () => {
-    const { queryTableData, dataSource, loading, onPageChange, onPageSizeChange, pagination } = useTable(getTableData)
+    const { queryTableData, dataSource, loading, onPageChange, onPageSizeChange, pagination } = useTable(
+        apiClient.getTableData,
+    )
 
-    const columns: TableColumnsType<DataType> = [
+    const columns: TableColumnsType<any> = [
         {
             title: 'Name',
             dataIndex: 'name',

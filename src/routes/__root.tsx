@@ -19,8 +19,8 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
                 : locationCur?.staticData.langCode
 
         useEffect(() => {
-            document.title = `${t('System.System_Name')} | ${t(code)}🌟`
-        }, [code])
+            document.title = `${t('System.System_Name')} | ${t(code)}`
+        }, [code, t])
 
         return (
             <>

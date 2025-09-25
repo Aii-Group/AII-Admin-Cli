@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next'
 import { Button, Checkbox, Flex, Form, Input } from 'antd'
 
 import Logo from '@/assets/png/logo.png'
-import { getMenu, login } from '@/api/mock'
 import { enableTransitions } from '@/utils/system'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import { Earth, Lock, Moon, SunOne, User } from '@icon-park/react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useLanguageStore, useMenuStore, useThemeStore, useUserStore } from '@/stores/system'
+import apiClient from '@/utils/http'
 
 export const Route = createFileRoute('/login')({
     component: () => <Login />,
@@ -57,14 +57,14 @@ const Login: React.FC = () => {
         language === 'zh' ? setLanguage('en') : setLanguage('zh')
     }
     const onFinish = async (values: any) => {
-        const loginRes = await login(values)
+        const loginRes = await apiClient.login(values)
         if (loginRes.success && loginRes.data) {
             setUserInfo(loginRes.data)
             getMenuData()
         }
     }
     const getMenuData = async () => {
-        const menuRes = await getMenu()
+        const menuRes = await apiClient.getMenu()
         if (menuRes.success) {
             appendMenu(menuRes.data ?? [])
             navigate({ to: '/dashboard' })
