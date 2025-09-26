@@ -1,4 +1,8 @@
 {
     "i18n-ally.localesPaths": ["src/locales"],
-    "i18n-ally.keystyle": "nested"
+    "i18n-ally.keystyle": "nested",
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+    "css.lint.unknownAtRules": "ignore"
 }

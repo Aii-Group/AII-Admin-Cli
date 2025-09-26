@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer {
+    .aii-table-pro {
+        @apply flex flex-col bg-light-colorBgContainer dark:bg-dark-colorBgContainer;
+    }
+
+    /* 表格容器样式 */
+    .aii-table-container {
+        position: relative;
+    }
+
+    /* 加载状态蒙版样式 */
+    .aii-table-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(1px);
+        z-index: 10;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* 暗色主题下的加载蒙版 */
+    .dark .aii-table-container::before {
+        background-color: rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .aii-table-container.loading::before {
+        display: flex;
+    }
+
+    /* 加载 Spin 组件样式 */
+    .aii-table-loading-spin {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 11;
+    }
+
+    .aii-table-empty {
+        @apply p-24 !border-b border-light-colorBorderSecondary dark:border-dark-colorBorderSecondary;
+    }
+
+    /* 工具栏样式 */
+    .aii-table-toolbar {
+        @apply flex items-center justify-between mb-10;
+    }
+
+    .aii-table-toolbar-left,
+    .aii-table-toolbar-right {
+        @apply flex items-center gap-10;
+    }
+
+    /* 批量操作行样式 */
+    .aii-table-batch-operation-row {
+        @apply flex justify-between items-center my-10 px-16 py-12 rounded-borderRadiusLG bg-light-colorPrimaryBg text-light-colorPrimary dark:bg-dark-colorPrimaryBg dark:text-dark-colorPrimary;
+    }
+
+    .aii-table-batch-info {
+        @apply font-bold text-light-colorPrimary dark:text-dark-colorPrimary;
+    }
+
+    .aii-table-batch-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* 表头样式 */
+    .aii-table-header {
+        @apply bg-[#fafafa] dark:bg-[#1D1D1D];
+        border-radius: 8px 8px 0 0;
+    }
+
+    .aii-table-header-row {
+        display: grid;
+        grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
+    }
+
+    .aii-table-header-cell {
+        @apply flex items-center relative h-55 px-16 py-12 font-bold shrink-0 box-border text-light-colorText dark:text-dark-colorText;
+    }
+
+    .aii-table-cell {
+        @apply flex items-center px-16 py-12 box-border text-light-colorText dark:text-dark-colorText;
+    }
+
+    .aii-table-header-cell::after {
+        @apply bg-light-colorBorderSecondary dark:bg-dark-colorBorderSecondary;
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 0;
+        width: 1px;
+        height: 1.6em;
+        transform: translateY(-50%);
+        transition: background-color 0.2s;
+        content: '';
+    }
+
+    .aii-table-header-cell:last-child::after {
+        display: none;
+    }
+
+    /* Selection 列样式 */
+    .aii-table-header-cell[data-column-id='select'] {
+        width: 48px !important;
+        min-width: 48px !important;
+        max-width: 48px !important;
+        flex: none !important;
+    }
+
+    .aii-table-header-cell[data-column-id='select']::after {
+        display: none;
+    }
+
+    .aii-table-cell[data-column-id='select'] {
+        width: 48px !important;
+        min-width: 48px !important;
+        max-width: 48px !important;
+        flex: none !important;
+    }
+
+    .aii-table-header-cell.sortable {
+        cursor: pointer;
+    }
+
+    .aii-table-header-content {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .aii-table-sort-icons {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .aii-table-sort-icons .anticon {
+        font-size: 10px;
+        color: #bfbfbf;
+        height: 6px;
+    }
+
+    .aii-table-sort-icons .anticon.active {
+        @apply text-light-colorPrimary dark:text-dark-colorPrimary;
+    }
+
+    .aii-table-filter-icon {
+        margin-left: 4px;
+        color: #bfbfbf;
+        font-size: 12px;
+    }
+
+    /* 表格主体样式 */
+    .aii-table-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .aii-table-row {
+        @apply !border-b border-light-colorBorderSecondary dark:!border-dark-colorBorderSecondary;
+        display: grid;
+        grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
+        transition: background-color 0.2s;
+    }
+
+    .aii-table-row.no-selection {
+        grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
+    }
+
+    .aii-table-row:hover {
+        @apply bg-[#fafafa] dark:bg-[#1d1d1d];
+    }
+
+    .aii-table-row.selected {
+        @apply bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg;
+    }
+
+    .aii-table-row.selected:hover {
+        @apply bg-light-colorPrimaryBgHover dark:bg-dark-colorPrimaryBgHover;
+    }
+
+    .aii-table-row.striped {
+        @apply bg-[#fafafa] dark:bg-[#1d1d1d];
+    }
+
+    /* 工具栏样式 */
+    .aii-table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* 分页样式 */
+    .aii-table-pagination {
+        @apply flex justify-between items-end mt-10;
+    }
+
+    .pagination-info {
+        @apply flex items-center gap-8 text-light-colorText dark:text-dark-colorText;
+    }
+
+    .pagination-dropdown {
+        @apply flex items-center gap-4;
+    }
+}

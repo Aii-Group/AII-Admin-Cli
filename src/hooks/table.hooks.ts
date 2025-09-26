@@ -112,7 +112,7 @@ function useTable<T, P extends PaginationParams = PaginationParams>(
                             }))
                         }
                         resolve(newRes as TableResponse<T>)
-                    }, 100)
+                    }, 500)
                 })
             })
             .catch((error: any) => {
