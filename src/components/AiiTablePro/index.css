@@ -9,33 +9,28 @@
     /* 表格容器样式 */
     .aii-table-container {
         position: relative;
+        transition: all 0.3s linear;
     }
 
     /* 加载状态蒙版样式 */
     .aii-table-container::before {
+        @apply bg-[#ffffff8a] dark:bg-[#0000002a];
         content: '';
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(1px);
-        z-index: 10;
+        z-index: 12;
         display: none;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease-in-out;
-    }
-
-    /* 暗色主题下的加载蒙版 */
-    .dark .aii-table-container::before {
-        background-color: rgba(0, 0, 0, 0.2);
-        transition: all 0.3s ease-in-out;
     }
 
     .aii-table-container.loading::before {
         display: flex;
+        z-index: 13;
     }
 
     /* 加载 Spin 组件样式 */
@@ -44,11 +39,11 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 11;
+        z-index: 14;
     }
 
     .aii-table-empty {
-        @apply p-24 !border-b border-light-colorBorderSecondary dark:border-dark-colorBorderSecondary;
+        @apply p-24 !border-b border-light-colorBorderSecondary dark:!border-dark-colorBorderSecondary;
     }
 
     /* 工具栏样式 */
@@ -62,8 +57,11 @@
     }
 
     /* 批量操作行样式 */
+    .aii-table-batch-operation-row-container {
+        @apply bg-light-colorBgContainer dark:bg-dark-colorBgContainer;
+    }
     .aii-table-batch-operation-row {
-        @apply flex justify-between items-center my-10 px-16 py-12 rounded-borderRadiusLG bg-light-colorPrimaryBg text-light-colorPrimary dark:bg-dark-colorPrimaryBg dark:text-dark-colorPrimary;
+        @apply flex justify-between box-border items-center  rounded-borderRadiusLG bg-light-colorPrimaryBg text-light-colorPrimary dark:bg-dark-colorPrimaryBg dark:text-dark-colorPrimary;
     }
 
     .aii-table-batch-info {
@@ -77,8 +75,13 @@
 
     /* 表头样式 */
     .aii-table-header {
-        @apply bg-[#fafafa] dark:bg-[#1D1D1D];
-        border-radius: 8px 8px 0 0;
+        @apply relative rounded-tr-borderRadiusLG rounded-tl-borderRadiusLG bg-[#fafafa] dark:bg-[#1D1D1D];
+    }
+
+    /* 表头粘性样式 */
+    .aii-table-header.sticky {
+        @apply top-0 z-[10] bg-[#fafafa] dark:bg-[#1D1D1D];
+        position: sticky;
     }
 
     .aii-table-header-row {
@@ -91,7 +94,7 @@
     }
 
     .aii-table-cell {
-        @apply flex items-center px-16 py-12 box-border text-light-colorText dark:text-dark-colorText;
+        @apply flex items-center p-16 box-border text-light-colorText dark:text-dark-colorText;
     }
 
     .aii-table-header-cell::after {
@@ -102,12 +105,12 @@
         width: 1px;
         height: 1.6em;
         transform: translateY(-50%);
-        transition: background-color 0.2s;
+        transition: background-color 0.3s;
         content: '';
     }
 
     .aii-table-header-cell:last-child::after {
-        display: none;
+        @apply hidden;
     }
 
     /* Selection 列样式 */
@@ -223,10 +226,27 @@
     }
 
     .pagination-info {
-        @apply flex items-center gap-8 text-light-colorText dark:text-dark-colorText;
+        @apply flex items-center gap-8 cursor-pointer text-light-colorText dark:text-dark-colorText;
     }
 
     .pagination-dropdown {
         @apply flex items-center gap-4;
+    }
+
+    .pagination-controls {
+        @apply flex items-center gap-4;
+    }
+
+    /* Ellipsis 样式 */
+    .aii-table-cell-ellipsis {
+        @apply overflow-hidden text-ellipsis whitespace-nowrap w-full;
+        max-width: 100%;
+        display: block;
+    }
+
+    /* 确保带有 ellipsis 的单元格能够正确显示省略号 */
+    .aii-table-cell:has(.aii-table-cell-ellipsis) {
+        @apply overflow-hidden;
+        min-width: 0;
     }
 }

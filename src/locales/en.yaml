@@ -112,6 +112,7 @@ Action:
     Export: 'Export'
     Operate: 'Operate'
     Filter: 'Filter'
+    Batch_Operate: 'Batch Operate'
 
 AI:
     Welcome: "Hello, I'm AI Assistant"

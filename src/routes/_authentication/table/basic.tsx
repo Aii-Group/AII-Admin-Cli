@@ -6,7 +6,18 @@ import apiClient from '@/utils/http'
 import useTable from '@/hooks/table.hooks'
 import { createFileRoute } from '@tanstack/react-router'
 import AiiTablePro from '@/components/AiiTablePro'
-import { DownloadFour, Filter, Newlybuild, Refresh } from '@icon-park/react'
+import {
+    DownloadFour,
+    Filter,
+    Newlybuild,
+    Refresh,
+    Copy,
+    Delete,
+    DocDetail,
+    Down,
+    FileEditingOne,
+    MoreOne,
+} from '@icon-park/react'
 import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authentication/table/basic')({
@@ -52,81 +63,130 @@ const Basic: React.FC = () => {
         },
     ]
 
+    const operations = [
+        {
+            key: 'edit',
+            label: t('Action.Edit'),
+            icon: <FileEditingOne />,
+            onClick: (record: any) => {
+                console.log('Edit', record)
+            },
+        },
+        {
+            key: 'copy',
+            label: t('Action.Copy'),
+            icon: <Copy />,
+            onClick: (record: any) => {
+                console.log('Copy', record)
+            },
+        },
+        {
+            key: 'detail',
+            label: t('Action.Detail'),
+            icon: <DocDetail />,
+            onClick: (record: any) => {
+                console.log('Detail', record)
+            },
+        },
+        {
+            key: 'delete',
+            label: t('Action.Delete'),
+            icon: <Delete />,
+            danger: true,
+            onClick: (record: any) => {
+                console.log('Delete', record)
+            },
+        },
+    ]
+
     useEffect(() => {
         queryTableData()
     }, [])
 
     return (
-        <div className="wrapper">
-            <AiiTablePro
-                data={dataSource as any[]}
-                columns={columns}
-                loading={loading}
-                pagination={{
-                    current: pagination.current,
-                    pageSize: pagination.pageSize,
-                    total: pagination.total,
-                    onChange: (current: number) => {
-                        onPageChange(current)
-                    },
-                    onShowSizeChange: (current: number, size: number) => onPageSizeChange(size),
-                }}
-                toolbar={[
-                    {
-                        key: 'create',
-                        icon: <Newlybuild />,
-                        label: t('Action.Create'),
-                        onClick: () => {},
-                    },
-                    {
-                        key: 'export',
-                        icon: <DownloadFour />,
-                        label: t('Action.Export'),
-                        onClick: () => {},
-                    },
-                    {
-                        key: 'refresh',
-                        icon: <Refresh />,
-                        label: t('Action.Refresh'),
-                        onClick: () => {
-                            console.log('Refresh')
+        <>
+            <div className="wrapper mb-10"></div>
+            <div className="wrapper">
+                <AiiTablePro
+                    data={dataSource as any[]}
+                    columns={columns}
+                    loading={loading}
+                    pagination={{
+                        current: pagination.current,
+                        pageSize: pagination.pageSize,
+                        total: pagination.total,
+                        onPageChange: (current: number) => {
+                            onPageChange(current)
                         },
-                    },
-                    {
-                        key: 'filter',
-                        icon: <Filter />,
-                        label: t('Action.Filter'),
-                        onClick: () => {
-                            console.log('Filter')
-                        },
-                    },
-                ]}
-                rowSelection={{
-                    enabled: true,
-                    onSelectionChange: (selectedRows) => {
-                        console.log('Selected rows:', selectedRows)
-                    },
-                    batchActions: [
+                        onPageSizeChange: (current: number, size: number) => onPageSizeChange(size),
+                    }}
+                    toolbar={[
                         {
-                            key: 'delete',
-                            label: '批量删除',
-                            icon: <DeleteOutlined />,
-                            type: 'primary',
-                            onClick: (selectedRows, selectedKeys) => {
-                                console.log('批量删除:', selectedRows, selectedKeys)
+                            key: 'create',
+                            icon: <Newlybuild />,
+                            label: t('Action.Create'),
+                            onClick: () => {
+                                console.log('Create')
                             },
                         },
                         {
                             key: 'export',
-                            label: '批量导出',
-                            icon: <ExportOutlined />,
-                            onClick: (selectedRows, selectedKeys) => {
-                                console.log('批量导出:', selectedRows, selectedKeys)
+                            icon: <DownloadFour />,
+                            label: t('Action.Export'),
+                            onClick: () => {
+                                console.log('Export')
                             },
                         },
-                    ],
-                }}
-            />
-        </div>
+                        {
+                            key: 'refresh',
+                            icon: <Refresh />,
+                            label: t('Action.Refresh'),
+                            onClick: () => {
+                                console.log('Refresh')
+                            },
+                        },
+                        {
+                            key: 'filter',
+                            icon: <Filter />,
+                            label: t('Action.Filter'),
+                            onClick: () => {
+                                console.log('Filter')
+                            },
+                        },
+                    ]}
+                    operations={operations}
+                    rowSelection={{
+                        enabled: true,
+                        batchActions: [
+                            {
+                                key: 'delete',
+                                label: '批量删除',
+                                danger: true,
+                                icon: <DeleteOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量删除:', selectedRows)
+                                },
+                            },
+                            {
+                                key: 'export',
+                                label: '批量导出',
+                                icon: <ExportOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量导出:', selectedRows)
+                                },
+                            },
+                            {
+                                key: 'more',
+                                label: '批量操作',
+                                icon: <ExportOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量操作:', selectedRows)
+                                },
+                            },
+                        ],
+                    }}
+                />
+            </div>
+        </>
     )
 }

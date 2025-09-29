@@ -1,44 +1,33 @@
-import React, {
-    forwardRef,
-    useState,
-    useMemo,
-    useImperativeHandle,
-    useEffect,
-    memo,
-    useCallback,
-    useRef,
-    useLayoutEffect,
-} from 'react'
+import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+
+import { useTranslation } from 'react-i18next'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Button, Checkbox, Divider, Dropdown, Empty, Spin, Tooltip } from 'antd'
+
+import { Down, Left, MoreOne, Right } from '@icon-park/react'
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import {
-    useReactTable,
+    ColumnFiltersState,
+    ExpandedState,
+    flexRender,
     getCoreRowModel,
-    getSortedRowModel,
+    getExpandedRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
-    getExpandedRowModel,
-    flexRender,
-    SortingState,
-    ColumnFiltersState,
-    VisibilityState,
-    RowSelectionState,
+    getSortedRowModel,
     PaginationState,
-    ExpandedState,
+    RowSelectionState,
+    SortingState,
     Table,
+    useReactTable,
+    VisibilityState,
 } from '@tanstack/react-table'
-import { Button, Input, Select, Checkbox, Spin, Empty, Divider, Dropdown } from 'antd'
-import {
-    SearchOutlined,
-    ReloadOutlined,
-    ExportOutlined,
-    LeftOutlined,
-    RightOutlined,
-    CaretUpOutlined,
-    CaretDownOutlined,
-    DownOutlined,
-} from '@ant-design/icons'
-import { Copy, Delete, DocDetail, Down, DownloadFour, FileEditingOne, MoreOne, Spanner } from '@icon-park/react'
-import { AiiTableProProps, AiiTableProRef, AiiColumnDef, ActionItem, TableData } from './AiiTablePro.types'
+
+import { AiiTableProProps, AiiTableProRef, TableData } from './AiiTablePro.types'
+
 import './index.css'
+
+const PageSizeOptions = [10, 20, 30, 40, 50]
 
 const AiiTablePro = memo(
     forwardRef<AiiTableProRef, AiiTableProProps<TableData>>(
@@ -50,26 +39,20 @@ const AiiTablePro = memo(
                 pagination = { current: 1, pageSize: 10, total: 0 },
                 rowSelection,
                 toolbar = [],
+                operations = [],
                 className = '',
                 style = {},
-                size = 'middle',
-                bordered = false,
-                showHeader = true,
-                resizable = false,
-                expandable,
-                scroll,
-                sticky,
+                sticky = true,
                 onSortingChange,
                 onColumnFiltersChange,
                 onGlobalFilterChange,
                 onRowSelectionChange,
                 onExpandedChange,
                 onRefresh,
-                onExport,
-                onCustomAction,
             },
             ref,
         ) => {
+            const { t } = useTranslation()
             // 内部状态
             const [sorting, setSorting] = useState<SortingState>([])
             const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -78,14 +61,41 @@ const AiiTablePro = memo(
             const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
             const [expanded, setExpanded] = useState<ExpandedState>({})
 
+            // 引用
+            const tableContainerRef = useRef<HTMLDivElement>(null)
+            const tableHeaderRef = useRef<HTMLDivElement>(null)
+
             const [paginationState, setPaginationState] = useState<PaginationState>({
                 pageIndex: pagination ? (pagination.current || 1) - 1 : 0,
                 pageSize: pagination ? pagination.pageSize || 10 : 10,
             })
 
-            // 处理列定义 - 使用 useMemo 优化
+            // 处理列定义
             const processedColumns = useMemo(() => {
                 const cols: any[] = [...columns]
+
+                // 处理每列的 ellipsis 配置
+                cols.forEach((col) => {
+                    if (col.ellipsis) {
+                        const originalCell = col.cell
+                        col.cell = ({ getValue, row, column }: any) => {
+                            const value = getValue()
+                            const displayValue = originalCell ? originalCell({ getValue, row, column }) : value
+
+                            if (col.ellipsis) {
+                                return (
+                                    <Tooltip title={displayValue} placement="topLeft">
+                                        <div className="aii-table-cell-ellipsis" title={String(value || '')}>
+                                            {displayValue}
+                                        </div>
+                                    </Tooltip>
+                                )
+                            }
+
+                            return displayValue
+                        }
+                    }
+                })
 
                 // 添加行选择列
                 if (rowSelection?.enabled) {
@@ -112,6 +122,50 @@ const AiiTablePro = memo(
                         enableColumnFilter: false,
                     }
                     cols.unshift(selectionColumn)
+                }
+
+                // 添加操作列
+                if (operations && operations.length > 0) {
+                    const operationColumn = {
+                        id: 'operations',
+                        header: t('Action.Operate'),
+                        cell: ({ row }: { row: any }) => {
+                            return (
+                                <div className="aii-table-cell-operations">
+                                    {operations && operations.length < 3 ? (
+                                        operations?.map((operation) => (
+                                            <Button
+                                                key={operation.key}
+                                                type={operation.type || 'text'}
+                                                danger={operation.danger}
+                                                icon={operation.icon}
+                                                onClick={() => operation.onClick?.(row.original)}
+                                            >
+                                                {operation.label}
+                                            </Button>
+                                        ))
+                                    ) : (
+                                        <Dropdown
+                                            menu={{
+                                                items: operations.map((operation) => ({
+                                                    key: operation.key,
+                                                    danger: operation.danger,
+                                                    icon: operation.icon,
+                                                    label: operation.label,
+                                                    onClick: () => operation.onClick?.(row.original),
+                                                })),
+                                            }}
+                                        >
+                                            <Button type="text" icon={<MoreOne />} />
+                                        </Dropdown>
+                                    )}
+                                </div>
+                            )
+                        },
+                        enableSorting: false,
+                        enableColumnFilter: false,
+                    }
+                    cols.push(operationColumn)
                 }
 
                 return cols
@@ -171,35 +225,6 @@ const AiiTablePro = memo(
                 onExpandedChange?.(Object.keys(expanded))
             }, [expanded, onExpandedChange])
 
-            // 用于测量表格主体高度的 ref
-            const tableBodyRef = useRef<HTMLDivElement>(null)
-            const [actualTableBodyHeight, setActualTableBodyHeight] = useState<number>(0) // 默认值
-
-            // 获取表格主体的实际高度
-            const getTableBodyHeight = useCallback(() => {
-                return actualTableBodyHeight
-            }, [actualTableBodyHeight])
-
-            // 测量实际表格主体高度
-            useLayoutEffect(() => {
-                if (tableBodyRef.current) {
-                    // 使用 setTimeout 确保 DOM 已经渲染完成
-                    const timer = setTimeout(() => {
-                        if (tableBodyRef.current) {
-                            const height = tableBodyRef.current.getBoundingClientRect().height
-                            if (height > 0 && Math.abs(height - actualTableBodyHeight) > 1) {
-                                // 只有当高度差异超过 1px 时才更新，避免频繁更新
-                                setActualTableBodyHeight(height)
-                            }
-                        }
-                    }, 0)
-
-                    return () => clearTimeout(timer)
-                }
-            }, [data, size, columns, actualTableBodyHeight]) // 添加 columns 作为依赖项，因为列的变化也可能影响高度
-
-            const tableBodyHeight = getTableBodyHeight()
-
             const handlePageChange = useCallback(
                 (page: number, pageSize?: number) => {
                     const newPageSize = pageSize || paginationState.pageSize
@@ -208,13 +233,10 @@ const AiiTablePro = memo(
                         pageSize: newPageSize,
                     }
 
-                    // 先更新内部状态
                     setPaginationState(newPagination)
 
-                    // 然后调用外部回调
-                    if (pagination && typeof pagination === 'object' && pagination.onChange) {
-                        console.log(page)
-                        pagination.onChange(page, newPageSize)
+                    if (pagination && typeof pagination === 'object' && pagination.onPageChange) {
+                        pagination.onPageChange(page, newPageSize)
                     }
                 },
                 [paginationState.pageSize, pagination],
@@ -223,20 +245,69 @@ const AiiTablePro = memo(
             const handlePageSizeChange = useCallback(
                 (current: number, size: number) => {
                     const newPagination = {
-                        pageIndex: 0, // 重置到第一页
+                        pageIndex: 0,
                         pageSize: size,
                     }
 
-                    // 先更新内部状态
                     setPaginationState(newPagination)
 
-                    // 然后调用外部回调
-                    if (pagination && typeof pagination === 'object' && pagination.onShowSizeChange) {
-                        pagination.onShowSizeChange(1, size) // 传递页码 1 而不是 current
+                    if (pagination && typeof pagination === 'object' && pagination.onPageSizeChange) {
+                        pagination.onPageSizeChange(1, size)
                     }
                 },
                 [pagination],
             )
+
+            // 分页渲染
+            const renderPagination = () => {
+                if (!pagination) return null
+
+                const totalPages = Math.ceil((pagination.total || 0) / paginationState.pageSize)
+                const currentPage = paginationState.pageIndex + 1
+
+                return (
+                    <div className="aii-table-pagination">
+                        <div className="pagination-info">
+                            <Dropdown
+                                menu={{
+                                    items: PageSizeOptions.map((size) => ({
+                                        key: size.toString(),
+                                        label: <div className="text-center">{size}</div>,
+                                        onClick: () => handlePageSizeChange(1, size),
+                                    })),
+                                    selectable: true,
+                                    defaultSelectedKeys: [paginationState.pageSize?.toString()],
+                                }}
+                                trigger={['hover']}
+                            >
+                                <div className="pagination-dropdown">
+                                    <span>{`${t('Common.PageSize_show')}: ${paginationState.pageSize || 10}`}</span>
+                                    <Down />
+                                </div>
+                            </Dropdown>
+                            <Divider type="vertical" />
+                            <span>{`${t('Common.Total')}: ${pagination.total || 0}`}</span>
+                        </div>
+                        <div className="pagination-controls">
+                            <Button
+                                type="text"
+                                disabled={currentPage <= 1}
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                icon={<Left />}
+                            />
+                            <span className="aii-table-pagination-current">
+                                {currentPage} / {totalPages}
+                            </span>
+                            <Button
+                                type="text"
+                                disabled={currentPage >= totalPages}
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                icon={<Right />}
+                            />
+                        </div>
+                    </div>
+                )
+            }
 
             // 工具栏渲染
             const renderToolbar = () => {
@@ -249,7 +320,9 @@ const AiiTablePro = memo(
                             {toolbar?.map((action) => (
                                 <Button
                                     key={action.key}
-                                    type={action.type || 'text'}
+                                    type={action.type}
+                                    color={action.color ?? 'default'}
+                                    variant={action.variant ?? 'filled'}
                                     icon={action.icon}
                                     onClick={action.onClick}
                                 >
@@ -261,103 +334,97 @@ const AiiTablePro = memo(
                 )
             }
 
-            // 分页渲染
-            const renderPagination = () => {
-                if (!pagination) return null
-
-                console.log('renderCustomPagination', paginationState.pageIndex, paginationState.pageSize)
-
-                const totalPages = Math.ceil((pagination.total || 0) / paginationState.pageSize)
-                const currentPage = paginationState.pageIndex + 1
-
-                return (
-                    <div className="aii-table-pagination">
-                        <div className="pagination-info">
-                            <Dropdown
-                                menu={{
-                                    items: [10, 20, 50, 100].map((size) => ({
-                                        key: size.toString(),
-                                        label: <div className="text-center">{size}</div>,
-                                        onClick: () => handlePageSizeChange(1, size),
-                                    })),
-                                    selectable: true,
-                                    defaultSelectedKeys: [paginationState.pageSize?.toString()],
-                                }}
-                                trigger={['hover']}
-                            >
-                                <div className="pagination-dropdown">
-                                    <span>每页显示: {paginationState.pageSize || 10}</span>
-                                    <DownOutlined />
-                                </div>
-                            </Dropdown>
-                            <Divider type="vertical" />
-                            <span>总数：{pagination.total || 0}</span>
-                        </div>
-
-                        <div className="aii-table-pagination-controls">
-                            <Button
-                                type="text"
-                                disabled={currentPage <= 1}
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                icon={<LeftOutlined />}
-                            />
-                            <span className="aii-table-pagination-current">
-                                {currentPage} / {totalPages}
-                            </span>
-                            <Button
-                                type="text"
-                                disabled={currentPage >= totalPages}
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                icon={<RightOutlined />}
-                            />
-                        </div>
-                    </div>
-                )
-            }
-
             // 批量操作行渲染
             const renderBatchOperationRow = () => {
                 const selectedRowKeys = Object.keys(rowSelectionState)
-                if (!rowSelection?.enabled || selectedRowKeys.length === 0 || !rowSelection.batchActions) return null
-
+                const showBatchOperationRow =
+                    !rowSelection?.enabled || selectedRowKeys.length === 0 || !rowSelection.batchActions
                 return (
-                    <div className="aii-table-batch-operation-row">
-                        <div className="aii-table-batch-info">
-                            <span>已选择 {selectedRowKeys.length} 项</span>
-                            <Divider type="vertical" />
-                            <Button type="text" danger onClick={() => setRowSelectionState({})}>
-                                取消选择
-                            </Button>
-                        </div>
-                        <div className="aii-table-batch-actions">
-                            {rowSelection.batchActions.map((action) => (
+                    <motion.div
+                        initial={false}
+                        animate={!showBatchOperationRow ? { padding: '10px 0' } : { padding: '0' }}
+                        transition={{ ease: 'easeInOut', duration: 0.3 }}
+                        style={{
+                            overflow: 'hidden',
+                            position: 'sticky',
+                            top: 55,
+                            zIndex: 11,
+                        }}
+                        className="aii-table-batch-operation-row-container"
+                    >
+                        <motion.div
+                            initial={false}
+                            animate={
+                                !showBatchOperationRow
+                                    ? { height: '55px', opacity: 1, padding: '16px 12px' }
+                                    : { height: 0, opacity: 0, padding: '0' }
+                            }
+                            transition={{ ease: 'easeInOut', duration: 0.3 }}
+                            className="aii-table-batch-operation-row"
+                        >
+                            <div className="aii-table-batch-info">
+                                <span className="mr-10">{`${t('Common.Choosed')}: ${selectedRowKeys.length}`}</span>
                                 <Button
-                                    key={action.key}
+                                    className="primary-text-btn"
                                     type="text"
-                                    icon={action.icon}
-                                    disabled={action.disabled}
-                                    onClick={() => {
-                                        const selectedRows = data.filter((_, index) =>
-                                            selectedRowKeys.includes(index.toString()),
-                                        )
-                                        action.onClick?.(selectedRows, selectedRowKeys)
-                                    }}
+                                    onClick={() => setRowSelectionState({})}
                                 >
-                                    {action.label}
+                                    {t('Action.Uncheck')}
                                 </Button>
-                            ))}
-                        </div>
-                    </div>
+                            </div>
+                            <div className="aii-table-batch-actions">
+                                {rowSelection?.batchActions && rowSelection?.batchActions?.length < 3 ? (
+                                    rowSelection?.batchActions?.map((action) => (
+                                        <Button
+                                            key={action.key}
+                                            type={action.type || 'text'}
+                                            danger={action.danger}
+                                            icon={action.icon}
+                                            disabled={action.disabled}
+                                            onClick={() => {
+                                                const selectedRows = data.filter((_, index) =>
+                                                    selectedRowKeys.includes(index.toString()),
+                                                )
+                                                action.onClick?.(selectedRows)
+                                            }}
+                                        >
+                                            {action.label}
+                                        </Button>
+                                    ))
+                                ) : (
+                                    <Dropdown
+                                        menu={{
+                                            items: rowSelection?.batchActions?.map((action) => ({
+                                                key: action.key,
+                                                label: action.label,
+                                                danger: action.danger,
+                                                onClick: () => {
+                                                    const selectedRows = data.filter((_, index) =>
+                                                        selectedRowKeys.includes(index.toString()),
+                                                    )
+                                                    action.onClick?.(selectedRows)
+                                                },
+                                            })),
+                                        }}
+                                        trigger={['hover']}
+                                    >
+                                        <Button type="text" icon={<MoreOne />}>
+                                            {t('Action.Batch_Operate')}
+                                        </Button>
+                                    </Dropdown>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
                 )
             }
 
-            // Grid 表格渲染
+            // 表格渲染
             const renderGridTable = () => {
                 const headerGroups = table.getHeaderGroups()
                 const rows = table.getRowModel().rows
                 const columnCount = processedColumns.length
 
-                // 动态计算 grid-template-columns
                 const hasSelection = rowSelection?.enabled
                 const gridTemplateColumns = hasSelection
                     ? `48px repeat(${columnCount - 1}, 1fr)`
@@ -365,6 +432,7 @@ const AiiTablePro = memo(
 
                 return (
                     <div
+                        ref={tableContainerRef}
                         className={`aii-table-container ${loading ? 'loading' : ''}`}
                         style={
                             {
@@ -378,8 +446,8 @@ const AiiTablePro = memo(
                                 <Spin />
                             </div>
                         )}
-                        <div className="aii-table-header">
-                            {table.getHeaderGroups().map((headerGroup) => (
+                        <div ref={tableHeaderRef} className={`aii-table-header ${sticky ? 'sticky' : ''}`}>
+                            {headerGroups.map((headerGroup) => (
                                 <div key={headerGroup.id} className="aii-table-header-row">
                                     {headerGroup.headers.map((header) => (
                                         <div
@@ -427,35 +495,46 @@ const AiiTablePro = memo(
                             ))}
                         </div>
                         {renderBatchOperationRow()}
-                        <div ref={tableBodyRef} className="aii-table-body">
-                            {rows.length === 0 ? (
-                                <div className="aii-table-empty">
-                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                </div>
-                            ) : (
-                                rows.map((row) => (
-                                    <div
-                                        key={row.id}
-                                        className={`aii-table-row ${row.getIsSelected() ? 'selected' : ''}`}
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <div
-                                                key={cell.id}
-                                                className="aii-table-cell"
-                                                data-column-id={cell.column.id}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </div>
-                                        ))}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: '100%' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ ease: 'easeInOut', duration: 0.3 }}
+                                className="aii-table-body"
+                            >
+                                {rows.length === 0 ? (
+                                    <div className="aii-table-empty">
+                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                     </div>
-                                ))
-                            )}
-                        </div>
+                                ) : (
+                                    rows.map((row) => (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ ease: 'easeInOut', duration: 0.3 }}
+                                            key={row.id}
+                                            className={`aii-table-row ${row.getIsSelected() ? 'selected' : ''}`}
+                                        >
+                                            {row.getVisibleCells().map((cell) => (
+                                                <div
+                                                    key={cell.id}
+                                                    className="aii-table-cell"
+                                                    data-column-id={cell.column.id}
+                                                >
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </div>
+                                            ))}
+                                        </motion.div>
+                                    ))
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 )
             }
 
-            // 优化 useImperativeHandle 的依赖项
             useImperativeHandle(
                 ref,
                 () => ({

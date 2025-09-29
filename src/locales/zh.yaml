@@ -112,6 +112,7 @@ Action:
     Export: '导出'
     Operate: '操作'
     Filter: '筛选'
+    Batch_Operate: '批量操作'
 
 AI:
     Welcome: '您好，我是 AI 助手，很高兴为您服务。'

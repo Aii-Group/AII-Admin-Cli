@@ -252,7 +252,7 @@ const Advanced: React.FC = () => {
                     rowKey="id"
                     loading={loading}
                     columns={columns}
-                    dataSource={[]}
+                    dataSource={dataSource}
                     pagination={pagination}
                     toolbar={toolbar}
                     operations={['EDIT', 'COPY', 'DETAIL', 'DELETE']}

@@ -1,4 +1,5 @@
 import React from 'react'
+import type { ButtonProps } from 'antd'
 import type {
     ColumnDef,
     SortingState,
@@ -34,23 +35,8 @@ export interface PaginationConfig {
     current?: number
     pageSize?: number
     total?: number
-    showSizeChanger?: boolean
-    showQuickJumper?: boolean
-    showTotal?: (total: number, range: [number, number]) => React.ReactNode
-    pageSizeOptions?: string[]
-    size?: 'default' | 'small'
-    simple?: boolean
-    hideOnSinglePage?: boolean
-    responsive?: boolean
-    disabled?: boolean
-    showLessItems?: boolean
-    itemRender?: (
-        page: number,
-        type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next',
-        originalElement: React.ReactElement,
-    ) => React.ReactNode
-    onChange?: (page: number, pageSize: number) => void
-    onShowSizeChange?: (current: number, size: number) => void
+    onPageChange?: (page: number, pageSize: number) => void
+    onPageSizeChange?: (current: number, size: number) => void
 }
 
 // 排序配置
@@ -168,45 +154,25 @@ export interface ActionItem {
 }
 
 // 批量操作项接口
-export interface BatchActionItem {
+export interface BatchActionItem extends Omit<ButtonProps, 'onClick'> {
     key: string
     label: string
-    icon?: React.ReactNode
-    type?: 'default' | 'primary' | 'dashed' | 'link' | 'text'
-    disabled?: boolean
-    onClick?: (selectedRows: any[], selectedRowKeys: React.Key[]) => void
+    onClick?: (selectedRows: any[]) => void
 }
 
 // 工具栏配置
-export interface ToolbarItem {
+export interface ToolbarItem extends Omit<ButtonProps, 'onClick'> {
     key: string
-    icon?: React.ReactNode
     label?: string
-    type?: 'link' | 'text' | 'primary' | 'default' | 'dashed'
     onClick?: (record?: any, index?: number) => void
 }
 
 // 操作列配置
-export interface ActionColumnConfig<TData extends TableData = TableData> {
-    enabled?: boolean
-    title?: string
-    width?: number | string
+export interface OperationItem<TData extends TableData = TableData> extends Omit<ButtonProps, 'onClick'> {
+    key: string
+    label?: string
     fixed?: 'left' | 'right'
-    actions?: Array<{
-        key: string
-        label: string
-        type?: 'link' | 'text' | 'primary' | 'default' | 'dashed'
-        icon?: React.ReactNode
-        onClick: (record: TData, index: number) => void
-        disabled?: boolean | ((record: TData) => boolean)
-        danger?: boolean
-        confirm?: {
-            title: string
-            content?: string
-            onConfirm: (record: TData) => void
-        }
-    }>
-    render?: (record: TData, index: number) => React.ReactNode
+    onClick?: (record: TData) => void
 }
 
 // 批量操作配置
@@ -273,17 +239,6 @@ export interface ExpandableConfig {
     rowExpandable?: (record: TableData) => boolean
 }
 
-// 加载状态配置
-export interface LoadingConfig {
-    loading?: boolean
-    skeleton?: boolean
-    skeletonRows?: number
-    skeletonColumns?: number
-    loadingText?: string
-    emptyText?: string
-    emptyImage?: React.ReactNode
-}
-
 // 扩展的列定义
 export interface AiiColumnDef<TData extends TableData = TableData, TValue = unknown>
     extends Omit<ColumnDef<TData, TValue>, 'header' | 'cell' | 'accessorFn'> {
@@ -297,7 +252,7 @@ export interface AiiColumnDef<TData extends TableData = TableData, TValue = unkn
 
     // 显示控制
     hidden?: boolean
-    ellipsis?: boolean | { showTitle?: boolean }
+    ellipsis?: boolean
     copyable?: boolean
 
     // 排序
@@ -355,10 +310,8 @@ export interface AiiColumnDef<TData extends TableData = TableData, TValue = unkn
 }
 
 // 工具栏项接口
-export interface ToolbarProps {
-    icon: React.ReactNode
+export interface ToolbarProps extends ButtonProps {
     label: string
-    onClick: () => void
 }
 
 // 操作项接口
@@ -394,11 +347,7 @@ export interface AiiTableProProps<T extends TableData = TableData> {
     toolbar?: ToolbarItem[]
 
     // 操作列
-    operations?:
-        | ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[]
-        | ((
-              record: T,
-          ) => ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[])
+    operations?: OperationItem[]
 
     // 行选择
     rowSelection?: RowSelectionConfig<T>
