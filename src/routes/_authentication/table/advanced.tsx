@@ -189,16 +189,19 @@ const Advanced: React.FC = () => {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
+            width: 160,
         },
         {
             title: 'Phone',
             dataIndex: 'phone',
             key: 'phone',
+            width: 120,
         },
         {
             title: 'Create Time',
             dataIndex: 'createTime',
             key: 'createTime',
+            width: 180,
         },
     ]
 

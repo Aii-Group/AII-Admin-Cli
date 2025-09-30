@@ -1,15 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Z-Index 层级定义 */
+:root {
+    --z-table-base: 1;
+    --z-table-row-border: 2;
+    --z-table-sticky-shadow: 3;
+    --z-table-header: 90;
+    --z-table-batch-operation: 90;
+    --z-table-loading-mask: 100;
+    --z-table-loading-spin: 101;
+}
+
 @layer {
     .aii-table-pro {
         @apply flex flex-col bg-light-colorBgContainer dark:bg-dark-colorBgContainer;
+        position: relative;
+        height: 100%;
+        z-index: var(--z-table-base);
     }
 
     /* 表格容器样式 */
     .aii-table-container {
         position: relative;
         transition: all 0.3s linear;
+        height: 100%;
     }
 
     /* 加载状态蒙版样式 */
@@ -22,7 +38,7 @@
         right: 0;
         bottom: 0;
         backdrop-filter: blur(1px);
-        z-index: 12;
+        z-index: var(--z-table-loading-mask);
         display: none;
         align-items: center;
         justify-content: center;
@@ -30,7 +46,6 @@
 
     .aii-table-container.loading::before {
         display: flex;
-        z-index: 13;
     }
 
     /* 加载 Spin 组件样式 */
@@ -39,7 +54,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 14;
+        z-index: var(--z-table-loading-spin);
     }
 
     .aii-table-empty {
@@ -59,6 +74,7 @@
     /* 批量操作行样式 */
     .aii-table-batch-operation-row-container {
         @apply bg-light-colorBgContainer dark:bg-dark-colorBgContainer;
+        z-index: var(--z-table-batch-operation);
     }
     .aii-table-batch-operation-row {
         @apply flex justify-between box-border items-center  rounded-borderRadiusLG bg-light-colorPrimaryBg text-light-colorPrimary dark:bg-dark-colorPrimaryBg dark:text-dark-colorPrimary;
@@ -75,26 +91,29 @@
 
     /* 表头样式 */
     .aii-table-header {
-        @apply relative rounded-tr-borderRadiusLG rounded-tl-borderRadiusLG bg-[#fafafa] dark:bg-[#1D1D1D];
+        @apply relative overflow-x-hidden rounded-tr-borderRadiusLG rounded-tl-borderRadiusLG bg-[#fafafa] dark:bg-[#1D1D1D];
+        z-index: var(--z-table-header);
     }
 
     /* 表头粘性样式 */
     .aii-table-header.sticky {
-        @apply top-0 z-[10] bg-[#fafafa] dark:bg-[#1D1D1D];
+        @apply top-0 bg-[#fafafa] dark:bg-[#1D1D1D];
         position: sticky;
+        z-index: var(--z-table-header);
     }
 
     .aii-table-header-row {
         display: grid;
         grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
+        background-color: inherit;
     }
 
     .aii-table-header-cell {
-        @apply flex items-center relative h-55 px-16 py-12 font-bold shrink-0 box-border text-light-colorText dark:text-dark-colorText;
+        @apply flex items-center relative h-55 px-16 py-12 font-bold shrink-0 box-border text-light-colorText dark:text-dark-colorText border-b border-light-colorBorderSecondary dark:border-dark-colorBorderSecondary;
     }
 
     .aii-table-cell {
-        @apply flex items-center p-16 box-border text-light-colorText dark:text-dark-colorText;
+        @apply relative flex items-center p-16 box-border text-light-colorText dark:text-dark-colorText !border-b border-light-colorBorderSecondary dark:!border-dark-colorBorderSecondary;
     }
 
     .aii-table-header-cell::after {
@@ -168,37 +187,37 @@
 
     /* 表格主体样式 */
     .aii-table-body {
+        @apply bg-light-colorBgContainer dark:bg-dark-colorBgContainer;
         display: flex;
         flex-direction: column;
         height: 100%;
         position: relative;
+        overflow-x: scroll;
     }
 
     .aii-table-row {
-        @apply !border-b border-light-colorBorderSecondary dark:!border-dark-colorBorderSecondary;
         display: grid;
         grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
         transition: background-color 0.2s;
+        width: 100%;
+        background-color: inherit;
+        position: relative;
     }
 
     .aii-table-row.no-selection {
         grid-template-columns: var(--grid-template-columns, repeat(var(--columns), 1fr));
     }
 
-    .aii-table-row:hover {
-        @apply bg-[#fafafa] dark:bg-[#1d1d1d];
+    .aii-table-row:hover > .aii-table-cell {
+        @apply !bg-[#fafafa] dark:!bg-[#1d1d1d];
     }
 
-    .aii-table-row.selected {
-        @apply bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg;
+    .aii-table-row.selected > .aii-table-cell {
+        @apply !bg-light-colorPrimaryBg dark:!bg-dark-colorPrimaryBg;
     }
 
-    .aii-table-row.selected:hover {
-        @apply bg-light-colorPrimaryBgHover dark:bg-dark-colorPrimaryBgHover;
-    }
-
-    .aii-table-row.striped {
-        @apply bg-[#fafafa] dark:bg-[#1d1d1d];
+    .aii-table-row.selected:hover > .aii-table-cell {
+        @apply !bg-light-colorPrimaryBgHover dark:!bg-dark-colorPrimaryBgHover;
     }
 
     /* 工具栏样式 */
@@ -244,9 +263,74 @@
         display: block;
     }
 
-    /* 确保带有 ellipsis 的单元格能够正确显示省略号 */
     .aii-table-cell:has(.aii-table-cell-ellipsis) {
         @apply overflow-hidden;
         min-width: 0;
+    }
+
+    /* 右侧固定列阴影样式 */
+    .sticky-right::after {
+        box-shadow: var(--sticky-box-shadow);
+        position: absolute;
+        top: 0;
+        bottom: -1px;
+        left: -10px;
+        width: 10px;
+        transition: box-shadow 0.3s;
+        content: '';
+        pointer-events: none;
+        z-index: var(--z-table-sticky-shadow);
+    }
+    .dark .sticky-right::after {
+        box-shadow: var(--sticky-dark-box-shadow);
+    }
+
+    /* 左侧固定列阴影样式 */
+    .sticky-left::after {
+        box-shadow: var(--sticky-box-shadow);
+        position: absolute;
+        top: 0;
+        bottom: -1px;
+        right: -10px;
+        width: 10px;
+        transition: box-shadow 0.3s;
+        content: '';
+        pointer-events: none;
+        z-index: var(--z-table-sticky-shadow);
+    }
+    .dark .sticky-left::after {
+        box-shadow: var(--sticky-dark-box-shadow);
+    }
+
+    .sticky-header-left::before {
+        box-shadow: var(--sticky-box-shadow);
+        position: absolute;
+        top: 0;
+        bottom: -1px;
+        right: -10px;
+        width: 10px;
+        transition: box-shadow 0.3s;
+        content: '';
+        pointer-events: none;
+        z-index: var(--z-table-sticky-shadow);
+    }
+    .dark .sticky-header-left::before {
+        box-shadow: var(--sticky-dark-box-shadow);
+    }
+
+    .sticky-header-right::before {
+        box-shadow: var(--sticky-box-shadow);
+        position: absolute;
+        top: 0;
+        bottom: -1px;
+        left: -10px;
+        width: 10px;
+        transition: box-shadow 0.3s;
+        content: '';
+        pointer-events: none;
+        z-index: var(--z-table-sticky-shadow);
+    }
+    .dark .sticky-header-right::before {
+        box-shadow: var(--sticky-dark-box-shadow);
     }
 }

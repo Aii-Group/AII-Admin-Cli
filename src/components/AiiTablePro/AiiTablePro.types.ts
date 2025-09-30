@@ -86,13 +86,6 @@ export interface RowSelectionConfig<TData extends TableData = TableData> {
     batchActions?: BatchActionItem[]
 }
 
-// 列可见性配置
-export interface ColumnVisibilityConfig {
-    enabled?: boolean
-    defaultColumnVisibility?: VisibilityState
-    onColumnVisibilityChange?: OnChangeFn<VisibilityState>
-}
-
 // 列调整大小配置
 export interface ColumnResizingConfig {
     enabled?: boolean
@@ -245,15 +238,12 @@ export interface AiiColumnDef<TData extends TableData = TableData, TValue = unkn
     // 基础属性
     title?: string
     dataIndex?: keyof TData | string
+    accessorKey?: keyof TData | string
     key?: string
     width?: number | string
     minWidth?: number
     maxWidth?: number
-
-    // 显示控制
-    hidden?: boolean
     ellipsis?: boolean
-    copyable?: boolean
 
     // 排序
     sortable?: boolean
@@ -294,43 +284,11 @@ export interface AiiColumnDef<TData extends TableData = TableData, TValue = unkn
     className?: string
     headerClassName?: string
     cellClassName?: string | ((record: TData, index: number) => string)
-
-    // 其他
-    tooltip?: string | ((record: TData) => string)
-    editable?: boolean | ((record: TData) => boolean)
-    size?: number
-
-    // 元数据
-    meta?: {
-        headerClassName?: string
-        cellClassName?: string
-        align?: 'left' | 'center' | 'right'
-        [key: string]: any
-    }
 }
 
 // 工具栏项接口
 export interface ToolbarProps extends ButtonProps {
     label: string
-}
-
-// 操作项接口
-export interface OperationItemProps {
-    key: string
-    icon?: React.ReactNode
-    label: string | React.ReactNode
-    danger?: boolean
-    [key: `data-${string}`]: string | number
-}
-
-// 批量操作行属性接口
-export interface BatchOperationRowProps {
-    selectedCount: number
-    columnsLength: number
-    onDeselect: () => void
-    onBatchDelete?: () => void
-    onBatchExport?: () => void
-    t: (key: string) => string
 }
 
 // 表格属性接口
@@ -356,11 +314,6 @@ export interface AiiTableProProps<T extends TableData = TableData> {
     onBatchDelete?: () => void
     onBatchExport?: () => void
     onOperationClick?: (key: string, record: any) => void
-
-    // 搜索
-    searchable?: boolean
-    searchPlaceholder?: string
-    onSearch?: (value: string) => void
 
     // 其他属性
     className?: string

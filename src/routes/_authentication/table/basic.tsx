@@ -19,6 +19,7 @@ import {
     MoreOne,
 } from '@icon-park/react'
 import { useTranslation } from 'react-i18next'
+import { AiiColumnDef, ColumnDef, TableData } from '@/components/AiiTablePro/AiiTablePro.types'
 
 export const Route = createFileRoute('/_authentication/table/basic')({
     component: () => <Basic />,
@@ -39,10 +40,14 @@ const Basic: React.FC = () => {
             title: 'Name',
             accessorKey: 'name',
             cell: ({ getValue }: any) => <span className="text-light-colorPrimary">{getValue()}</span>,
+
+            fixed: 'left' as const,
         },
         {
             title: 'Age',
             accessorKey: 'age',
+
+            fixed: 'left' as const,
         },
         {
             title: 'Address',
@@ -155,36 +160,36 @@ const Basic: React.FC = () => {
                         },
                     ]}
                     operations={operations}
-                    rowSelection={{
-                        enabled: true,
-                        batchActions: [
-                            {
-                                key: 'delete',
-                                label: '批量删除',
-                                danger: true,
-                                icon: <DeleteOutlined />,
-                                onClick: (selectedRows) => {
-                                    console.log('批量删除:', selectedRows)
-                                },
-                            },
-                            {
-                                key: 'export',
-                                label: '批量导出',
-                                icon: <ExportOutlined />,
-                                onClick: (selectedRows) => {
-                                    console.log('批量导出:', selectedRows)
-                                },
-                            },
-                            {
-                                key: 'more',
-                                label: '批量操作',
-                                icon: <ExportOutlined />,
-                                onClick: (selectedRows) => {
-                                    console.log('批量操作:', selectedRows)
-                                },
-                            },
-                        ],
-                    }}
+                    // rowSelection={{
+                    //     enabled: false,
+                    //     batchActions: [
+                    //         {
+                    //             key: 'delete',
+                    //             label: '批量删除',
+                    //             danger: true,
+                    //             icon: <DeleteOutlined />,
+                    //             onClick: (selectedRows) => {
+                    //                 console.log('批量删除:', selectedRows)
+                    //             },
+                    //         },
+                    //         {
+                    //             key: 'export',
+                    //             label: '批量导出',
+                    //             icon: <ExportOutlined />,
+                    //             onClick: (selectedRows) => {
+                    //                 console.log('批量导出:', selectedRows)
+                    //             },
+                    //         },
+                    //         {
+                    //             key: 'more',
+                    //             label: '批量操作',
+                    //             icon: <ExportOutlined />,
+                    //             onClick: (selectedRows) => {
+                    //                 console.log('批量操作:', selectedRows)
+                    //             },
+                    //         },
+                    //     ],
+                    // }}
                 />
             </div>
         </>

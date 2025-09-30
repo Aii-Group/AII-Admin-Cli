@@ -1,4 +1,14 @@
-import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, {
+    forwardRef,
+    memo,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useRef,
+    useState,
+    CSSProperties,
+} from 'react'
 
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -7,6 +17,7 @@ import { Button, Checkbox, Divider, Dropdown, Empty, Spin, Tooltip } from 'antd'
 import { Down, Left, MoreOne, Right } from '@icon-park/react'
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import {
+    Column,
     ColumnFiltersState,
     ExpandedState,
     flexRender,
@@ -21,13 +32,16 @@ import {
     Table,
     useReactTable,
     VisibilityState,
+    ColumnPinningState,
 } from '@tanstack/react-table'
 
-import { AiiTableProProps, AiiTableProRef, TableData } from './AiiTablePro.types'
+import { AiiTableProProps, AiiTableProRef, TableData, AiiColumnDef } from './AiiTablePro.types'
+
+import classNames from 'classnames'
 
 import './index.css'
 
-const PageSizeOptions = [10, 20, 30, 40, 50]
+const PageSizeOptions = [10, 20, 30, 50, 100]
 
 const AiiTablePro = memo(
     forwardRef<AiiTableProRef, AiiTableProProps<TableData>>(
@@ -37,7 +51,7 @@ const AiiTablePro = memo(
                 columns,
                 loading = false,
                 pagination = { current: 1, pageSize: 10, total: 0 },
-                rowSelection,
+                rowSelection = {},
                 toolbar = [],
                 operations = [],
                 className = '',
@@ -60,10 +74,15 @@ const AiiTablePro = memo(
             const [rowSelectionState, setRowSelectionState] = useState<RowSelectionState>({})
             const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
             const [expanded, setExpanded] = useState<ExpandedState>({})
+            const [columnPinningState, setColumnPinningState] = useState<ColumnPinningState>({
+                left: [],
+                right: [],
+            })
 
             // 引用
             const tableContainerRef = useRef<HTMLDivElement>(null)
             const tableHeaderRef = useRef<HTMLDivElement>(null)
+            const tableBodyRef = useRef<HTMLDivElement>(null)
 
             const [paginationState, setPaginationState] = useState<PaginationState>({
                 pageIndex: pagination ? (pagination.current || 1) - 1 : 0,
@@ -73,9 +92,12 @@ const AiiTablePro = memo(
             // 处理列定义
             const processedColumns = useMemo(() => {
                 const cols: any[] = [...columns]
+                const left: string[] = ['select']
+                const right: string[] = ['operations']
 
-                // 处理每列的 ellipsis 配置
+                // 处理自定义配置
                 cols.forEach((col) => {
+                    // 处理 ellipsis 配置
                     if (col.ellipsis) {
                         const originalCell = col.cell
                         col.cell = ({ getValue, row, column }: any) => {
@@ -95,12 +117,41 @@ const AiiTablePro = memo(
                             return displayValue
                         }
                     }
+                    // 处理固定列配置
+                    if (col.fixed) {
+                        if (col.fixed === 'left') {
+                            left.push(col.accessorKey)
+                        }
+                        if (col.fixed === 'right') {
+                            right.push(col.accessorKey)
+                        }
+                        setColumnPinningState({
+                            left,
+                            right,
+                        })
+                    }
+                    // 处理宽度配置
+                    if (col.width && !col.size) {
+                        if (typeof col.width === 'number') {
+                            col.size = col.width
+                            col.minSize = col.width
+                            col.maxSize = col.width
+                        } else if (typeof col.width === 'string' && col.width.endsWith('px')) {
+                            const width = parseInt(col.width.replace('px', ''))
+                            col.size = width
+                            col.minSize = width
+                            col.maxSize = width
+                        }
+                    }
                 })
 
                 // 添加行选择列
-                if (rowSelection?.enabled) {
+                if (rowSelection.enabled) {
                     const selectionColumn = {
                         id: 'select',
+                        size: 48,
+                        minSize: 48,
+                        maxSize: 48,
                         header: ({ table }: { table: Table<TableData> }) => (
                             <Checkbox
                                 checked={table.getIsAllRowsSelected()}
@@ -120,14 +171,20 @@ const AiiTablePro = memo(
                         ),
                         enableSorting: false,
                         enableColumnFilter: false,
+                        enableResizing: false,
+                        fixed: 'left',
                     }
                     cols.unshift(selectionColumn)
                 }
 
                 // 添加操作列
-                if (operations && operations.length > 0) {
+                if (operations && operations.length) {
+                    const operationWidth = operations.length > 2 ? 120 : 240
                     const operationColumn = {
                         id: 'operations',
+                        size: operationWidth,
+                        minSize: operationWidth,
+                        maxSize: operationWidth,
                         header: t('Action.Operate'),
                         cell: ({ row }: { row: any }) => {
                             return (
@@ -164,12 +221,14 @@ const AiiTablePro = memo(
                         },
                         enableSorting: false,
                         enableColumnFilter: false,
+                        enableResizing: false,
+                        fixed: 'right',
                     }
                     cols.push(operationColumn)
                 }
 
                 return cols
-            }, [columns, rowSelection?.enabled])
+            }, [columns, rowSelection?.enabled, operations, t])
 
             // 创建表格实例
             const table = useReactTable({
@@ -182,6 +241,7 @@ const AiiTablePro = memo(
                     rowSelection: rowSelectionState,
                     columnVisibility,
                     pagination: paginationState,
+                    columnPinning: columnPinningState,
                     expanded,
                 },
                 onSortingChange: setSorting,
@@ -348,7 +408,7 @@ const AiiTablePro = memo(
                             overflow: 'hidden',
                             position: 'sticky',
                             top: 55,
-                            zIndex: 11,
+                            zIndex: 'var(--z-table-batch-operation)',
                         }}
                         className="aii-table-batch-operation-row-container"
                     >
@@ -419,16 +479,63 @@ const AiiTablePro = memo(
                 )
             }
 
+            // 固定列阴影样式
+            const getCommonPinningStyles = (column: Column<any>): CSSProperties => {
+                const isPinned = column.getIsPinned()
+                const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left')
+                const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right')
+
+                // 使用状态中的阴影显示标志
+                const { showLeftShadow, showRightShadow } = shadowState
+
+                let boxShadow: string | undefined = undefined
+                let darkBoxShadow: string | undefined = undefined
+                if (isLastLeftPinnedColumn && showLeftShadow) {
+                    boxShadow = 'inset 10px 0 8px -8px rgba(0, 0, 0, 0.06)'
+                    darkBoxShadow = 'inset 10px 0 8px -8px rgba(253, 253, 253, 0.12)'
+                } else if (isFirstRightPinnedColumn && showRightShadow) {
+                    boxShadow = 'inset -10px 0 8px -8px rgba(0, 0, 0, 0.06)'
+                    darkBoxShadow = 'inset -10px 0 8px -8px rgba(253, 253, 253, 0.12)'
+                }
+
+                return {
+                    '--sticky-box-shadow': boxShadow || 'none',
+                    '--sticky-dark-box-shadow': darkBoxShadow || 'none',
+                    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+                    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+                    position: isPinned ? 'sticky' : 'static',
+                    // width: `${column.getSize()}px`,
+                    zIndex: isPinned ? 80 : 1,
+                    backgroundColor: isPinned ? 'inherit' : undefined,
+                } as React.CSSProperties
+            }
+
             // 表格渲染
             const renderGridTable = () => {
                 const headerGroups = table.getHeaderGroups()
                 const rows = table.getRowModel().rows
                 const columnCount = processedColumns.length
 
-                const hasSelection = rowSelection?.enabled
-                const gridTemplateColumns = hasSelection
-                    ? `48px repeat(${columnCount - 1}, 1fr)`
-                    : `repeat(${columnCount}, 1fr)`
+                // 计算每列的宽度
+                const getColumnWidths = () => {
+                    return table
+                        .getVisibleLeafColumns()
+                        .map((column) => {
+                            const size = column.getSize()
+                            const columnDef = column.columnDef as AiiColumnDef<TableData>
+
+                            // 对于有固定宽度的列（包括选择列、操作列和用户设置了width的列），直接返回像素值
+                            if (column.id === 'select' || column.id === 'operations' || columnDef.width) {
+                                return `${size}px`
+                            }
+
+                            // 对于没有设置宽度的列，使用实际的size值作为最小宽度，同时允许扩展
+                            return `minmax(${size}px, 1fr)`
+                        })
+                        .join(' ')
+                }
+
+                const gridTemplateColumns = getColumnWidths()
 
                 return (
                     <div
@@ -452,8 +559,15 @@ const AiiTablePro = memo(
                                     {headerGroup.headers.map((header) => (
                                         <div
                                             key={header.id}
-                                            className="aii-table-header-cell"
+                                            className={classNames(
+                                                'aii-table-header-cell',
+                                                header.column.getIsPinned() &&
+                                                    `sticky-header-${header.column.getIsPinned()}`,
+                                            )}
                                             data-column-id={header.column.id}
+                                            style={{
+                                                ...getCommonPinningStyles(header.column),
+                                            }}
                                         >
                                             <div className="aii-table-header-content">
                                                 <span>
@@ -497,6 +611,7 @@ const AiiTablePro = memo(
                         {renderBatchOperationRow()}
                         <AnimatePresence mode="wait">
                             <motion.div
+                                ref={tableBodyRef}
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: '100%' }}
                                 exit={{ opacity: 0, height: 0 }}
@@ -520,8 +635,15 @@ const AiiTablePro = memo(
                                             {row.getVisibleCells().map((cell) => (
                                                 <div
                                                     key={cell.id}
-                                                    className="aii-table-cell"
+                                                    className={classNames(
+                                                        'aii-table-cell',
+                                                        cell.column.getIsPinned() &&
+                                                            `sticky-${cell.column.getIsPinned()}`,
+                                                    )}
                                                     data-column-id={cell.column.id}
+                                                    style={{
+                                                        ...getCommonPinningStyles(cell.column),
+                                                    }}
                                                 >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </div>
@@ -566,6 +688,100 @@ const AiiTablePro = memo(
                 }),
                 [data, rowSelectionState, pagination, onRefresh],
             )
+
+            // 阴影状态管理
+            const [shadowState, setShadowState] = useState({
+                showLeftShadow: false,
+                showRightShadow: false,
+            })
+
+            // 防抖函数
+            const debounce = useCallback((func: Function, wait: number) => {
+                let timeout: NodeJS.Timeout
+                return function executedFunction(...args: any[]) {
+                    const later = () => {
+                        clearTimeout(timeout)
+                        func(...args)
+                    }
+                    clearTimeout(timeout)
+                    timeout = setTimeout(later, wait)
+                }
+            }, [])
+
+            // 节流函数
+            const throttle = useCallback((func: Function, limit: number) => {
+                let inThrottle: boolean
+                return function executedFunction(...args: any[]) {
+                    if (!inThrottle) {
+                        func(...args)
+                        inThrottle = true
+                        setTimeout(() => (inThrottle = false), limit)
+                    }
+                }
+            }, [])
+
+            // 滚动同步和固定列阴影检测 - 优化版本
+            useEffect(() => {
+                const tableBodyElement = tableBodyRef.current
+                const tableHeaderElement = tableHeaderRef.current
+                const tableContainer = tableContainerRef.current
+
+                if (!tableBodyElement || !tableHeaderElement || !tableContainer) return
+
+                const handleScrollAndShadow = () => {
+                    const scrollLeft = tableBodyElement.scrollLeft
+
+                    // 同步表头滚动
+                    tableHeaderElement.scrollLeft = scrollLeft
+
+                    // 检测是否需要显示固定列阴影
+                    const scrollWidth = tableBodyElement.scrollWidth
+                    const clientWidth = tableBodyElement.clientWidth
+                    const maxScrollLeft = scrollWidth - clientWidth
+
+                    // 左侧阴影：当向右滚动时显示
+                    const showLeftShadow = scrollLeft > 0
+                    // 右侧阴影：当表格内容超出容器且还能继续向右滚动时显示
+                    const showRightShadow = scrollWidth > clientWidth && scrollLeft < maxScrollLeft - 1
+
+                    // 更新阴影状态（只在状态真正改变时更新）
+                    setShadowState((prev) => {
+                        if (prev.showLeftShadow !== showLeftShadow || prev.showRightShadow !== showRightShadow) {
+                            return { showLeftShadow, showRightShadow }
+                        }
+                        return prev
+                    })
+
+                    // 同时设置 DOM 属性（用于其他可能的用途）
+                    tableContainer.setAttribute('data-scroll-left', showLeftShadow.toString())
+                    tableContainer.setAttribute('data-scroll-right', showRightShadow.toString())
+                }
+
+                const handleResize = debounce(() => {
+                    // 窗口大小变化时重新检测阴影状态
+                    handleScrollAndShadow()
+                }, 100)
+
+                // 使用节流优化滚动性能
+                const throttledScrollHandler = throttle(handleScrollAndShadow, 16) // 约60fps
+
+                // 添加事件监听器 - 同时监听表头和表体的滚动
+                tableBodyElement.addEventListener('scroll', throttledScrollHandler, { passive: true })
+                tableHeaderElement.addEventListener('scroll', throttledScrollHandler, { passive: true })
+                window.addEventListener('resize', handleResize, { passive: true })
+
+                // 初始化检测（使用requestAnimationFrame确保DOM完全渲染）
+                const initCheck = () => {
+                    requestAnimationFrame(handleScrollAndShadow)
+                }
+                initCheck()
+
+                return () => {
+                    tableBodyElement.removeEventListener('scroll', throttledScrollHandler)
+                    tableHeaderElement.removeEventListener('scroll', throttledScrollHandler)
+                    window.removeEventListener('resize', handleResize)
+                }
+            }, [debounce, throttle]) // 移除data和columns依赖，避免频繁重新绑定
 
             return (
                 <div className={`aii-table-pro ${className}`} style={style}>
