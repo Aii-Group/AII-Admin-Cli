@@ -170,13 +170,23 @@
     }
 
     .aii-table-sort-icons .anticon {
+        @apply !text-light-colorTextQuaternary dark:!text-dark-colorTextQuaternary;
         font-size: 10px;
-        color: #bfbfbf;
         height: 6px;
     }
 
     .aii-table-sort-icons .anticon.active {
-        @apply text-light-colorPrimary dark:text-dark-colorPrimary;
+        @apply !text-light-colorPrimary dark:!text-dark-colorPrimary;
+    }
+
+    .aii-table-sort-trigger {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        cursor: pointer;
+        z-index: 1;
     }
 
     .aii-table-filter-icon {
@@ -192,7 +202,7 @@
         flex-direction: column;
         height: 100%;
         position: relative;
-        overflow-x: scroll;
+        overflow-x: auto;
     }
 
     .aii-table-row {

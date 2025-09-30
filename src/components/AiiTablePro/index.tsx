@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button, Checkbox, Divider, Dropdown, Empty, Spin, Tooltip } from 'antd'
 
-import { Down, Left, MoreOne, Right } from '@icon-park/react'
+import { Down, Left, MoreOne, Right, UpOne, DownOne } from '@icon-park/react'
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import {
     Column,
@@ -97,6 +97,11 @@ const AiiTablePro = memo(
 
                 // 处理自定义配置
                 cols.forEach((col) => {
+                    // 设置默认的 enableSorting 为 false
+                    if (col.enableSorting === undefined) {
+                        col.enableSorting = false
+                    }
+
                     // 处理 ellipsis 配置
                     if (col.ellipsis) {
                         const originalCell = col.cell
@@ -141,6 +146,15 @@ const AiiTablePro = memo(
                             col.size = width
                             col.minSize = width
                             col.maxSize = width
+                        }
+                    }
+                    if (col.enableSorting) {
+                        col.sortingFn = (a: any, b: any) => {
+                            const valueA = a.getValue(col.accessorKey)
+                            const valueB = b.getValue(col.accessorKey)
+                            if (valueA < valueB) return -1
+                            if (valueA > valueB) return 1
+                            return 0
                         }
                     }
                 })
@@ -581,18 +595,16 @@ const AiiTablePro = memo(
                                                 {header.column.getCanSort() && (
                                                     <div className="aii-table-sort-icons">
                                                         <CaretUpOutlined
-                                                            className={
-                                                                header.column.getIsSorted() === 'asc'
-                                                                    ? 'sort-icon active'
-                                                                    : 'sort-icon'
-                                                            }
+                                                            className={classNames([
+                                                                'sort-up',
+                                                                header.column.getIsSorted() === 'asc' && 'active',
+                                                            ])}
                                                         />
                                                         <CaretDownOutlined
-                                                            className={
-                                                                header.column.getIsSorted() === 'desc'
-                                                                    ? 'sort-icon active'
-                                                                    : 'sort-icon'
-                                                            }
+                                                            className={classNames([
+                                                                'sort-down',
+                                                                header.column.getIsSorted() === 'desc' && 'active',
+                                                            ])}
                                                         />
                                                     </div>
                                                 )}
@@ -600,7 +612,14 @@ const AiiTablePro = memo(
                                             {header.column.getCanSort() && (
                                                 <div
                                                     className="aii-table-sort-trigger"
-                                                    onClick={header.column.getToggleSortingHandler()}
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        e.stopPropagation()
+                                                        const handler = header.column.getToggleSortingHandler()
+                                                        if (handler) {
+                                                            handler(e)
+                                                        }
+                                                    }}
                                                 />
                                             )}
                                         </div>

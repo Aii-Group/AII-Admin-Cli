@@ -101,13 +101,6 @@ export interface ColumnOrderingConfig {
     onColumnOrderChange?: OnChangeFn<ColumnOrderState>
 }
 
-// 列固定配置
-export interface ColumnPinningConfig {
-    enabled?: boolean
-    defaultColumnPinning?: ColumnPinningState
-    onColumnPinningChange?: OnChangeFn<ColumnPinningState>
-}
-
 // 行展开配置
 export interface RowExpandingConfig<TData extends TableData = TableData> {
     enabled?: boolean
@@ -136,20 +129,10 @@ export interface VirtualizationConfig {
     horizontal?: boolean
 }
 
-// 操作项接口
-export interface ActionItem {
-    key: string
-    label: string
-    icon?: React.ReactNode
-    type?: 'link' | 'text' | 'primary' | 'default' | 'dashed'
-    disabled?: boolean
-    onClick?: (record?: any, index?: number) => void
-}
-
 // 批量操作项接口
 export interface BatchActionItem extends Omit<ButtonProps, 'onClick'> {
     key: string
-    label: string
+    label?: string
     onClick?: (selectedRows: any[]) => void
 }
 
@@ -164,45 +147,8 @@ export interface ToolbarItem extends Omit<ButtonProps, 'onClick'> {
 export interface OperationItem<TData extends TableData = TableData> extends Omit<ButtonProps, 'onClick'> {
     key: string
     label?: string
-    fixed?: 'left' | 'right'
+    fixed?: 'left' | 'right' | boolean
     onClick?: (record: TData) => void
-}
-
-// 批量操作配置
-export interface BatchOperationConfig<TData extends TableData = TableData> {
-    enabled?: boolean
-    actions?: Array<{
-        key: string
-        label: string
-        icon?: React.ReactNode
-        onClick: (selectedRows: TData[], selectedRowKeys: string[]) => void
-        disabled?: boolean
-        danger?: boolean
-        confirm?: {
-            title: string
-            content?: string
-        }
-    }>
-}
-
-// 表格样式配置
-export interface TableStyleConfig {
-    size?: 'small' | 'middle' | 'large'
-    bordered?: boolean
-    striped?: boolean
-    hoverable?: boolean
-    sticky?: boolean | { offsetHeader?: number; offsetScroll?: number }
-    scroll?: { x?: number | string | true; y?: number | string }
-    tableLayout?: 'auto' | 'fixed'
-    className?: string
-    style?: React.CSSProperties
-    headerStyle?: React.CSSProperties
-    rowStyle?: React.CSSProperties | ((record: TableData, index: number) => React.CSSProperties)
-    cellStyle?: React.CSSProperties | ((value: any, record: TableData, index: number) => React.CSSProperties)
-    stripedRows?: boolean
-    hoverEffect?: boolean
-    gridLines?: boolean
-    compactMode?: boolean
 }
 
 // 滚动配置
@@ -293,35 +239,25 @@ export interface ToolbarProps extends ButtonProps {
 
 // 表格属性接口
 export interface AiiTableProProps<T extends TableData = TableData> {
+    // 数据
     data: T[]
+    // 列定义
     columns: AiiColumnDef<T>[]
+    // 加载状态
     loading?: boolean
-    rowKey?: string | ((record: T) => string)
-
-    // 分页相关
+    // 分页配置
     pagination?: PaginationConfig | false
-
     // 工具栏
     toolbar?: ToolbarItem[]
-
     // 操作列
     operations?: OperationItem[]
-
     // 行选择
     rowSelection?: RowSelectionConfig<T>
-
-    // 批量操作
-    onBatchDelete?: () => void
-    onBatchExport?: () => void
-    onOperationClick?: (key: string, record: any) => void
-
     // 其他属性
     className?: string
     style?: React.CSSProperties
     resizable?: boolean
     expandable?: ExpandableConfig
-    size?: 'small' | 'middle' | 'large'
-    bordered?: boolean
     showHeader?: boolean
     sticky?: StickyConfig
     scroll?: ScrollConfig
@@ -331,8 +267,6 @@ export interface AiiTableProProps<T extends TableData = TableData> {
     onRowSelectionChange?: (selectedRowKeys: React.Key[], selectedRows: T[]) => void
     onExpandedChange?: (expandedRowKeys: React.Key[]) => void
     onRefresh?: () => void
-    onExport?: () => void
-    onCustomAction?: (action: string, data?: any) => void
 }
 
 // 表格引用接口

@@ -40,13 +40,12 @@ const Basic: React.FC = () => {
             title: 'Name',
             accessorKey: 'name',
             cell: ({ getValue }: any) => <span className="text-light-colorPrimary">{getValue()}</span>,
-
+            enableSorting: true,
             fixed: 'left' as const,
         },
         {
             title: 'Age',
             accessorKey: 'age',
-
             fixed: 'left' as const,
         },
         {
@@ -65,6 +64,7 @@ const Basic: React.FC = () => {
         {
             title: 'Create Time',
             accessorKey: 'createTime',
+            enableSorting: true,
         },
     ]
 
@@ -117,14 +117,15 @@ const Basic: React.FC = () => {
                     columns={columns}
                     loading={loading}
                     pagination={{
-                        current: pagination.current,
-                        pageSize: pagination.pageSize,
-                        total: pagination.total,
+                        ...pagination,
                         onPageChange: (current: number) => {
                             onPageChange(current)
                         },
                         onPageSizeChange: (current: number, size: number) => onPageSizeChange(size),
                     }}
+                    // onSortingChange={(sorting) => {
+                    //     console.log('Sorting changed:', sorting)
+                    // }}
                     toolbar={[
                         {
                             key: 'create',
