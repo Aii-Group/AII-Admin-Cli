@@ -714,7 +714,20 @@ const AiiTablePro = memo(
                 showRightShadow: false,
             })
 
-            // 防抖函数
+            // 高性能节流函数 - 使用 requestAnimationFrame 确保最佳性能
+            const rafThrottle = useCallback((func: Function) => {
+                let rafId: number | null = null
+                return function executedFunction(...args: any[]) {
+                    if (rafId === null) {
+                        rafId = requestAnimationFrame(() => {
+                            func(...args)
+                            rafId = null
+                        })
+                    }
+                }
+            }, [])
+
+            // 防抖函数 - 用于窗口大小变化
             const debounce = useCallback((func: Function, wait: number) => {
                 let timeout: NodeJS.Timeout
                 return function executedFunction(...args: any[]) {
@@ -727,19 +740,7 @@ const AiiTablePro = memo(
                 }
             }, [])
 
-            // 节流函数
-            const throttle = useCallback((func: Function, limit: number) => {
-                let inThrottle: boolean
-                return function executedFunction(...args: any[]) {
-                    if (!inThrottle) {
-                        func(...args)
-                        inThrottle = true
-                        setTimeout(() => (inThrottle = false), limit)
-                    }
-                }
-            }, [])
-
-            // 滚动同步和固定列阴影检测 - 优化版本
+            // 滚动同步和固定列阴影检测 - 高性能版本
             useEffect(() => {
                 const tableBodyElement = tableBodyRef.current
                 const tableHeaderElement = tableHeaderRef.current
@@ -747,60 +748,87 @@ const AiiTablePro = memo(
 
                 if (!tableBodyElement || !tableHeaderElement || !tableContainer) return
 
-                const handleScrollAndShadow = () => {
+                // 缓存上一次的状态，避免不必要的更新
+                let lastScrollLeft = -1
+                let lastShadowState = { showLeftShadow: false, showRightShadow: false }
+
+                const handleScrollSync = () => {
                     const scrollLeft = tableBodyElement.scrollLeft
 
-                    // 同步表头滚动
-                    tableHeaderElement.scrollLeft = scrollLeft
+                    // 只有滚动位置真正改变时才同步表头
+                    if (scrollLeft !== lastScrollLeft) {
+                        tableHeaderElement.scrollLeft = scrollLeft
+                        lastScrollLeft = scrollLeft
+                    }
+                }
 
-                    // 检测是否需要显示固定列阴影
+                const handleShadowDetection = () => {
+                    const scrollLeft = tableBodyElement.scrollLeft
                     const scrollWidth = tableBodyElement.scrollWidth
                     const clientWidth = tableBodyElement.clientWidth
+
+                    // 提前计算，避免重复计算
+                    const hasHorizontalScroll = scrollWidth > clientWidth
+                    if (!hasHorizontalScroll) {
+                        // 如果没有水平滚动，直接设置为无阴影状态
+                        if (lastShadowState.showLeftShadow || lastShadowState.showRightShadow) {
+                            lastShadowState = { showLeftShadow: false, showRightShadow: false }
+                            setShadowState(lastShadowState)
+                            tableContainer.setAttribute('data-scroll-left', 'false')
+                            tableContainer.setAttribute('data-scroll-right', 'false')
+                        }
+                        return
+                    }
+
                     const maxScrollLeft = scrollWidth - clientWidth
 
                     // 左侧阴影：当向右滚动时显示
                     const showLeftShadow = scrollLeft > 0
                     // 右侧阴影：当表格内容超出容器且还能继续向右滚动时显示
-                    const showRightShadow = scrollWidth > clientWidth && scrollLeft < maxScrollLeft - 1
+                    const showRightShadow = scrollLeft < maxScrollLeft - 1
 
-                    // 更新阴影状态（只在状态真正改变时更新）
-                    setShadowState((prev) => {
-                        if (prev.showLeftShadow !== showLeftShadow || prev.showRightShadow !== showRightShadow) {
-                            return { showLeftShadow, showRightShadow }
-                        }
-                        return prev
-                    })
+                    // 只在阴影状态真正改变时更新
+                    if (
+                        lastShadowState.showLeftShadow !== showLeftShadow ||
+                        lastShadowState.showRightShadow !== showRightShadow
+                    ) {
+                        lastShadowState = { showLeftShadow, showRightShadow }
 
-                    // 同时设置 DOM 属性（用于其他可能的用途）
-                    tableContainer.setAttribute('data-scroll-left', showLeftShadow.toString())
-                    tableContainer.setAttribute('data-scroll-right', showRightShadow.toString())
+                        // 批量更新状态和DOM属性
+                        setShadowState(lastShadowState)
+                        tableContainer.setAttribute('data-scroll-left', showLeftShadow.toString())
+                        tableContainer.setAttribute('data-scroll-right', showRightShadow.toString())
+                    }
+                }
+
+                const handleScrollAndShadow = () => {
+                    handleScrollSync()
+                    handleShadowDetection()
                 }
 
                 const handleResize = debounce(() => {
                     // 窗口大小变化时重新检测阴影状态
-                    handleScrollAndShadow()
+                    handleShadowDetection()
                 }, 100)
 
-                // 使用节流优化滚动性能
-                const throttledScrollHandler = throttle(handleScrollAndShadow, 16) // 约60fps
+                // 使用 requestAnimationFrame 节流，确保最佳跟手性
+                const rafThrottledScrollHandler = rafThrottle(handleScrollAndShadow)
 
-                // 添加事件监听器 - 同时监听表头和表体的滚动
-                tableBodyElement.addEventListener('scroll', throttledScrollHandler, { passive: true })
-                tableHeaderElement.addEventListener('scroll', throttledScrollHandler, { passive: true })
+                // 只监听表体滚动，避免重复处理
+                tableBodyElement.addEventListener('scroll', rafThrottledScrollHandler, { passive: true })
                 window.addEventListener('resize', handleResize, { passive: true })
 
-                // 初始化检测（使用requestAnimationFrame确保DOM完全渲染）
+                // 初始化检测
                 const initCheck = () => {
-                    requestAnimationFrame(handleScrollAndShadow)
+                    requestAnimationFrame(handleShadowDetection)
                 }
                 initCheck()
 
                 return () => {
-                    tableBodyElement.removeEventListener('scroll', throttledScrollHandler)
-                    tableHeaderElement.removeEventListener('scroll', throttledScrollHandler)
+                    tableBodyElement.removeEventListener('scroll', rafThrottledScrollHandler)
                     window.removeEventListener('resize', handleResize)
                 }
-            }, [debounce, throttle]) // 移除data和columns依赖，避免频繁重新绑定
+            }, [rafThrottle, debounce])
 
             return (
                 <div className={`aii-table-pro ${className}`} style={style}>
