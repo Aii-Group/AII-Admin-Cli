@@ -344,3 +344,23 @@
         box-shadow: var(--sticky-dark-box-shadow);
     }
 }
+
+/* 展开按钮样式 */
+.aii-table-expand-btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.aii-table-expand-btn.expanded {
+    transform: rotate(180deg);
+}
+
+.aii-table-cell-with-expand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.aii-table-tree-indent {
+    display: inline-block;
+    width: 20px;
+}

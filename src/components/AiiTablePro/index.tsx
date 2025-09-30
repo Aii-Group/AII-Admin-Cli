@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button, Checkbox, Divider, Dropdown, Empty, Spin, Tooltip } from 'antd'
 
-import { Down, Left, MoreOne, Right, UpOne, DownOne } from '@icon-park/react'
+import { Down, Left, MoreOne, Right, Up } from '@icon-park/react'
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons'
 import {
     Column,
@@ -90,20 +90,65 @@ const AiiTablePro = memo(
             })
 
             // 处理列定义
+            // 检查数据是否具有树形结构
+            const hasTreeStructure = useMemo(() => {
+                return data.some((item) => item.children && Array.isArray(item.children) && item.children.length > 0)
+            }, [data])
+
             const processedColumns = useMemo(() => {
                 const cols: any[] = [...columns]
                 const left: string[] = ['select']
                 const right: string[] = ['operations']
 
                 // 处理自定义配置
-                cols.forEach((col) => {
+                cols.forEach((col, index) => {
                     // 设置默认的 enableSorting 为 false
                     if (col.enableSorting === undefined) {
                         col.enableSorting = false
                     }
 
+                    // 只在数据具有树形结构时，为第一列添加展开功能
+                    if (index === 0 && hasTreeStructure) {
+                        const originalCell = col.cell
+                        col.cell = ({ getValue, row, column }: any) => {
+                            const value = getValue()
+                            const displayValue = originalCell ? originalCell({ getValue, row, column }) : value
+                            const canExpand = row.getCanExpand()
+                            const isExpanded = row.getIsExpanded()
+                            const depth = row.depth || 0
+
+                            return (
+                                <div
+                                    className="aii-table-cell-with-expand"
+                                    style={{
+                                        paddingLeft: `${depth * 20}px`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                    }}
+                                >
+                                    {canExpand ? (
+                                        <Button
+                                            className={classNames(['aii-table-expand-btn', isExpanded && 'expanded'])}
+                                            variant="link"
+                                            color="default"
+                                            icon={<Up />}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                row.toggleExpanded()
+                                            }}
+                                        />
+                                    ) : (
+                                        <div style={{ width: '16px', height: '16px' }} />
+                                    )}
+                                    <span>{displayValue}</span>
+                                </div>
+                            )
+                        }
+                    }
+
                     // 处理 ellipsis 配置
-                    if (col.ellipsis) {
+                    if (col.ellipsis && !hasTreeStructure) {
                         const originalCell = col.cell
                         col.cell = ({ getValue, row, column }: any) => {
                             const value = getValue()
@@ -242,7 +287,7 @@ const AiiTablePro = memo(
                 }
 
                 return cols
-            }, [columns, rowSelection?.enabled, operations, t])
+            }, [columns, rowSelection?.enabled, operations, t, hasTreeStructure])
 
             // 创建表格实例
             const table = useReactTable({
@@ -270,8 +315,10 @@ const AiiTablePro = memo(
                 getFilteredRowModel: getFilteredRowModel(),
                 getPaginationRowModel: getPaginationRowModel(),
                 getExpandedRowModel: getExpandedRowModel(),
+                getSubRows: (row) => row.children,
                 manualPagination: !!pagination,
                 pageCount: pagination ? Math.ceil((pagination.total || 0) / paginationState.pageSize) : -1,
+                paginateExpandedRows: false,
             })
 
             // 同步外部状态变化
@@ -628,27 +675,51 @@ const AiiTablePro = memo(
                             ))}
                         </div>
                         {renderBatchOperationRow()}
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                ref={tableBodyRef}
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: '100%' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ ease: 'easeInOut', duration: 0.3 }}
-                                className="aii-table-body"
-                            >
-                                {rows.length === 0 ? (
-                                    <div className="aii-table-empty">
-                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                                    </div>
-                                ) : (
-                                    rows.map((row) => (
+                        <motion.div
+                            ref={tableBodyRef}
+                            className="aii-table-body"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{
+                                opacity: 1,
+                                height: 'auto',
+                                transition: {
+                                    duration: 0.4,
+                                    ease: 'easeInOut',
+                                },
+                            }}
+                            layout
+                        >
+                            {rows.length === 0 ? (
+                                <div className="aii-table-empty">
+                                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                </div>
+                            ) : (
+                                <AnimatePresence initial={false}>
+                                    {rows.map((row) => (
                                         <motion.div
+                                            layout
                                             initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: 'auto' }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{ ease: 'easeInOut', duration: 0.3 }}
-                                            key={row.id}
+                                            animate={{
+                                                opacity: 1,
+                                                height: 'auto',
+                                                transition: {
+                                                    duration: 0.3,
+                                                    ease: 'easeInOut',
+                                                    height: { duration: 0.3 },
+                                                    opacity: { duration: 0.2 },
+                                                },
+                                            }}
+                                            exit={{
+                                                opacity: 0,
+                                                height: 0,
+                                                transition: {
+                                                    duration: 0.25,
+                                                    ease: 'easeInOut',
+                                                    height: { duration: 0.25, delay: 0.05 },
+                                                    opacity: { duration: 0.15 },
+                                                },
+                                            }}
+                                            key={`row-${row.id}-${row.index}`}
                                             className={`aii-table-row ${row.getIsSelected() ? 'selected' : ''}`}
                                         >
                                             {row.getVisibleCells().map((cell) => (
@@ -668,10 +739,10 @@ const AiiTablePro = memo(
                                                 </div>
                                             ))}
                                         </motion.div>
-                                    ))
-                                )}
-                            </motion.div>
-                        </AnimatePresence>
+                                    ))}
+                                </AnimatePresence>
+                            )}
+                        </motion.div>
                     </div>
                 )
             }
