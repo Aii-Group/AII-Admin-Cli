@@ -55,7 +55,7 @@
     }
 
     .header {
-        @apply flex items-center justify-between box-border w-full h-60 px-24 py-10 bg-light-colorBgContainer dark:bg-dark-colorBgContainer dark:border-b dark:border-dark-colorBorder shadow-boxShadowDrawerDown;
+        @apply flex items-center justify-between box-border w-full h-60 px-24 py-10 dark:border-b dark:border-dark-colorBorder;
     }
 
     .main {

@@ -192,56 +192,100 @@ pnpm format
 
 ## 10. HTTP 请求规范
 
-### 10.1 服务使用
+### 10.1 API 客户端生成
 
-- **优先使用封装的 HTTP 服务**，通过 `commonService` 实例调用 API，禁止直接使用 axios
-- 导入方式：`import commonService from '@/utils/http'`
-- 基础配置已包含：baseURL 为 `/`，超时时间 10000ms，自动携带 credentials
+- **使用 swagger-to-ts-axios 工具自动生成 API 客户端**，基于 Swagger/OpenAPI 规范
+- 配置文件：`mock-swagger.config.json`，包含输入源、输出目录、baseURL 等配置
+- 生成命令：`pnpm swagger-mock`，会在 `/src/mockClient` 目录生成类型定义和 API 客户端
+- 生成的文件包括：
+    - `types.ts`：API 相关的 TypeScript 类型定义
+    - `api.ts`：API 客户端类和方法
+    - `index.ts`：统一导出入口
 
-### 10.2 请求方法
+### 10.2 服务使用
 
-- 使用封装的请求方法：`get`/`post`/`put`/`delete`/`request`
-- 参数传递规范：
+- **优先使用生成的 API 客户端**，通过 `apiClient` 实例调用 API
+- 导入方式：`import apiClient from '@/utils/http'`
+- 基础配置：baseURL 为 `/api/v1`，超时时间 10000ms，支持自定义拦截器
+
+### 10.3 请求方法
+
+- 使用生成的 API 方法，具有完整的类型安全：
 
     ```typescript
-    // GET 请求
-    commonService.get<T>('/api/user', { id: 1 })
+    // 用户登录
+    const loginData = await apiClient.login({
+        username: 'admin',
+        password: '123456',
+    })
 
-    // POST 请求
-    commonService.post<T>('/api/user', { name: 'test' })
+    // 获取表格数据
+    const tableData = await apiClient.getTableData({
+        current: 1,
+        pageSize: 10,
+        username: 'test',
+    })
+
+    // 获取菜单列表
+    const menuData = await apiClient.getMenu()
     ```
 
-- 所有请求必须指定返回类型 `T`，确保类型安全
+- 所有方法都有完整的 TypeScript 类型支持，包括请求参数和响应数据
 
-### 10.3 拦截器处理
+### 10.4 自定义拦截器
 
-- **禁止修改默认拦截器逻辑**，如需扩展创建新的服务类继承 `HttpService`
-- 请求拦截器自动处理：
-    - 添加 `token` 请求头（从用户状态获取）
+- 项目在 `/src/utils/http/index.ts` 中配置了自定义拦截器
+- **请求拦截器**自动处理：
     - 启动 NProgress 进度条
-    - 取消重复请求
-- 响应拦截器自动处理：
+    - 添加 `token` 请求头（从用户状态获取）
+    - 错误时显示错误信息并关闭进度条
+- **响应拦截器**自动处理：
     - 关闭 NProgress 进度条
-    - 移除已完成请求的取消令牌
-    - 统一错误提示（通过 antd message）
-
-### 10.4 请求取消机制
-
-- 系统自动取消重复请求（相同 URL、方法和参数）
-- 如需允许重复请求，在请求配置中添加 `ignoreCancel: true`
-- 原理：使用 `AbortController` 实现，具体参见 `AxiosCanceler` 类
+    - 处理文件下载响应（支持多种文件类型）
+    - 业务成功判断（`code === ResultEnum.SUCCESS`）
+    - 错误时显示错误信息
 
 ### 10.5 错误处理
 
-- HTTP 状态码处理：通过 `checkStatus` 函数统一处理（401/403/404 等状态）
-- 业务错误码处理：
-    - 成功：`code === ResultEnum.SUCCESS` (默认 200)
-    - 登录失效：`code === ResultEnum.OVERDUE` (599)，自动处理登出逻辑
-    - 其他错误：自动显示 `data.msg` 错误信息
+- **HTTP 状态码处理**：通过 `checkStatus` 函数统一处理
+    - 401：未授权，自动跳转登录页（非微应用环境）或发送全局数据（微应用环境）
+    - 403：禁止访问
+    - 404：资源不存在
+    - 500：服务器内部错误
+    - 其他状态码：显示对应的国际化错误信息
+- **业务错误码处理**：
+    - 成功：`code === ResultEnum.SUCCESS`
+    - 其他错误：显示 `response.data.message` 错误信息
 
 ### 10.6 类型定义
 
-- 必须使用已定义的响应类型：
+- **使用生成的类型定义**，位于 `/src/mockClient/types.ts`：
+
+    ```typescript
+    // API 响应基础类型
+    interface BaseResponse {
+        code: number
+        msg: string
+        success: boolean
+        timestamp?: string
+    }
+
+    // 登录请求参数
+    interface LoginRequest {
+        username: string
+        password: string
+    }
+
+    // 表格查询参数
+    interface TableQueryParams {
+        current?: number
+        pageSize?: number
+        username?: string
+        // ... 其他字段
+    }
+    ```
+
+- **HTTP 工具类型**，位于 `/src/utils/http/interface/index.ts`：
     ```typescript
     // 基础响应
     interface Result {
@@ -261,13 +305,27 @@ pnpm format
         total: number
     }
     ```
-- 请求参数建议使用接口定义，确保类型校验
 
-### 10.7 特殊场景处理
+### 10.7 文件下载处理
 
-- 文件上传/下载：使用 `request` 方法并指定 `responseType: 'blob'`
-- Token 刷新：通过 `RefresherService` 处理，具体场景参见类实现
-- 微应用环境：自动禁用 credentials（通过 `isMicroAppEnv` 判断）
+- **自动文件下载**：响应拦截器自动检测文件类型并触发下载
+- 支持的文件类型：Excel、PDF、ZIP、Word、PowerPoint、CSV、图片等
+- 下载逻辑位于 `/src/utils/http/helper/downloadHelper.ts`
+- 自动从响应头提取文件名，支持中文文件名
+
+### 10.8 特殊场景处理
+
+- **微应用环境**：通过 `isMicroAppEnv` 判断，自动禁用 credentials
+- **国际化错误信息**：错误提示支持中英文切换
+- **进度条显示**：使用 NProgress 显示请求进度
+- **全局消息提示**：通过 `window.$message` 显示成功/错误信息
+
+### 10.9 开发流程
+
+1. **更新 Swagger 文档**：修改 `/mock/swagger.json` 文件
+2. **重新生成客户端**：运行 `pnpm swagger-mock` 命令
+3. **使用生成的方法**：导入并调用生成的 API 方法
+4. **类型安全**：享受完整的 TypeScript 类型检查和智能提示
 
 ## 11. 国际化
 

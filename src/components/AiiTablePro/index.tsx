@@ -33,6 +33,7 @@ import {
     useReactTable,
     VisibilityState,
     ColumnPinningState,
+    ColumnSizingState,
 } from '@tanstack/react-table'
 
 import { AiiTableProProps, AiiTableProRef, TableData, AiiColumnDef } from './AiiTablePro.types'
@@ -74,6 +75,7 @@ const AiiTablePro = memo(
             const [rowSelectionState, setRowSelectionState] = useState<RowSelectionState>({})
             const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
             const [expanded, setExpanded] = useState<ExpandedState>({})
+            const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({})
             const [columnPinningState, setColumnPinningState] = useState<ColumnPinningState>({
                 left: [],
                 right: [],
@@ -97,14 +99,19 @@ const AiiTablePro = memo(
 
             const processedColumns = useMemo(() => {
                 const cols: any[] = [...columns]
-                const left: string[] = ['select']
-                const right: string[] = ['operations']
+                const left: string[] = []
+                const right: string[] = []
 
                 // 处理自定义配置
                 cols.forEach((col, index) => {
                     // 设置默认的 enableSorting 为 false
                     if (col.enableSorting === undefined) {
                         col.enableSorting = false
+                    }
+
+                    // 设置默认的 enableResizing 为 true，启用列宽调整
+                    if (col.enableResizing === undefined) {
+                        col.enableResizing = true
                     }
 
                     // 只在数据具有树形结构时，为第一列添加展开功能
@@ -175,10 +182,6 @@ const AiiTablePro = memo(
                         if (col.fixed === 'right') {
                             right.push(col.accessorKey)
                         }
-                        setColumnPinningState({
-                            left,
-                            right,
-                        })
                     }
                     // 处理宽度配置
                     if (col.width && !col.size) {
@@ -230,10 +233,11 @@ const AiiTablePro = memo(
                         ),
                         enableSorting: false,
                         enableColumnFilter: false,
-                        enableResizing: false,
+                        enableResizing: true,
                         fixed: 'left',
                     }
                     cols.unshift(selectionColumn)
+                    left.push('select')
                 }
 
                 // 添加操作列
@@ -280,11 +284,18 @@ const AiiTablePro = memo(
                         },
                         enableSorting: false,
                         enableColumnFilter: false,
-                        enableResizing: false,
+                        enableResizing: true,
                         fixed: 'right',
                     }
                     cols.push(operationColumn)
+                    right.push('operations')
                 }
+
+                // 设置列固定状态
+                setColumnPinningState({
+                    left,
+                    right,
+                })
 
                 return cols
             }, [columns, rowSelection?.enabled, operations, t, hasTreeStructure])
@@ -301,6 +312,7 @@ const AiiTablePro = memo(
                     columnVisibility,
                     pagination: paginationState,
                     columnPinning: columnPinningState,
+                    columnSizing,
                     expanded,
                 },
                 onSortingChange: setSorting,
@@ -309,6 +321,7 @@ const AiiTablePro = memo(
                 onRowSelectionChange: setRowSelectionState,
                 onColumnVisibilityChange: setColumnVisibility,
                 onPaginationChange: setPaginationState,
+                onColumnSizingChange: setColumnSizing,
                 onExpandedChange: setExpanded,
                 getCoreRowModel: getCoreRowModel(),
                 getSortedRowModel: getSortedRowModel(),
@@ -319,6 +332,9 @@ const AiiTablePro = memo(
                 manualPagination: !!pagination,
                 pageCount: pagination ? Math.ceil((pagination.total || 0) / paginationState.pageSize) : -1,
                 paginateExpandedRows: false,
+                // 启用列宽调整功能
+                enableColumnResizing: true,
+                columnResizeMode: 'onChange',
             })
 
             // 同步外部状态变化
@@ -564,7 +580,7 @@ const AiiTablePro = memo(
                     '--sticky-dark-box-shadow': darkBoxShadow || 'none',
                     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
                     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
-                    position: isPinned ? 'sticky' : 'static',
+                    position: isPinned ? 'sticky' : 'relative',
                     // width: `${column.getSize()}px`,
                     zIndex: isPinned ? 80 : 1,
                     backgroundColor: isPinned ? 'inherit' : undefined,
@@ -590,8 +606,17 @@ const AiiTablePro = memo(
                                 return `${size}px`
                             }
 
-                            // 对于没有设置宽度的列，使用实际的size值作为最小宽度，同时允许扩展
-                            return `minmax(${size}px, 1fr)`
+                            // 对于可调整宽度的列，如果用户已调整过宽度，使用调整后的size值
+                            // 否则使用 minmax 实现响应式布局，允许列平分剩余空间
+                            const isResized = columnSizing[column.id] !== undefined
+                            if (isResized) {
+                                // 确保调整后的宽度不小于列的最小宽度
+                                const minSize = column.columnDef.minSize || 120
+                                const adjustedSize = Math.max(size, minSize)
+                                return `${adjustedSize}px`
+                            } else {
+                                return `minmax(${size}px, 1fr)`
+                            }
                         })
                         .join(' ')
                 }
@@ -667,6 +692,15 @@ const AiiTablePro = memo(
                                                             handler(e)
                                                         }
                                                     }}
+                                                />
+                                            )}
+                                            {header.column.getCanResize() && (
+                                                <div
+                                                    className={classNames('resizer', {
+                                                        isResizing: header.column.getIsResizing(),
+                                                    })}
+                                                    onMouseDown={header.getResizeHandler()}
+                                                    onTouchStart={header.getResizeHandler()}
                                                 />
                                             )}
                                         </div>

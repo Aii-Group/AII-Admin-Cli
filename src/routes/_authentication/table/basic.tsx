@@ -186,12 +186,10 @@ const Basic: React.FC = () => {
             accessorKey: 'name',
             cell: ({ getValue }: any) => <span>{getValue()}</span>,
             enableSorting: true,
-            fixed: 'left' as const,
         },
         {
             title: 'Age',
             accessorKey: 'age',
-            fixed: 'left' as const,
         },
         {
             title: 'Address',
@@ -271,20 +269,13 @@ const Basic: React.FC = () => {
                     data={useTreeData ? treeData : (dataSource as any[])}
                     columns={columns}
                     loading={loading}
-                    pagination={
-                        useTreeData
-                            ? false
-                            : {
-                                  ...pagination,
-                                  onPageChange: (current: number) => {
-                                      onPageChange(current)
-                                  },
-                                  onPageSizeChange: (current: number, size: number) => onPageSizeChange(size),
-                              }
-                    }
-                    // onSortingChange={(sorting) => {
-                    //     console.log('Sorting changed:', sorting)
-                    // }}
+                    pagination={{
+                        ...pagination,
+                        onPageChange: (current: number) => {
+                            onPageChange(current)
+                        },
+                        onPageSizeChange: (current: number, size: number) => onPageSizeChange(size),
+                    }}
                     toolbar={[
                         {
                             key: 'create',
@@ -324,36 +315,36 @@ const Basic: React.FC = () => {
                         },
                     ]}
                     operations={operations}
-                    // rowSelection={{
-                    //     enabled: false,
-                    //     batchActions: [
-                    //         {
-                    //             key: 'delete',
-                    //             label: '批量删除',
-                    //             danger: true,
-                    //             icon: <DeleteOutlined />,
-                    //             onClick: (selectedRows) => {
-                    //                 console.log('批量删除:', selectedRows)
-                    //             },
-                    //         },
-                    //         {
-                    //             key: 'export',
-                    //             label: '批量导出',
-                    //             icon: <ExportOutlined />,
-                    //             onClick: (selectedRows) => {
-                    //                 console.log('批量导出:', selectedRows)
-                    //             },
-                    //         },
-                    //         {
-                    //             key: 'more',
-                    //             label: '批量操作',
-                    //             icon: <ExportOutlined />,
-                    //             onClick: (selectedRows) => {
-                    //                 console.log('批量操作:', selectedRows)
-                    //             },
-                    //         },
-                    //     ],
-                    // }}
+                    rowSelection={{
+                        enabled: true,
+                        batchActions: [
+                            {
+                                key: 'delete',
+                                label: '批量删除',
+                                danger: true,
+                                icon: <DeleteOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量删除:', selectedRows)
+                                },
+                            },
+                            {
+                                key: 'export',
+                                label: '批量导出',
+                                icon: <ExportOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量导出:', selectedRows)
+                                },
+                            },
+                            {
+                                key: 'more',
+                                label: '批量操作',
+                                icon: <ExportOutlined />,
+                                onClick: (selectedRows) => {
+                                    console.log('批量操作:', selectedRows)
+                                },
+                            },
+                        ],
+                    }}
                 />
             </div>
         </>

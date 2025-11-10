@@ -112,13 +112,37 @@
         @apply flex items-center relative h-55 px-16 py-12 font-bold shrink-0 box-border text-light-colorText dark:text-dark-colorText border-b border-light-colorBorderSecondary dark:border-dark-colorBorderSecondary;
     }
 
+    /* 列宽调整手柄样式 */
+    .aii-table-header-cell .resizer {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        width: 5px;
+        background: transparent;
+        cursor: col-resize;
+        user-select: none;
+        touch-action: none;
+        z-index: 10;
+    }
+
+    .aii-table-header-cell .resizer:hover {
+        @apply bg-light-colorPrimary dark:bg-dark-colorPrimary;
+        opacity: 0.3;
+    }
+
+    .aii-table-header-cell .resizer.isResizing {
+        @apply bg-light-colorPrimary dark:bg-dark-colorPrimary;
+        opacity: 0.6;
+    }
+
     .aii-table-cell {
         @apply relative flex items-center p-16 box-border text-light-colorText dark:text-dark-colorText !border-b border-light-colorBorderSecondary dark:!border-dark-colorBorderSecondary;
     }
 
     .aii-table-header-cell::after {
-        @apply bg-light-colorBorderSecondary dark:bg-dark-colorBorderSecondary;
-        position: absolute;
+        @apply !bg-light-colorBorderSecondary dark:!bg-dark-colorBorderSecondary;
+        position: absolute !important;
         top: 50%;
         inset-inline-end: 0;
         width: 1px;
@@ -126,6 +150,7 @@
         transform: translateY(-50%);
         transition: background-color 0.3s;
         content: '';
+        background: #000;
     }
 
     .aii-table-header-cell:last-child::after {

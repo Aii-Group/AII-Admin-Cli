@@ -7,6 +7,7 @@ import AppProvider from '@/components/AppProvider'
 import { DrawerProvider } from '@/components/AiiDrawer'
 import { RouterProvider } from '@tanstack/react-router'
 import { DEFAULT_ICON_CONFIGS, IconProvider } from '@icon-park/react'
+import { components } from './styleToken'
 
 import useTheme from './hooks/theme.hooks'
 import useLanguage from './hooks/language.hooks'
@@ -39,6 +40,7 @@ function App() {
             theme={{
                 token: { ...color, borderRadius: 8 },
                 algorithm: themeAlgorithm,
+                components,
             }}
         >
             <AppProvider>

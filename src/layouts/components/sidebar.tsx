@@ -35,6 +35,7 @@ const Sidebar: React.FC = () => {
                     height: '100%',
                     overflowY: 'auto',
                     borderRadius: '8px',
+                    background: 'transparent',
                 }}
                 inlineCollapsed={collapsed}
                 selectedKeys={selectedKeys}
@@ -44,10 +45,10 @@ const Sidebar: React.FC = () => {
                 mode="inline"
                 items={menuItems}
             />
-            <div
+            {/* <div
                 className={`collapse-btn ${collapsed ? 'collapse-btn-fold' : 'collapse-btn-expand'}`}
                 onClick={toggleCollapsed}
-            ></div>
+            ></div> */}
         </div>
     )
 }
