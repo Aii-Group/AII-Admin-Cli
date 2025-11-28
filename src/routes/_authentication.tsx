@@ -21,11 +21,7 @@ export const Route = createFileRoute('/_authentication')({
         return <Layouts />
     },
     beforeLoad: ({ context, matches, location }) => {
-        const { permissions, token } = context
-        if (!token) throw redirect({ to: '/login' })
-        const code = matches.find((item) => item.pathname === location.pathname)?.staticData.code
-        if (permissions && permissions.length > 0) {
-            if (code !== 'Iframe' && !permissions.includes(code)) throw redirect({ to: '/403' })
-        }
+        // 根据需求自定义 throw redirect({ to: xxx })
+        console.log('<router beforeLoad>', context, matches, location)
     },
 })

@@ -29,16 +29,13 @@ body {
 
 body,
 .fullscreen.fullscreen-enabled {
-    /* background-color: var(--background-light); */
+    background-color: var(--background-light);
     color: var(--text-light);
-    background: url('./assets/png/bg.png') no-repeat center center fixed;
-    background-size: 100% 100%;
 }
 
 .dark body,
 .dark .fullscreen.fullscreen-enabled {
     background-color: var(--background-dark);
-    background-image: none;
     color: var(--text-dark);
 }
 /*! scopecss-enable */

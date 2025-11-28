@@ -1,3 +1,8 @@
+/**
+ * @Alpha - This API is still in development and may change in the future.
+ * @description - This is the Alpha version of the AiiTablePro component.
+ */
+
 import { useEffect, useState } from 'react'
 
 import { DeleteOutlined, ExportOutlined } from '@ant-design/icons'

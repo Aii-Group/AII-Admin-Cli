@@ -1,6 +1,8 @@
 System:
     System_Name: 'Admin Cli'
     Welcome: 'Welcome'
+    zh: 'Chinese'
+    en: 'English'
 
 Menu:
     Dashboard: 'Dashboard'

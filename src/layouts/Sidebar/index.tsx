@@ -27,7 +27,7 @@ const Sidebar: React.FC = () => {
     }, [menu, location.pathname, collapsed])
 
     return (
-        <div className="sidebar-inline">
+        <div className="relative h-[calc(100vh-80px)] box-border rounded-borderRadiusLG dark:!border dark:!border-dark-colorBorder">
             <Menu
                 className="!border-0"
                 style={{
@@ -46,7 +46,11 @@ const Sidebar: React.FC = () => {
                 items={menuItems}
             />
             {/* <div
-                className={`collapse-btn ${collapsed ? 'collapse-btn-fold' : 'collapse-btn-expand'}`}
+                className={`absolute w-6 h-100 top-1/2 -right-9 !-translate-y-1/2 cursor-pointer z-[50] before:content-[''] before:absolute before:-left-1 before:w-6 before:h-50 before:rounded-[3px] before:bg-light-colorBorder dark:before:!bg-dark-colorBorder before:shadow-xl before:transform before:rotate-[0] before:transition-all before:duration-300 before:ease-in-out before:top-2 after:content-[''] after:absolute after:-left-1 after:w-6 after:h-50 after:rounded-[3px] after:bg-light-colorBorder dark:after:!bg-dark-colorBorder after:shadow-xl after:transform after:rotate-[0] after:transition-all after:duration-300 after:ease-in-out after:bottom-2 ${
+                    collapsed
+                        ? 'hover:after:transform hover:after:rotate-[10deg] hover:after:origin-center hover:after:transition-all hover:after:duration-300 hover:after:ease-in-out hover:before:transform hover:before:-rotate-[10deg] hover:before:origin-center hover:before:transition-all hover:before:duration-300 hover:before:ease-in-out'
+                        : 'hover:before:transform hover:before:rotate-[10deg] hover:before:origin-center hover:before:transition-all hover:before:duration-300 hover:before:ease-in-out hover:after:transform hover:after:-rotate-[10deg] hover:after:origin-center hover:after:transition-all hover:after:duration-300 hover:after:ease-in-out'
+                }`}
                 onClick={toggleCollapsed}
             ></div> */}
         </div>

@@ -129,7 +129,10 @@ const TabBar: React.FC = () => {
     }
 
     return (
-        <div ref={tabBarRef} className="tab-bar overflow-x-auto whitespace-nowrap">
+        <div
+            ref={tabBarRef}
+            className="w-full px-4 mb-10 py-4 h-48 flex flex-nowrap rounded-borderRadiusLG bg-light-colorBgContainer dark:!bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder overflow-x-auto whitespace-nowrap"
+        >
             {tabs.map((tab, index) => {
                 return (
                     <Dropdown
@@ -155,7 +158,11 @@ const TabBar: React.FC = () => {
                                         tabRefs.current[tab.path] = el
                                     }
                                 }}
-                                className={`tab inline-block ${tab.path === location.pathname ? ' tab-active' : ''} `}
+                                className={`w-full h-full leading-[40px] box-border px-16 relative cursor-pointer rounded-tl-[8px] rounded-tr-[8px] transition-all duration-300 ease-in-out flex-shrink-0 whitespace-nowrap inline-block ${
+                                    tab.path === location.pathname
+                                        ? "text-light-colorPrimary dark:!text-dark-colorPrimary border-b-light-colorPrimary dark:!border-b-dark-colorPrimary bg-light-colorPrimaryBg dark:!bg-dark-colorPrimaryBg before:content-[''] before:absolute before:bottom-0 before:h-2 before:bg-light-colorPrimary dark:before:!bg-dark-colorPrimary before:w-[calc(50%)] before:transition-all before:duration-300 before:ease-in-out before:left-1/2 before:origin-right after:content-[''] after:absolute after:bottom-0 after:h-2 after:bg-light-colorPrimary dark:after:!bg-dark-colorPrimary after:w-[calc(50%)] after:transition-all after:duration-300 after:ease-in-out after:right-1/2 after:origin-left"
+                                        : "before:content-[''] before:absolute before:bottom-0 before:h-2 before:w-0 before:bg-transparent before:transition-all before:duration-300 before:ease-in-out before:left-1/2 after:content-[''] after:absolute after:bottom-0 after:h-2 after:w-0 after:bg-transparent after:transition-all after:duration-300 after:ease-in-out after:right-1/2"
+                                } hover:text-light-colorPrimary dark:hover:!text-dark-colorPrimary`}
                                 onContextMenu={(e) => {
                                     e.preventDefault()
                                     setContextMenuTab(tab)
@@ -165,7 +172,7 @@ const TabBar: React.FC = () => {
                                 <span className="px-10">{t(`Menu.${tab.code}`)}</span>
                                 {tab.closeable && (
                                     <CloseOutlined
-                                        className="tab-close-btn"
+                                        className="w-0 h-0 transform origin-center transition-all duration-300 ease-in-out hover:w-14 hover:h-14"
                                         onClick={(event) => {
                                             event.preventDefault()
                                             event.stopPropagation()

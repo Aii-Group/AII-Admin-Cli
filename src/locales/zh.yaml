@@ -1,6 +1,8 @@
 System:
     System_Name: '管理系统'
     Welcome: '登录'
+    zh: '中文'
+    en: '英文'
 
 Menu:
     Dashboard: '首页'

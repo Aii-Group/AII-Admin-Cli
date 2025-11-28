@@ -23,10 +23,6 @@ const IframePage: React.FC = () => {
     }
 
     return (
-        <iframe
-            src={decodedSrc}
-            style={{ width: '100%', height: 'calc(100vh - 138px)', border: 'none' }}
-            title="External Content"
-        />
+        <iframe src={decodedSrc} style={{ width: '100%', height: '100%', border: 'none' }} title="External Content" />
     )
 }

@@ -71,19 +71,27 @@ const Login: React.FC = () => {
         }
     }
     return (
-        <div className="login">
-            <div className="login-center-box">
-                <div className="login-banner">
-                    <div className="system-logo">
-                        <img src={Logo} />
-                        <span>{t('System.System_Name')}</span>
+        <div className="w-full min-w-960 h-[100vh] flex">
+            <div
+                className="w-900 h-480 flex gap-10 m-auto rounded-[40px] bg-white dark:!bg-dark-colorBgContainer"
+                style={{
+                    boxShadow:
+                        theme === 'dark'
+                            ? '-20px 20px 60px #23272a, 20px -20px 60px #2d3236'
+                            : '-20px 20px 60px #cbcfd1, 20px -20px 60px #ffffff',
+                }}
+            >
+                <div className="w-500 box-border">
+                    <div className="absolute top-16 left-16 flex items-center">
+                        <img src={Logo} className="w-36 h-36" />
+                        <span className="text-24 font-bold px-16">{t('System.System_Name')}</span>
                     </div>
-                    <div className="lottie-wrapper">
+                    <div className="w-full h-full p-40 bg-slate-100 dark:!bg-black rounded-[40px]">
                         <DotLottieReact src="/banner.json" autoplay loop />
                     </div>
                 </div>
-                <div className="login-form">
-                    <div className="setting">
+                <div className="w-400 box-border m-auto pr-10">
+                    <div className="absolute top-16 right-16">
                         <Button
                             type="text"
                             icon={theme === 'light' ? <SunOne /> : <Moon />}
@@ -91,12 +99,12 @@ const Login: React.FC = () => {
                         />
                         <Button type="text" icon={<Earth />} onClick={onChangeLanguage} />
                     </div>
-                    <div className="login-form-title">{t('System.Welcome')}</div>
+                    <div className="text-24 font-bold mb-60 text-center">{t('System.Welcome')}</div>
                     <Form
                         size="large"
                         name="login"
                         initialValues={{ remember: true }}
-                        style={{ width: '60%', minWidth: 360 }}
+                        className="!w-full box-border"
                         onFinish={onFinish}
                     >
                         <Form.Item

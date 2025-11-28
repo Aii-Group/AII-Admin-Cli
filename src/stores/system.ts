@@ -26,15 +26,7 @@ export const useUserStore = create<System.UserState>()(
 export const useMenuStore = create<System.MenuState>()(
     persist(
         (set) => ({
-            menu: [
-                // {
-                //   key: 'Dashboard',
-                //   label: 'Dashboard',
-                //   icon: 'dashboard',
-                //   path: '/dashboard',
-                //   filePath: '/dashboard/index',
-                // },
-            ],
+            menu: [],
             setMenu: (menu: System.MenuOptions[]) => set({ menu }),
             appendMenu: (menu: System.MenuOptions[]) =>
                 set((state) => {
@@ -46,7 +38,7 @@ export const useMenuStore = create<System.MenuState>()(
         }),
         {
             name: `${storagePrefix}-menu-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )
@@ -67,7 +59,7 @@ export const useMenuCollapseStore = create<System.CollapseState>()(
         }),
         {
             name: `${storagePrefix}-collapse-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )
@@ -87,7 +79,7 @@ export const useThemeStore = create<System.ThemeState>()(
         }),
         {
             name: `${storagePrefix}-theme-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )
@@ -147,7 +139,7 @@ export const useTabStore = create<System.TabState>()(
         }),
         {
             name: `${storagePrefix}-tab-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )
@@ -160,7 +152,7 @@ export const useLanguageStore = create<System.LanguageState>()(
         }),
         {
             name: `${storagePrefix}-language-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )
@@ -173,7 +165,7 @@ export const useFullscreenStore = create<System.FullscreenState>()(
         }),
         {
             name: `${storagePrefix}-fullscreen-storage`,
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => sessionStorage),
         },
     ),
 )

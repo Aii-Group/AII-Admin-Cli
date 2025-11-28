@@ -1,22 +1,33 @@
-import Main from '../components/main'
-import Header from '../components/header'
-// import TabBar from '../components/tabBar'
-import Sidebar from '../components/sidebar'
-import { useMenuCollapseStore } from '@/stores/system'
 import { isMicroAppEnv } from '@/utils/micro.ts'
+import { useMenuCollapseStore } from '@/stores/system'
+
+import Main from '../Main'
+import Header from '../Header'
+import Sidebar from '../Sidebar'
 
 const FullMode: React.FC = () => {
     const { collapsed } = useMenuCollapseStore()
     return (
         <>
-            {!isMicroAppEnv && <Header />}
-            <div className="flex p-10">
-                <Sidebar />
-                <div style={{ width: collapsed ? 'calc(100vw - 80px)' : 'calc(100vw - 212px)', marginLeft: '10px' }}>
-                    {/* <TabBar /> */}
+            {!isMicroAppEnv ? (
+                <>
+                    <Header />
+                    <div className="flex gap-10 p-10">
+                        <Sidebar />
+                        <div
+                            style={{
+                                width: collapsed ? 'calc(100vw - 80px)' : 'calc(100vw - 240px)',
+                            }}
+                        >
+                            <Main />
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="w-full">
                     <Main />
                 </div>
-            </div>
+            )}
         </>
     )
 }
