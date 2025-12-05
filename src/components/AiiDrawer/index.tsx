@@ -29,7 +29,7 @@ export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
     return (
         <DrawerContext.Provider value={{ showDrawer, closeDrawer }}>
             {children}
-            <Drawer title="Drawer" placement="right" onClose={closeDrawer} open={open} width={400} {...drawerProps}>
+            <Drawer title="Drawer" placement="right" onClose={closeDrawer} open={open} size={400} {...drawerProps}>
                 {content}
             </Drawer>
         </DrawerContext.Provider>

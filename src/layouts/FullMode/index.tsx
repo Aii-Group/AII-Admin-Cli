@@ -16,7 +16,7 @@ const FullMode: React.FC = () => {
                         <Sidebar />
                         <div
                             style={{
-                                width: collapsed ? 'calc(100vw - 80px)' : 'calc(100vw - 240px)',
+                                width: collapsed ? 'calc(100vw - 80px)' : 'calc(100vw - 270px)',
                             }}
                         >
                             <Main />

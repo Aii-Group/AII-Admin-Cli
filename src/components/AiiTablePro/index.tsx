@@ -427,7 +427,7 @@ const AiiTablePro = memo(
                                     <Down />
                                 </div>
                             </Dropdown>
-                            <Divider type="vertical" />
+                            <Divider vertical />
                             <span>{`${t('Common.Total')}: ${pagination.total || 0}`}</span>
                         </div>
                         <div className="pagination-controls">

@@ -329,7 +329,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                             <Down />
                         </div>
                     </Dropdown>
-                    <Divider type="vertical" />
+                    <Divider vertical />
                     <span>{`${t('Common.Total')}: ${pagination.total}`}</span>
                 </div>
                 <Pagination

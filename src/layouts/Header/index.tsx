@@ -21,7 +21,7 @@ const Header: React.FC = () => {
                 <LanguageButton />
                 <FullscreenButton />
                 <AIButton />
-                <Divider type="vertical" orientation="center" />
+                <Divider vertical />
                 <UserAvatar />
             </div>
         </div>

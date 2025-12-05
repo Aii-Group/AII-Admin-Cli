@@ -147,7 +147,7 @@ export const useTabStore = create<System.TabState>()(
 export const useLanguageStore = create<System.LanguageState>()(
     persist(
         (set) => ({
-            language: 'zh',
+            language: 'zh-CN',
             setLanguage: (language: string) => set({ language }),
         }),
         {

@@ -16,20 +16,30 @@ import { useLanguageStore, useThemeStore, useUserStore } from './stores/system'
 const IconConfig = { ...DEFAULT_ICON_CONFIGS, prefix: 'icon', size: 18 }
 
 function App() {
-    const { setTheme } = useThemeStore()
+    const { setTheme, setColor } = useThemeStore()
     const { setLanguage } = useLanguageStore()
     const { locale } = useLanguage()
     const { themeAlgorithm, color } = useTheme()
-    const { userInfo } = useUserStore()
+    const { userInfo, setUserInfo } = useUserStore()
 
     useEffect(() => {
         isMicroAppEnv &&
             window.microApp.addGlobalDataListener((data: any) => {
-                if (data.language) {
-                    setLanguage(data.language)
+                if (data.lang) {
+                    setLanguage(data.lang)
                 }
                 if (data.theme) {
                     setTheme(data.theme)
+                }
+                if (data.userInfo) {
+                    setUserInfo({
+                        ...userInfo,
+                        ...data.userInfo,
+                        permissions: data.permissionsButton ?? [],
+                    })
+                }
+                if (data.brandColor) {
+                    setColor(data.brandColor)
                 }
             }, true)
     }, [])

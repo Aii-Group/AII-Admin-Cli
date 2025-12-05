@@ -22,7 +22,7 @@ const AIButton: React.FC = () => {
                     className="p-4"
                 />
             ),
-            width: '50%',
+            size: 800,
         })
     }
     return <Button type="text" icon={<MessageEmoji />} onClick={handleOpenAI} />

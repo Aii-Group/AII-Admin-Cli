@@ -21,7 +21,7 @@
         "@tanstack/react-router": "^1.131.31",
         "@tanstack/react-router-devtools": "^1.131.31",
         "@tanstack/react-table": "^8.21.3",
-        "antd": "^5.27.1",
+        "antd": "^6.0.1",
         "axios": "^1.11.0",
         "classnames": "^2.5.1",
         "framer-motion": "^12.23.12",

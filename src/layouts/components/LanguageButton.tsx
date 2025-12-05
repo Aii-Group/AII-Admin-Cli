@@ -10,9 +10,9 @@ const LanguageButton: React.FC = () => {
 
     const items = [
         {
-            key: 'zh',
+            key: 'zh-CN',
             label: t('System.zh'),
-            onClick: () => setLanguage('zh'),
+            onClick: () => setLanguage('zh-CN'),
         },
         {
             key: 'en',
