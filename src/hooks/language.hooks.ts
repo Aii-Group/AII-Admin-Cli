@@ -4,10 +4,11 @@ import i18n from 'i18next'
 
 import enUS from 'antd/locale/en_US'
 import zhCN from 'antd/locale/zh_CN'
-import type { Locale } from 'antd/es/locale'
+import { type Locale } from 'antd/es/locale'
 import { getBrowserLang } from '@/utils/system'
 import { useLanguageStore } from '@/stores/system'
 import { languageEnums } from '@/enums/languageEnum'
+
 function useLanguage() {
     const { language, setLanguage } = useLanguageStore()
     const [locale, setLocal] = useState<Locale>(zhCN)

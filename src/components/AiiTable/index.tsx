@@ -1,14 +1,65 @@
-import { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import type { MenuProps, TableProps } from 'antd'
-import { Button, Divider, Dropdown, Pagination, Space, Table } from 'antd'
+import { Button, Divider, Dropdown, Pagination, Space, Table, type MenuProps, type TableProps } from 'antd'
 
-import { Copy, Delete, DocDetail, Down, DownloadFour, FileEditingOne, MoreOne } from '@icon-park/react'
+import { Copy, Delete, DocDetail, Down, FileEditingOne, MoreOne } from '@icon-park/react'
 
-import type { AiiTableProps, BatchOperationRowProps, OperationColumnProps, OperationItemProps } from './AiiTable.types'
+export interface BatchOperationItemProps {
+    key: string
+    icon?: React.ReactNode
+    label: string | React.ReactNode
+    danger?: boolean
+    onClick: () => void
+}
 
-import './index.css'
+export interface ToolbarProps {
+    icon: React.ReactNode
+    label: string
+    onClick: () => void
+}
+
+export interface OperationColumnProps {
+    title: string
+    key: string
+    render: (record: any) => React.ReactNode
+    fixed?: 'left' | 'right'
+    width?: number | string
+}
+
+export interface OperationItemProps {
+    key: string
+    icon?: React.ReactNode
+    label: string | React.ReactNode
+    danger?: boolean
+    [key: `data-${string}`]: string | number
+}
+
+export interface AiiTableProps<T> extends TableProps<T> {
+    pagination?: {
+        total: number
+        current: number
+        pageSize: number
+    }
+    toolbar?: ToolbarProps[]
+    operations?:
+        | ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[]
+        | ((
+              record: T,
+          ) => ('EDIT' | 'DELETE' | 'COPY' | 'DETAIL' | { key: string; icon?: React.ReactNode; label: string })[])
+    onPageSizeChange?: (pageSize: number) => void
+    onPageChange?: (page: number) => void
+    batchOperations?: BatchOperationItemProps[]
+    onOperationClick?: (key: string, record: any) => void
+}
+
+export interface BatchOperationRowProps {
+    selectedCount: number
+    columnsLength: number
+    onDeselect: () => void
+    batchOperations?: BatchOperationItemProps[]
+    t: (key: string) => string
+}
 
 const pageSizeOptions: System.Enum[] = [
     {
@@ -48,13 +99,14 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
         pagination,
         toolbar,
         operations,
+        batchOperations,
         onPageSizeChange,
         onPageChange,
         rowSelection,
-        onBatchDelete,
-        onBatchExport,
         onOperationClick,
     } = props
+
+    const hasPagination = !!pagination
 
     const defaultOperationMenu: OperationItemProps[] = [
         {
@@ -149,11 +201,11 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     }
 
     const pageSizeChanged = (pageSize: number) => {
-        onPageSizeChange(pageSize)
+        onPageSizeChange?.(pageSize)
     }
 
     const onChange = (page: number) => {
-        onPageChange(page)
+        onPageChange?.(page)
     }
 
     const onDeselect = () => {
@@ -161,7 +213,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     }
 
     const BatchOperationRow = memo(
-        ({ selectedCount, columnsLength, onDeselect, onBatchDelete, onBatchExport, t }: BatchOperationRowProps) => {
+        ({ selectedCount, columnsLength, onDeselect, batchOperations, t }: BatchOperationRowProps) => {
             const isVisible = selectedCount > 0
             // 表格列数依赖于是否启用操作列，如果启用了操作列，会重新计算表格列数，导致每次勾选或取消勾选时都会重新渲染，导致表格闪烁
             // 因此，为避免表格闪烁，不依赖于表格列数，而是根据是否启用操作列来计算表格列数
@@ -175,8 +227,12 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                 if (!isVisible) return null
                 if (computeColumnsLength <= 4) {
                     return (
-                        <th style={thStyle} colSpan={computeColumnsLength + 1}>
-                            <div className="flex w-full batch-operation-th">
+                        <th
+                            style={thStyle}
+                            colSpan={computeColumnsLength + 1}
+                            className="!bg-white dark:!bg-dark-colorBgContainer"
+                        >
+                            <div className="w-full h-64 grid items-center bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg">
                                 <div className="flex items-center gap-16 px-10 w-1/2">
                                     <div>{`${t('Common.Choosed')}: ${selectedCount}`}</div>
                                     <Button className="primary-text-btn" type="text" onClick={onDeselect}>
@@ -184,22 +240,17 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                                     </Button>
                                 </div>
                                 <div className="flex justify-end px-10 w-1/2">
-                                    <Button
-                                        className="primary-text-btn"
-                                        type="text"
-                                        icon={<Delete />}
-                                        onClick={onBatchDelete}
-                                    >
-                                        {t('Action.Batch_Delete')}
-                                    </Button>
-                                    <Button
-                                        className="error-text-btn"
-                                        type="text"
-                                        icon={<DownloadFour />}
-                                        onClick={onBatchExport}
-                                    >
-                                        {t('Action.Batch_Export')}
-                                    </Button>
+                                    {batchOperations?.map((item) => (
+                                        <Button
+                                            key={item.key}
+                                            className={item.danger ? 'error-text-btn' : 'primary-text-btn'}
+                                            type="text"
+                                            icon={item.icon}
+                                            onClick={item.onClick}
+                                        >
+                                            {item.label}
+                                        </Button>
+                                    ))}
                                 </div>
                             </div>
                         </th>
@@ -207,8 +258,8 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                 } else {
                     return (
                         <>
-                            <th colSpan={3} style={leftThStyle}>
-                                <div className="batch-operation-th">
+                            <th colSpan={3} style={leftThStyle} className="!bg-white dark:!bg-dark-colorBgContainer">
+                                <div className="h-64 grid items-center bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg">
                                     <div className="flex items-center gap-16 px-10">
                                         <div>{`${t('Common.Choosed')}: ${selectedCount}`}</div>
                                         <Button className="primary-text-btn" type="text" onClick={onDeselect}>
@@ -217,35 +268,34 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                                     </div>
                                 </div>
                             </th>
-                            <th colSpan={computeColumnsLength - 5} style={middleThStyle} className="ant-table-cell">
-                                <div className="batch-operation-th" />
+                            <th
+                                colSpan={computeColumnsLength - 5}
+                                style={middleThStyle}
+                                className="ant-table-cell !bg-white dark:!bg-dark-colorBgContainer"
+                            >
+                                <div className="h-64 grid items-center bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg" />
                             </th>
-                            <th colSpan={3} style={rightThStyle}>
-                                <div className="batch-operation-th">
+                            <th colSpan={3} style={rightThStyle} className="!bg-white dark:!bg-dark-colorBgContainer">
+                                <div className="h-64 grid items-center bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg">
                                     <div className="text-right px-10">
-                                        <Button
-                                            className="error-text-btn"
-                                            type="text"
-                                            icon={<Delete />}
-                                            onClick={onBatchDelete}
-                                        >
-                                            {t('Action.Batch_Delete')}
-                                        </Button>
-                                        <Button
-                                            className="primary-text-btn"
-                                            type="text"
-                                            icon={<DownloadFour />}
-                                            onClick={onBatchExport}
-                                        >
-                                            {t('Action.Batch_Export')}
-                                        </Button>
+                                        {batchOperations?.map((item) => (
+                                            <Button
+                                                key={item.key}
+                                                className={item.danger ? 'error-text-btn' : 'primary-text-btn'}
+                                                type="text"
+                                                icon={item.icon}
+                                                onClick={item.onClick}
+                                            >
+                                                {item.label}
+                                            </Button>
+                                        ))}
                                     </div>
                                 </div>
                             </th>
                         </>
                     )
                 }
-            }, [isVisible])
+            }, [isVisible, batchOperations])
 
             return (
                 <tr className="batch-operation-tr" style={{ height: isVisible ? 'auto' : 0, overflow: 'hidden' }}>
@@ -255,7 +305,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
         },
     )
 
-    const batchOperations = useMemo(
+    const batchOperationsHeader = useMemo(
         () => ({
             header: {
                 wrapper: (props: any) => {
@@ -268,8 +318,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                                 selectedCount={selectedRowKeys.length}
                                 columnsLength={columnsLength}
                                 onDeselect={onDeselect}
-                                onBatchDelete={onBatchDelete}
-                                onBatchExport={onBatchExport}
+                                batchOperations={batchOperations}
                                 t={t}
                             />
                         </thead>
@@ -277,7 +326,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                 },
             },
         }),
-        [rowSelection],
+        [rowSelection, batchOperations],
     )
 
     useEffect(() => {
@@ -291,8 +340,8 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
     }, [operations])
 
     return (
-        <div className="aii-table">
-            <div className="toolbar">
+        <>
+            <div className="flex items-center justify-end gap-10 mb-10">
                 {toolbar?.length &&
                     toolbar.map((tool, index) => (
                         <Button key={index} type="text" icon={tool.icon} onClick={tool.onClick}>
@@ -302,7 +351,7 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
             </div>
             <Table
                 loading={loading}
-                components={batchOperations}
+                components={batchOperationsHeader}
                 rowKey={rowKey}
                 pagination={false}
                 columns={tableColumns}
@@ -311,37 +360,39 @@ const AiiTable = <T extends unknown>(props: AiiTableProps<T>): React.ReactElemen
                 scroll={{ x: 'max-content' }}
                 sticky={{ offsetHeader: 0 }}
             />
-            <div className="footer">
-                <div className="pagination">
-                    <Dropdown
-                        menu={{
-                            items: pageSizeOptions,
-                            selectable: true,
-                            defaultSelectedKeys: [pagination?.pageSize.toString()],
-                            onClick: ({ key }) => {
-                                pageSizeChanged(parseInt(key))
-                            },
-                        }}
-                        popupRender={(menu) => <div className="text-center">{menu}</div>}
-                    >
-                        <div className="flex items-center cursor-pointer">
-                            <span>{`${t('Common.PageSize_show')}: ${pagination?.pageSize}`}</span>
-                            <Down />
-                        </div>
-                    </Dropdown>
-                    <Divider vertical />
-                    <span>{`${t('Common.Total')}: ${pagination.total}`}</span>
+            {hasPagination && (
+                <div className="mt-10 flex items-center justify-between">
+                    <div className="flex items-center">
+                        <Dropdown
+                            menu={{
+                                items: pageSizeOptions,
+                                selectable: true,
+                                defaultSelectedKeys: [pagination?.pageSize.toString()],
+                                onClick: ({ key }) => {
+                                    pageSizeChanged(parseInt(key))
+                                },
+                            }}
+                            popupRender={(menu) => <div className="text-center">{menu}</div>}
+                        >
+                            <div className="flex items-center cursor-pointer">
+                                <span>{`${t('Common.PageSize_show')}: ${pagination?.pageSize}`}</span>
+                                <Down />
+                            </div>
+                        </Dropdown>
+                        <Divider vertical />
+                        <span>{`${t('Common.Total')}: ${pagination?.total}`}</span>
+                    </div>
+                    <Pagination
+                        simple={{ readOnly: true }}
+                        showSizeChanger={false}
+                        current={pagination?.current}
+                        pageSize={pagination?.pageSize}
+                        total={pagination?.total}
+                        onChange={(page) => onChange(page)}
+                    />
                 </div>
-                <Pagination
-                    simple={{ readOnly: true }}
-                    showSizeChanger={false}
-                    current={pagination.current}
-                    pageSize={pagination.pageSize}
-                    total={pagination.total}
-                    onChange={(page) => onChange(page)}
-                />
-            </div>
-        </div>
+            )}
+        </>
     )
 }
 export default AiiTable

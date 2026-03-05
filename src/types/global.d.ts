@@ -10,7 +10,7 @@ declare global {
         microApp?: any
         __MICRO_APP_ENVIRONMENT__?: boolean
         __MICRO_APP_NAME__?: string
-        __MICRO_APP_BASE_ROUTE__?: String
+        __MICRO_APP_BASE_ROUTE__?: string
     }
     export namespace System {
         interface UserState {

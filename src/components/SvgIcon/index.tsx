@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const SvgIcon: React.FC<React.SVGAttributes<SVGSVGElement> & { icon: string }> = (props) => {
+const SvgIcon = (props: { icon: string } & React.SVGAttributes<SVGSVGElement>) => {
     const { icon, ...svgProps } = props
     const [Icon, setIcon] = useState<React.ComponentType<React.SVGAttributes<SVGSVGElement>> | null>(null)
 

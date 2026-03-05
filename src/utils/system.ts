@@ -66,7 +66,7 @@ export const renderMenuItems = (menuList: System.MenuOptions[], t: TFunction): M
 export const findActiveKey = (menuList: System.MenuOptions[], path: string): string[] => {
     const activeKey: string[] = []
     const loop = (items: System.MenuOptions[]) => {
-        for (let item of items) {
+        for (const item of items) {
             if (item.path === path) {
                 activeKey.push(item.key)
             }
@@ -81,7 +81,7 @@ export const findActiveKey = (menuList: System.MenuOptions[], path: string): str
 }
 
 export const getBrowserLang = () => {
-    let browserLang = navigator.language ? navigator.language : navigator.browserLanguage
+    const browserLang = navigator.language ? navigator.language : navigator.browserLanguage
     let defaultBrowserLang
     if (
         browserLang.toLowerCase() === 'cn' ||

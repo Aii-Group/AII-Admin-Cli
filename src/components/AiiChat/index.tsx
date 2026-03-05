@@ -2,11 +2,10 @@ import { memo, useEffect, useRef, useState } from 'react'
 
 import OpenAI from 'openai'
 import remarkGfm from 'remark-gfm'
-import type { GetProp } from 'antd'
-import { Button, Space, Spin } from 'antd'
 import ReactMarkdown from 'react-markdown'
 import { useTranslation } from 'react-i18next'
-import type { Components } from 'react-markdown'
+import { type Components } from 'react-markdown'
+import { Button, Space, Spin, type GetProp } from 'antd'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 
 import { useThemeStore } from '@/stores/system'
@@ -14,10 +13,22 @@ import Robot from '@/assets/svg/robot.svg?react'
 import { Bubble, Sender, useXAgent, useXChat } from '@ant-design/x'
 import { Check, Copy, Down, Send, TwoEllipses } from '@icon-park/react'
 import { materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+export interface CodeBlockProps {
+    value: string
+    language?: string
+}
 
-import type { BubbleItemProps, CodeBlockProps } from './AiiChat.types'
+export interface Message {
+    thinkingContent: string | undefined
+    msg: string
+}
 
-import './index.css'
+export interface BubbleItemProps {
+    message: Message
+    id: string | number
+    status: string
+    interruptedMessages: OpenAI.ChatCompletionMessageParam[]
+}
 
 const client = new OpenAI({
     baseURL: import.meta.env.VITE_ALIYUN_AI_URL,
@@ -44,8 +55,8 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ value, language }) => {
     }
 
     return (
-        <div className="code-block-wrapper">
-            <div className="code-block-header">
+        <div className="my-4 rounded-lg overflow-hidden bg-light-colorBgBase dark:bg-dark-colorBgBase">
+            <div className="flex justify-between items-center px-12 py-6 bg-light-colorBgElevated dark:bg-dark-colorBgElevated border-b dark:border-dark-colorBorder">
                 <span className="text-sm">{language || 'Code'}</span>
                 <span className="flex items-center text-sm gap-4 cursor-pointer" onClick={handleCopyCode}>
                     {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -357,18 +368,18 @@ const AiiChat: React.FC = () => {
     }, [isThinking])
 
     return (
-        <div className="aii-chat">
+        <div className="h-full relative">
             <Bubble.List
                 style={{ maxHeight: 'calc(100% - 160px)', overflowY: 'auto' }}
                 roles={roles}
                 items={bubbleItems}
             />
             <Sender
-                className="sender"
+                className="w-full absolute bottom-0 left-0"
                 classNames={{
-                    input: 'sender-content',
-                    prefix: 'sender-prefix',
-                    actions: 'sender-actions',
+                    input: '!block overflow-auto !mb-40',
+                    prefix: 'absolute bottom-12 left-16',
+                    actions: 'absolute bottom-12 right-12 left-16 w-[calc(100%-28px)]',
                 }}
                 loading={agent.isRequesting()}
                 value={content}

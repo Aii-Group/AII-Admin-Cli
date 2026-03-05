@@ -1,9 +1,11 @@
-import { useState, useMemo, useCallback, memo } from 'react'
-import { Col, Row, Form, Space, Button, Tooltip } from 'antd'
-import { Down, Clear, Search } from '@icon-park/react'
+import { memo, useCallback, useMemo, useState } from 'react'
+
+import clsx from 'clsx'
 import { useTranslation } from 'react-i18next'
-import { motion, AnimatePresence } from 'framer-motion'
-import classNames from 'classnames'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Button, Col, Form, Row, Space, Tooltip } from 'antd'
+
+import { Clear, Down, Search } from '@icon-park/react'
 
 interface AiiSearchProps {
     items: React.ReactElement<typeof Form.Item>[]
@@ -18,7 +20,7 @@ interface DynamicFieldsRowsProps {
     Operations: React.FC
 }
 
-const DynamicFieldsRows: React.FC<DynamicFieldsRowsProps> = memo(({ items, expand, Operations }) => {
+const DynamicFieldsRows = memo(({ items, expand, Operations }: DynamicFieldsRowsProps) => {
     const renderCols = useCallback(
         (start: number, end: number) =>
             items.slice(start, end).map((item, index) => (
@@ -59,7 +61,7 @@ const DynamicFieldsRows: React.FC<DynamicFieldsRowsProps> = memo(({ items, expan
     )
 })
 
-const AiiSearch: React.FC<AiiSearchProps> = (props) => {
+const AiiSearch = (props: AiiSearchProps) => {
     const { items, onSearch, wrapper = true } = props
     const { t } = useTranslation()
     const [form] = Form.useForm()
@@ -70,7 +72,7 @@ const AiiSearch: React.FC<AiiSearchProps> = (props) => {
     const Operations = useMemo(() => {
         return () => (
             <Col span={items.length < 4 ? 6 : 24}>
-                <div className={items.length < 4 ? '' : 'text-right'}>
+                <div className={clsx('text-right', items.length >= 4)}>
                     <Space size="small">
                         <Button icon={<Search />} type="primary" htmlType="submit">
                             {t('Action.Search')}
@@ -86,7 +88,10 @@ const AiiSearch: React.FC<AiiSearchProps> = (props) => {
                         {items.length > 4 && (
                             <Tooltip title={expand ? t('Action.Collapse') : t('Action.Expand')}>
                                 <a
-                                    className={`flex items-center hover:text-light-colorPrimary dark:hover:text-dark-colorPrimary transition-all duration-300 ease-in-out ${expand ? 'rotate-180' : 'rotate-0'}`}
+                                    className={clsx(
+                                        'flex items-center hover:text-light-colorPrimary dark:hover:text-dark-colorPrimary transition-all duration-300 ease-in-out',
+                                        { 'rotate-180': expand, 'rotate-0': !expand },
+                                    )}
                                     onClick={handleExpand}
                                 >
                                     <Down />
@@ -114,7 +119,7 @@ const AiiSearch: React.FC<AiiSearchProps> = (props) => {
     )
 
     return (
-        <div className={classNames('mb-10', { 'pb-0': items.length < 4, wrapper: wrapper })}>
+        <div className={clsx('mb-10', { 'pb-0': items.length < 4, wrapper: wrapper })}>
             <Form form={form} name="advanced_search" onFinish={onFinish}>
                 <DynamicFieldsRows items={items} expand={expand} Operations={Operations} />
             </Form>

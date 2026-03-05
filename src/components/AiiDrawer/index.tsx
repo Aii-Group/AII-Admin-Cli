@@ -1,15 +1,26 @@
 import { createContext, useContext, useState } from 'react'
 
-import { Drawer } from 'antd'
+import { Drawer, type DrawerProps } from 'antd'
 
-import type { AiiDrawerProps, DrawerContent, DrawerContextType, DrawerProviderProps } from './AiiDrawer.types'
+export interface AiiDrawerProps extends DrawerProps {}
+
+export type DrawerContent = React.ReactNode | null
+
+export interface DrawerContextType {
+    showDrawer: (content: DrawerContent, drawerProps?: Partial<AiiDrawerProps>) => void
+    closeDrawer: () => void
+}
+
+export interface DrawerProviderProps {
+    children: React.ReactNode
+}
 
 const DrawerContext = createContext<DrawerContextType>({
     showDrawer: () => {},
     closeDrawer: () => {},
 })
 
-export const DrawerProvider: React.FC<DrawerProviderProps> = ({ children }) => {
+export const DrawerProvider = ({ children }: DrawerProviderProps) => {
     const [open, setOpen] = useState(false)
     const [content, setContent] = useState<DrawerContent>(null)
     const [drawerProps, setDrawerProps] = useState<Partial<AiiDrawerProps>>({})

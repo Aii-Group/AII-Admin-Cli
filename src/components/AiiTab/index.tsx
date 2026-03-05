@@ -1,19 +1,30 @@
-import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import classNames from 'classnames'
-import { AiiTabProps } from './AiiTab.types'
+import { useEffect, useRef, useState } from 'react'
 
-import './index.css'
+import clsx from 'clsx'
+import { AnimatePresence, motion } from 'framer-motion'
+export interface Tab {
+    key: number | string
+    label: string
+    icon?: React.ReactNode
+    content?: React.ReactNode | string
+}
 
-const AiiTab: React.FC<AiiTabProps> = (props) => {
-    const { tabs, defaultActiveKey, onTabClick, simple = true } = props
+export interface AiiTabProps {
+    defaultActiveKey: number | string
+    tabs: Tab[]
+    onTabClick?: (label: string) => void
+    simple?: boolean
+}
+
+const AiiTab = (props: AiiTabProps) => {
+    const { tabs, defaultActiveKey, onTabClick } = props
     const [activeTabKey, setActiveTabKey] = useState(defaultActiveKey || 0)
 
     const [indicatorPosition, setIndicatorPosition] = useState({ left: 0, width: 0, top: 0 })
     const navRef = useRef<HTMLDivElement>(null)
     const activeTabRef = useRef<HTMLDivElement>(null)
 
-    const handleTabClick = (key: number, label: string) => {
+    const handleTabClick = (key: number | string, label: string) => {
         onTabClick?.(label)
         setActiveTabKey(key)
     }
@@ -33,18 +44,18 @@ const AiiTab: React.FC<AiiTabProps> = (props) => {
     }, [activeTabKey])
 
     return (
-        <motion.div className="aii-tab">
-            <div
-                ref={navRef}
-                className={classNames('aii-tab-nav', { 'border-b': !simple, 'dark:border-dark-colorBorder': !simple })}
-            >
+        <motion.div className="w-full h-full relative">
+            <div ref={navRef} className="relative flex items-center gap-10 mb-10">
                 {tabs.map((item) => (
                     <div
                         key={item.key}
                         ref={activeTabKey === item.key ? activeTabRef : null}
-                        className={classNames('aii-tab-nav-item', {
-                            'aii-tab-nav-item-active': activeTabKey === item.key,
-                        })}
+                        className={clsx(
+                            'flex items-center cursor-pointer z-10 h-38 px-16 py-8 rounded-borderRadiusLG relative bg-transparent transition-all duration-300 hover:text-light-colorPrimary dark:hover:text-dark-colorPrimary',
+                            {
+                                'text-light-colorPrimary dark:text-dark-colorPrimary': activeTabKey === item.key,
+                            },
+                        )}
                         onClick={() => handleTabClick(item.key, item.label)}
                     >
                         <div className="flex items-center gap-4">
@@ -54,7 +65,7 @@ const AiiTab: React.FC<AiiTabProps> = (props) => {
                     </div>
                 ))}
                 <motion.div
-                    className="aii-tab-nav-indicator"
+                    className="absolute z-0 top-0 h-38 rounded-borderRadiusLG bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg"
                     layoutId="activeTabIndicator"
                     animate={{
                         left: indicatorPosition.left,
@@ -64,7 +75,7 @@ const AiiTab: React.FC<AiiTabProps> = (props) => {
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
             </div>
-            <div className="aii-tab-content">
+            <div className="overflow-hidden">
                 <AnimatePresence>
                     {tabs.map((item) => (
                         <motion.div
@@ -77,7 +88,6 @@ const AiiTab: React.FC<AiiTabProps> = (props) => {
                             animate={activeTabKey === item.key ? 'active' : 'inactive'}
                             exit="inactive"
                             transition={{ ease: 'easeInOut', duration: 0.3 }}
-                            className="aii-tab-content-item"
                             style={{ overflow: 'hidden' }}
                         >
                             {item.content}

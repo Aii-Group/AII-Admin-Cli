@@ -1,11 +1,11 @@
-import i18n from '@/utils/i18n'
+import { ApiClient } from '@/mockClient'
 import NProgress from '@/utils/nprogress'
 import { ResultEnum } from '@/enums/httpEnum'
-import { useUserStore } from '@/stores/system'
 import { isMicroAppEnv } from '@/utils/micro'
+import { useUserStore } from '@/stores/system'
+
 import { checkStatus } from './helper/checkStatusHelper'
-import { ApiClient } from '@/mockClient'
-import { downloadTypes, downloadFile } from './helper/downloadHelper'
+import { downloadFile, downloadTypes } from './helper/downloadHelper'
 
 const apiClient = new ApiClient({
     baseURL: '/api/v1',

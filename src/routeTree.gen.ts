@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticationRouteImport } from './routes/_authentication'
 import { Route as R403RouteImport } from './routes/403'
-import { Route as AuthenticationTableBasicRouteImport } from './routes/_authentication/table/basic'
 import { Route as AuthenticationTableAdvancedRouteImport } from './routes/_authentication/table/advanced'
 import { Route as AuthenticationIframeNameRouteImport } from './routes/_authentication/iframe/$name'
 import { Route as AuthenticationTabTabRouteImport } from './routes/_authentication/_tab/tab'
@@ -32,12 +31,6 @@ const R403Route = R403RouteImport.update({
   path: '/403',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticationTableBasicRoute =
-  AuthenticationTableBasicRouteImport.update({
-    id: '/table/basic',
-    path: '/table/basic',
-    getParentRoute: () => AuthenticationRoute,
-  } as any)
 const AuthenticationTableAdvancedRoute =
   AuthenticationTableAdvancedRouteImport.update({
     id: '/table/advanced',
@@ -69,7 +62,6 @@ export interface FileRoutesByFullPath {
   '/tab': typeof AuthenticationTabTabRoute
   '/iframe/$name': typeof AuthenticationIframeNameRoute
   '/table/advanced': typeof AuthenticationTableAdvancedRoute
-  '/table/basic': typeof AuthenticationTableBasicRoute
 }
 export interface FileRoutesByTo {
   '/403': typeof R403Route
@@ -78,7 +70,6 @@ export interface FileRoutesByTo {
   '/tab': typeof AuthenticationTabTabRoute
   '/iframe/$name': typeof AuthenticationIframeNameRoute
   '/table/advanced': typeof AuthenticationTableAdvancedRoute
-  '/table/basic': typeof AuthenticationTableBasicRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,7 +80,6 @@ export interface FileRoutesById {
   '/_authentication/_tab/tab': typeof AuthenticationTabTabRoute
   '/_authentication/iframe/$name': typeof AuthenticationIframeNameRoute
   '/_authentication/table/advanced': typeof AuthenticationTableAdvancedRoute
-  '/_authentication/table/basic': typeof AuthenticationTableBasicRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -100,7 +90,6 @@ export interface FileRouteTypes {
     | '/tab'
     | '/iframe/$name'
     | '/table/advanced'
-    | '/table/basic'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/403'
@@ -109,7 +98,6 @@ export interface FileRouteTypes {
     | '/tab'
     | '/iframe/$name'
     | '/table/advanced'
-    | '/table/basic'
   id:
     | '__root__'
     | '/403'
@@ -119,7 +107,6 @@ export interface FileRouteTypes {
     | '/_authentication/_tab/tab'
     | '/_authentication/iframe/$name'
     | '/_authentication/table/advanced'
-    | '/_authentication/table/basic'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,13 +137,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/403'
       preLoaderRoute: typeof R403RouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authentication/table/basic': {
-      id: '/_authentication/table/basic'
-      path: '/table/basic'
-      fullPath: '/table/basic'
-      preLoaderRoute: typeof AuthenticationTableBasicRouteImport
-      parentRoute: typeof AuthenticationRoute
     }
     '/_authentication/table/advanced': {
       id: '/_authentication/table/advanced'
@@ -194,7 +174,6 @@ interface AuthenticationRouteChildren {
   AuthenticationTabTabRoute: typeof AuthenticationTabTabRoute
   AuthenticationIframeNameRoute: typeof AuthenticationIframeNameRoute
   AuthenticationTableAdvancedRoute: typeof AuthenticationTableAdvancedRoute
-  AuthenticationTableBasicRoute: typeof AuthenticationTableBasicRoute
 }
 
 const AuthenticationRouteChildren: AuthenticationRouteChildren = {
@@ -202,7 +181,6 @@ const AuthenticationRouteChildren: AuthenticationRouteChildren = {
   AuthenticationTabTabRoute: AuthenticationTabTabRoute,
   AuthenticationIframeNameRoute: AuthenticationIframeNameRoute,
   AuthenticationTableAdvancedRoute: AuthenticationTableAdvancedRoute,
-  AuthenticationTableBasicRoute: AuthenticationTableBasicRoute,
 }
 
 const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(

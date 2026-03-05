@@ -14,7 +14,7 @@ export const Route = createFileRoute('/_authentication/_dashboard/dashboard')({
 function RouteComponent() {
     return (
         <>
-            <div className="wrapper text-center">
+            <div className="wrapper flex flex-col items-center justify-center h-full">
                 <Avatar className="mb-20" size={100} src={importImg('png', 'logo.png')} />
                 <Typography.Title level={2}>Welcome AII Admin CLI</Typography.Title>
             </div>

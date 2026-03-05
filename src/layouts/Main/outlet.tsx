@@ -33,8 +33,8 @@ const AnimatedOutlet = forwardRef<HTMLDivElement>(() => {
                 onExited={() => (isPresent.current = true)}
                 onEntered={() => (isPresent.current = false)}
             >
-                <div ref={nodeRef}>
-                    <div key={pathname}>
+                <div ref={nodeRef} className="h-full">
+                    <div key={pathname} className="h-full">
                         <RouterContext.Provider value={renderedContext.current}>
                             <Outlet />
                         </RouterContext.Provider>

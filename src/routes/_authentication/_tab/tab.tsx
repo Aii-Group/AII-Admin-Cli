@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Button, Form, Input, InputNumber } from 'antd'
+
 import AiiTab from '@/components/AiiTab'
-import { Input, Button, Form, InputNumber } from 'antd'
-import AiiSearch from '@/components/AiiSearch'
 import { Label } from '@icon-park/react'
+import AiiSearch from '@/components/AiiSearch'
+import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authentication/_tab/tab')({
     component: RouteComponent,
@@ -90,7 +91,7 @@ function RouteComponent() {
     ]
 
     return (
-        <div className="w-full h-full p-4">
+        <div className="wrapper">
             <AiiTab tabs={tabs} defaultActiveKey={1} />
         </div>
     )

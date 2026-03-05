@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import { Form, Input, Modal, Tooltip } from 'antd'
-import type { TableColumnsType, TableProps } from 'antd'
+import { Form, Input, Modal, Tooltip, type TableColumnsType, type TableProps } from 'antd'
 
 import apiClient from '@/utils/http'
 import useTable from '@/hooks/table.hooks'
@@ -11,10 +10,10 @@ import AiiSearch from '@/components/AiiSearch'
 import { useModal } from '@/hooks/modal.hooks'
 import { useDrawer } from '@/components/AiiDrawer'
 import { createFileRoute } from '@tanstack/react-router'
-import { DownloadFour, Filter, Newlybuild, Refresh } from '@icon-park/react'
+import { Delete, DownloadFour, Filter, Newlybuild, Refresh } from '@icon-park/react'
 
 export const Route = createFileRoute('/_authentication/table/advanced')({
-    component: () => <Advanced />,
+    component: RouteComponent,
     staticData: {
         code: 'Advanced_Table',
         langCode: 'Menu.Advanced_Table',
@@ -25,7 +24,7 @@ type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'
 
 const modalTypeEnums: string[] = ['create', 'edit']
 
-const Advanced: React.FC = () => {
+function RouteComponent() {
     const { t } = useTranslation()
 
     const { showDrawer } = useDrawer()
@@ -262,8 +261,21 @@ const Advanced: React.FC = () => {
                     onPageSizeChange={onPageSizeChange}
                     onPageChange={onPageChange}
                     rowSelection={rowSelection}
-                    onBatchDelete={onBatchDelete}
-                    onBatchExport={onBatchExport}
+                    batchOperations={[
+                        {
+                            key: 'DELETE',
+                            icon: <Delete />,
+                            label: 'Batch Delete',
+                            onClick: onBatchDelete,
+                            danger: true,
+                        },
+                        {
+                            key: 'EXPORT',
+                            icon: <DownloadFour />,
+                            label: 'Batch Export',
+                            onClick: onBatchExport,
+                        },
+                    ]}
                     onOperationClick={onOperationClick}
                 />
             </div>

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import type { ModalProps } from 'antd'
+import { type ModalProps } from 'antd'
 
 interface ModalOptions extends ModalProps {
     content?: React.ReactNode
@@ -16,7 +16,7 @@ interface ModalController {
     updateModal: (options: Partial<ModalOptions>) => void
 }
 
-export const createModal = (): ModalController => {
+export function createModal(): ModalController {
     const [isOpen, setIsOpen] = useState(false)
     const [modalOptions, setModalOptions] = useState<ModalOptions>({})
 
@@ -43,7 +43,7 @@ export const createModal = (): ModalController => {
     }
 }
 
-export const useModal = (ids: string[]): Record<string, ModalController> => {
+export function useModal(ids: string[]): Record<string, ModalController> {
     const modals = ids.reduce(
         (acc, id) => {
             acc[id] = createModal()

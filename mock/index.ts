@@ -178,12 +178,6 @@ const mockMenuData: MenuItem[] = [
         path: '/table',
         children: [
             {
-                key: 'Basic_Table',
-                label: 'Basic Table',
-                path: '/table/basic',
-                filePath: '/table/basic',
-            },
-            {
                 key: 'Advanced_Table',
                 label: 'Advanced Table',
                 path: '/table/advanced',
@@ -191,28 +185,28 @@ const mockMenuData: MenuItem[] = [
             },
         ],
     },
-    {
-        key: 'External_Link',
-        label: 'External Link',
-        icon: 'link',
-        path: '/iframe',
-        children: [
-            {
-                key: 'Baidu',
-                label: 'Baidu',
-                path: '/iframe/Baidu',
-                link: 'https://www.baidu.com/',
-                filePath: '/iframe/index',
-            },
-            {
-                key: 'React',
-                label: 'React',
-                path: '/iframe/React',
-                link: 'https://zh-hans.react.dev/',
-                filePath: '/iframe/index',
-            },
-        ],
-    },
+    // {
+    //     key: 'External_Link',
+    //     label: 'External Link',
+    //     icon: 'link',
+    //     path: '/iframe',
+    //     children: [
+    //         {
+    //             key: 'Baidu',
+    //             label: 'Baidu',
+    //             path: '/iframe/Baidu',
+    //             link: 'https://www.baidu.com/',
+    //             filePath: '/iframe/index',
+    //         },
+    //         {
+    //             key: 'React',
+    //             label: 'React',
+    //             path: '/iframe/React',
+    //             link: 'https://zh-hans.react.dev/',
+    //             filePath: '/iframe/index',
+    //         },
+    //     ],
+    // },
 ]
 
 // ==================== API Mock 定义 ====================
