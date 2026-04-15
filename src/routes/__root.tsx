@@ -13,20 +13,19 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
     component: () => {
         const { t } = useTranslation()
         const locationCur = useMatches().find((item) => item.pathname === location.pathname)
-        const code =
-            locationCur?.staticData.code === 'Iframe'
-                ? `Menu.${locationCur?.params.name}`
-                : locationCur?.staticData.langCode
+        const key = locationCur?.staticData?.key as string | undefined
+        const titleMenuKey =
+            key === 'Iframe' && locationCur?.params && 'name' in locationCur.params
+                ? (locationCur.params as { name: string }).name
+                : key
 
         useEffect(() => {
-            document.title = `${t('System.System_Name')} | ${t(code)}`
-        }, [code, t])
+            document.title = titleMenuKey
+                ? `${t('System.System_Name')} | ${t(`Menu.${titleMenuKey}`)}`
+                : t('System.System_Name')
+        }, [titleMenuKey, t])
 
-        return (
-            <>
-                <Outlet />
-            </>
-        )
+        return <Outlet />
     },
     beforeLoad: (ctx) => {
         if (location.pathname === '/') {

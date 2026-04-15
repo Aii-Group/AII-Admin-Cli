@@ -1,0 +1,32 @@
+Dashboard:
+    Title: AII Admin CLI
+    Subtitle: 面向中后台的前端脚手架与演示工程，内置布局/路由/菜单/页签/主题/国际化/请求封装/Mock/表格工作台，以及可选的 AI 对话能力。这里是你了解系统全貌与快速上手的起点。
+    Logo_Alt: AII Admin CLI
+    Open: 打开
+    QuickEntry_Section_Label: 快捷入口
+    Badge_Antd: Ant Design
+    Badge_TailwindToken: Token + Tailwind
+    Badge_Router: TanStack Router
+    Badge_Table: Table Workbench
+    Badge_AI: AI Chat
+    QuickEntry_TableWorkbench_Title: 表格工作台（综合示例）
+    QuickEntry_TableWorkbench_Desc: AiiTable + AiiSearch + useTable + Modal/Drawer 的完整用法，适合直接拷贝为业务页模板。
+    QuickEntry_TabDemo_Title: 页签组件示例
+    QuickEntry_TabDemo_Desc: AiiTab（页面内二级页签）示例，适合做模块内的视图切换。
+    QuickEntry_MenuAndRoute_Title: 菜单与路由约定
+    QuickEntry_MenuAndRoute_Desc: 了解菜单 key、路由 staticData.key 与 i18n 文案三者如何对齐，避免 404/标题不一致。
+    SystemOverview_Title: 系统概览（你能得到什么）
+    SystemOverview_Point1: 统一布局与多页签：Header/Sidebar/Main + 路由页签（可关闭策略、右键菜单等）。
+    SystemOverview_Point2: 主题与暗黑模式：antd Token 驱动，Tailwind 只做布局与少量修饰，明暗一致可控。
+    SystemOverview_Point3: 国际化：i18next + YAML 资源，系统文案与业务文案分层合并，支持 zh-CN / en。
+    SystemOverview_Point4: 请求与 Mock：Axios 封装 + 401 处理 + vite-plugin-mock，本地可直接跑通登录/菜单/列表接口。
+    HowToExtend_Title: 新增功能页（最短路径）
+    HowToExtend_Step1: 在 src/routes/_authentication 下新增文件路由，并设置 staticData.key。
+    HowToExtend_Step2: 保存后确认 routeTree.gen.ts 已生成对应 fullPath，且与菜单 path 完全一致。
+    HowToExtend_Step3: 在 src/locales/business/Menu/{zh,en}.yaml 增加 Menu.{key} 文案，key 与 staticData.key 对齐。
+    HowToExtend_Step4: 让 getMenu（或 mock）返回该菜单项（key/path/icon/children/permission 等），重新登录验证。
+    Docs_Title: 开发者文档
+    Docs_Lead: 本页为脚手架说明文档（偏开发者向）：内容随仓库演进，以源码为准。
+    Docs_MockLogin_Title: 本地 Mock 登录
+    Docs_MockLogin_Body: 账号 admin / 密码 123456；菜单来自 GET /api/v1/getMenu，可在 mock/index.ts 的 mockMenuData 修改层级与路径。
+    Docs_SectionNav: 文档章节（点击展开）

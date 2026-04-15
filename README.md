@@ -3,357 +3,186 @@
   <h1>AII Admin CLI</h1>
 </div>
 
-#### Description
+## 项目简介
 
-`AII Admin CLI` is a React-based admin dashboard project that supports internationalization (i18n), theme switching (light/dark mode), and aims to provide a modern, extensible solution for management systems.
-
----
-
-### Table of Contents
-
-1. [Features](#features)
-2. [Installation](#installation)
-3. [Components](#components)
-    - [AiiTable](#aiitable)
-    - [AiiSearch](#aiisearch)
-    - [AiiDrawer](#aiidrawer)
-    - [AiiTab](#aiitab)
-    - [AppProvider](#appprovider)
-4. [State Management](#state-management)
-5. [Menu Format](#menu-format)
-6. [Contributing](#contributing)
-7. [License](#license)
+`AII Admin CLI` 是一个基于 React 的后台管理模板，内置 **国际化（i18n）**、**亮/暗主题**、**标签页多开**、**动态菜单与路由**、以及 **AI Chat** 能力，面向中后台场景做可复用的组件与工程化沉淀。
 
 ---
 
-### Features
+## 目录
 
-- **Internationalization (i18n)**: Powered by `react-i18next`, supports dynamic language switching.
-- **Theme Switching**: Customizable themes using Ant Design, supports light and dark modes.
-- **Reusable Components**: Provides highly customizable components like tables, search forms, and drawers.
-- **Global State Management**: Efficient state management using Zustand.
-- **Dynamic Route Generation**: Dynamically generates routes based on the menu structure, with support for lazy-loaded components.
-- **AI Chat Integration**: Includes an AI-powered chat component with support for OpenAI's GPT model, featuring real-time streaming, markdown rendering, and code block support.
-
----
-
-### Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/Aii-Group/AII-Admin-Cli.git
-    ```
-
-2. Navigate to the project directory:
-
-    ```bash
-    cd aii-admin-cli
-    ```
-
-3. Install dependencies:
-
-    ```bash
-    pnpm install
-    ```
-
-4. Start the development server:
-
-    ```bash
-    pnpm dev
-    ```
-
-5. Open your browser and visit:
-    ```
-    http://localhost:3001
-    ```
+1. [特性](#特性)
+2. [技术栈](#技术栈)
+3. [快速开始](#快速开始)
+4. [环境变量与模式](#环境变量与模式)
+5. [Mock 与 Swagger](#mock-与-swagger)
+6. [目录结构](#目录结构)
+7. [项目约定](#项目约定)
+8. [核心组件索引](#核心组件索引)
+9. [贡献](#贡献)
+10. [License](#license)
 
 ---
 
-### Components
+## 特性
 
-#### AiiTable
+- **国际化（i18n）**：基于 `i18next` / `react-i18next`，支持运行时切换语言
+- **主题切换**：基于 antd Theme/Token，支持亮色/暗色模式
+- **可复用业务组件**：表格、搜索表单、抽屉、弹窗、Tab 等能力沉淀
+- **全局状态管理**：基于 Zustand，支持持久化
+- **菜单驱动路由**：根据菜单结构生成/匹配路由（支持懒加载）
+- **AI Chat**：支持流式响应、Markdown 渲染与代码块高亮（对接多家模型配置）
 
-`AiiTable` is a highly customizable table component based on Ant Design, supporting batch operations, custom toolbars, and dynamic column rendering.
+---
 
-**Key Features**:
+## 技术栈
 
-- **Dynamic Columns**: Allows dynamic definition of table columns.
-- **Batch Operations**: Supports batch deletion, export, and more.
-- **Pagination**: Built-in pagination with customizable page size.
-- **Toolbar**: Add custom buttons above the table.
-- **Row Selection**: Enables row selection for batch operations.
-- **Action Buttons**: Add action buttons (e.g., edit, delete) for each row.
+- **React 18**
+- **Vite 7**
+- **Ant Design 6**
+- **Tailwind CSS v4**：以布局为主，颜色等优先走 antd token（项目已将 antd token 映射到 Tailwind）
+- **TanStack Router**
+- **React Query**
+- **Zustand**
+- **Mock**：`vite-plugin-mock` + `mockjs`
 
-**Usage Example**:
+---
 
-```tsx
-import React from 'react'
-import AiiTable from '@/components/AiiTable'
+## 快速开始
 
-const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Age', dataIndex: 'age', key: 'age' },
-    { title: 'Address', dataIndex: 'address', key: 'address' },
-]
+### 前置条件
 
-const dataSource = [
-    { key: '1', name: 'John Doe', age: 32, address: 'New York' },
-    { key: '2', name: 'Jane Smith', age: 28, address: 'London' },
-]
+- Node.js（建议使用 LTS 版本）
+- 包管理器：`pnpm`
 
-const App = () => (
-    <AiiTable
-        rowKey="key"
-        columns={columns}
-        dataSource={dataSource}
-        pagination={{ current: 1, pageSize: 10, total: 50 }}
-        toolbar={[{ label: 'Add', icon: <PlusOutlined />, onClick: () => console.log('Add clicked') }]}
-        operations={['DETAIL', 'EDIT', 'DELETE']}
-    />
-)
+### 本地启动
 
-export default App
+```bash
+pnpm install
+pnpm dev
+```
+
+默认访问地址（以实际控制台输出为准）：
+
+```text
+http://localhost:3001
+```
+
+### 构建与预览
+
+```bash
+pnpm build
+pnpm preview
 ```
 
 ---
 
-#### AiiSearch
+## 环境变量与模式
 
-`AiiSearch` is a flexible search form component that supports dynamic form items, collapsible layouts, and search/reset actions.
+- **公共变量**：`.env`（所有 mode 共享）
+- **开发变量**：`.env.development`
+- **生产变量**：`.env.production`
 
-**Key Features**:
+> 约定：Vite 只会将 `VITE_` 前缀变量暴露到客户端。涉及本地密钥建议使用 `.env.local`（通常在 `.gitignore` 中忽略，不提交仓库）。
 
-- **Dynamic Form Items**: Render form fields dynamically using an array.
-- **Collapsible Layout**: Supports collapsible/expandable layout for many fields.
-- **Search and Reset**: Built-in search and reset buttons.
+### 关键变量（节选）
 
-**Usage Example**:
+- **应用标题**
+    - `VITE_TITLE`
+- **环境标识**
+    - `VITE_APP_ENV`（`development` / `production`）
+- **Mock 开关**
+    - `VITE_USE_MOCK`：开发默认 `true`，生产默认 `false`
+- **AI 配置（按需填写 Key）**
+    - `VITE_ALIYUN_AI_URL` / `VITE_ALIYUN_AI_KEY` / `VITE_ALIYUN_AI_MODEL`
+    - `VITE_DEEPSEEK_AI_URL` / `VITE_DEEPSEEK_AI_KEY` / `VITE_DEEPSEEK_AI_MODEL`
 
-```tsx
-import React from 'react'
-import { Form, Input } from 'antd'
-import AiiSearch from '@/components/AiiSearch'
+---
 
-const formItems = [
-    <Form.Item name="name" label="Name" key="name">
-        <Input placeholder="Enter name" />
-    </Form.Item>,
-    <Form.Item name="age" label="Age" key="age">
-        <Input placeholder="Enter age" />
-    </Form.Item>,
-]
+## Mock 与 Swagger
 
-const App = () => <AiiSearch items={formItems} onSearch={(values) => console.log('Search values:', values)} />
+### 开发期 Mock
 
-export default App
+开发环境默认开启 Mock（见 `.env.development` 的 `VITE_USE_MOCK=true`）。如需关闭，改为 `false` 后重启开发服务。
+
+### 从 Swagger 生成 Mock 类型/客户端（可选）
+
+项目提供脚本：
+
+```bash
+pnpm swagger-mock
 ```
 
 ---
 
-#### AiiDrawer
+## 目录结构
 
-`AiiDrawer` is a global drawer component based on Ant Design's `Drawer`, supporting dynamic content and global management.
-
-**Key Features**:
-
-- **Global Management**: Manage drawer visibility through context.
-- **Dynamic Content**: Pass dynamic content to the drawer.
-- **Customizable Props**: Supports all Ant Design `Drawer` props.
-
-**Usage Example**:
-
-1. **Wrap your app with `DrawerProvider`**:
-
-```tsx
-import React from 'react'
-import { DrawerProvider } from '@/components/AiiDrawer'
-
-const App = () => (
-    <DrawerProvider>
-        <YourApp />
-    </DrawerProvider>
-)
-
-export default App
-```
-
-2. **Control the drawer using `useDrawer`**:
-
-```tsx
-import React from 'react'
-import { Button } from 'antd'
-import { useDrawer } from '@/components/AiiDrawer'
-
-const ExampleComponent = () => {
-    const { showDrawer, closeDrawer } = useDrawer()
-
-    const handleOpenDrawer = () => {
-        showDrawer(
-            <div>
-                <h3>Drawer Content</h3>
-                <p>This is some content inside the drawer.</p>
-                <Button onClick={closeDrawer}>Close Drawer</Button>
-            </div>,
-            { title: 'Custom Drawer Title', width: 500 },
-        )
-    }
-
-    return <Button onClick={handleOpenDrawer}>Open Drawer</Button>
-}
-
-export default ExampleComponent
+```text
+.
+├─ mock/                      # mock 数据、swagger 产物与 mock 配置
+├─ public/
+├─ src/
+│  ├─ api/                    # API 封装（含 mock client）
+│  ├─ components/             # 复用组件（AiiTable/AiiSearch/AiiDrawer/AiiModal...）
+│  ├─ hooks/                  # 业务 hooks（table/modal/drawer/theme/language...）
+│  ├─ layouts/                # 布局（Header/Sidebar/Main/Tab...）
+│  ├─ locales/                # i18n 资源（含 business 模块）
+│  ├─ routes/                 # TanStack Router 文件路由
+│  ├─ stores/                 # Zustand stores
+│  ├─ styles/                 # 全局样式（含 wrapper 等约定）
+│  └─ utils/                  # 工具方法（http/i18n/menu/system...）
+├─ preset.js                  # antd token -> Tailwind 映射
+├─ tailwind.config.js
+└─ vite.config.ts
 ```
 
 ---
 
-#### AppProvider
+## 项目约定
 
-`AppProvider` is a global context provider that integrates Ant Design's `message`, `Modal`, and `notification` APIs for global usage.
+### UI 与样式
 
-**Key Features**:
+- **优先 antd 组件与 Token**：颜色/边框/阴影等视觉优先走 token，避免硬编码 `bg-white` / `text-black`
+- **Tailwind 以布局为主**：网格/间距/对齐/溢出等
+- **暗黑模式必须可用**：新增页面同时保证 light/dark 对比度
+- **统一容器**：列表页/表单页等建议使用 `.wrapper`（见 `src/styles/global.css`）
 
-- **Global Message Notifications**: Call `message` API via `window.$message`.
-- **Global Modals**: Call `Modal` API via `window.$modal`.
-- **Global Notifications**: Call `notification` API via `window.$notification`.
+（更完整规范见：`.cursor/rules/ui-guidelines.mdc`）
 
-**Usage Example**:
+### 状态与全局反馈
 
-1. **Wrap your app with `AppProvider`**:
+- 全局状态：Zustand（支持持久化）
+- 全局反馈：通过 `AppProvider` 挂载的 `window.$message / window.$modal / window.$notification`
 
-```tsx
-import React from 'react'
-import ReactDOM from 'react-dom'
-import AppProvider from '@/components/AppProvider'
-import App from './App'
+### i18n
 
-ReactDOM.render(
-    <AppProvider>
-        <App />
-    </AppProvider>,
-    document.getElementById('root'),
-)
-```
+业务文案建议放在 `src/locales/business/**` 下，按模块维护中英文资源。
 
-2. **Call APIs globally**:
+### 菜单与路由
 
-```tsx
-// Show a success message
-window.$message.success('This is a success message!')
-
-// Show a confirmation modal
-window.$modal.confirm({
-    title: 'Confirm Action',
-    content: 'Are you sure you want to proceed?',
-    onOk: () => console.log('Confirmed'),
-})
-
-// Show a notification
-window.$notification.info({
-    message: 'Notification Title',
-    description: 'This is the content of the notification.',
-})
-```
+菜单项通常包含：`key` / `label` / `icon` / `path` / `children`（以及用于定位页面的字段，如 `filePath` 等）。
 
 ---
 
-### State Management
+## 核心组件索引
 
-This project uses Zustand for state management. We have several predefined stores for different purposes:
+> 组件实现与示例以源码为准，建议直接从 `src/components/` 与对应 hooks 入手阅读。
 
-1. **User Store**: Manages user authentication and information.
-2. **Menu Store**: Manages application menu structure.
-3. **Theme Store**: Manages application theme (light/dark mode).
-4. **Tab Store**: Manages opened tabs in the application.
-5. **Language Store**: Manages application language.
-6. **Fullscreen Store**: Manages fullscreen state.
-7. **Tab Content Store**: Manages content of tabs to preserve state when switching between tabs.
-
-All stores support local storage persistence, ensuring that the application state is preserved even after page refresh.
-
-You can create your own stores following the same pattern as these existing stores.
+- `src/components/AiiTable`：表格封装（分页、工具栏、行操作、批量等）
+- `src/components/AiiSearch`：搜索表单封装（展开/收起、重置、联动）
+- `src/components/AiiDrawer` + `src/hooks/drawer.hooks.ts`：抽屉能力（命令式调用）
+- `src/components/AiiModal` + `src/hooks/modal.hooks.ts`：弹窗能力（命令式调用）
+- `src/components/AiiTab`：多标签页能力与状态保活
+- `src/components/AppProvider`：全局 `message/modal/notification` 注入
 
 ---
 
-#### AiiTab
+## 贡献
 
-`AiiTab` is a tab component that supports smooth animations and state preservation when switching between tabs. It uses Zustand for state management to ensure tab content is preserved when switching.
-
-**Key Features**:
-
-- **Smooth Animations**: Uses Framer Motion for smooth tab transitions.
-- **State Preservation**: Uses Zustand to preserve tab content state when switching.
-- **Dynamic Tabs**: Supports dynamic tab creation and management.
-
-**Usage Example**:
-
-```tsx
-import React from 'react'
-import AiiTab from '@/components/AiiTab'
-
-const tabs = [
-    { key: 'tab1', label: 'Tab 1', content: <div>Content for Tab 1</div> },
-    { key: 'tab2', label: 'Tab 2', content: <div>Content for Tab 2</div> },
-    { key: 'tab3', label: 'Tab 3', content: <div>Content for Tab 3</div> },
-]
-
-const App = () => <AiiTab tabs={tabs} />
-
-export default App
-```
-
-**Props**:
-
-- `tabs`: Array of tab objects, each with `key`, `label`, and `content` properties.
-- `onTabClick`: Optional callback function triggered when a tab is clicked.
+欢迎贡献。请先阅读 [Contributing Guide](CONTRIBUTING.md)（如存在），并遵循项目的 ESLint/Prettier 以及 UI 规范。
 
 ---
 
-### Menu Format
+## License
 
-The menu format is an array of objects, where each object represents a menu item. Each menu item can have the following properties:
-
-- `key`: Unique key for the menu item.
-- `label`: Display label for the menu item.
-- `icon`: Icon for the menu item.
-- `path`: Path for the menu item.
-- `children`: Array of child menu items.
-
-**Example**:
-
-```tsx
-const menu = [
-    {
-        key: 'Table',
-        label: 'Table',
-        icon: 'table',
-        path: '/table',
-        children: [
-            {
-                key: 'Basic_Table',
-                label: 'Basic Table',
-                path: '/table/basic',
-                filePath: '/table/basic',
-            },
-            {
-                key: 'Advanced_Table',
-                label: 'Advanced Table',
-                path: '/table/advanced',
-                filePath: '/table/advanced',
-            },
-        ],
-    },
-]
-```
-
----
-
-### Contributing
-
-We welcome contributions! Please refer to the [Contributing Guide](CONTRIBUTING.md) to get started.
-
----
-
-### License
-
-This project is licensed under the [MIT License](LICENSE).
+本项目采用 [MIT License](LICENSE) 开源协议。

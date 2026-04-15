@@ -7,6 +7,7 @@ const router = createRouter({
     defaultStructuralSharing: true,
     context: { token: undefined!, permissions: undefined! },
     defaultNotFoundComponent: Error404,
+    basepath: import.meta.env.BASE_URL,
 })
 
 export default router

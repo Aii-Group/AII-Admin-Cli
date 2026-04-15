@@ -1,0 +1,46 @@
+---
+description: AppProvider 挂载 antd 静态 API 与 window.$message / $modal / $notification 使用约定
+globs: src/components/AppProvider/**,src/types/global.d.ts,src/utils/http/**
+alwaysApply: false
+---
+
+# AppProvider 与全局反馈 API
+
+`AppProvider`（`@/components/AppProvider`）在渲染子树前调用 `message.useMessage()`、`Modal.useModal()`、`notification.useNotification()`，把返回的 **context holder** 放进 JSX，并将实例挂到 `window`，供**非 React 上下文**（如 HTTP 拦截器、工具函数）命令式调用。
+
+## 1. 根部挂载顺序
+
+在 `App.tsx` 中：`AppProvider` 应位于 **`XProvider`（antd 主题 / locale）之内**，以便 message / Modal / notification 继承同一套 Design Token 与语言。当前顺序为：`XProvider` → `AppProvider` → … → `DrawerProvider` / `ModalProvider` → 路由。
+
+不要在未挂载 `AppProvider` 的代码路径里调用 `window.$message` 等（例如应用入口极早阶段）；首屏前若必须提示，需另作兜底。
+
+## 2. 全局 API 与类型
+
+| 全局属性 | 来源 | 典型用途 |
+|----------|------|----------|
+| `window.$message` | `message.useMessage()` | `success` / `error` / `info` / `warning` / `loading` |
+| `window.$modal` | `Modal.useModal()` | `confirm`、轻量对话框（见下） |
+| `window.$notification` | `notification.useNotification()` | 右上角通知 |
+
+`Window` 类型声明在 `src/types/global.d.ts`（`MessageInstance`、`HookAPI`、`NotificationInstance`）。若调整挂载方式或改名，**同步更新**该文件。
+
+## 3. `$modal` 与 `ModalProvider` / `useModal` 的取舍
+
+- **命令式** `window.$modal.confirm({ ... })`：适合删除确认、简单二次确认、与业务组件无强耦合的提示。
+- **声明式槽位** `useModal` + `ModalProvider`：适合带表单、多步骤、需 `openModal` / `updateModal` / 多 `id` 并存的复杂弹窗。
+
+详见 `.cursor/rules/aiimodal-usage.mdc`。
+
+## 4. 示例
+
+```tsx
+// 组件或任意已挂载 AppProvider 后的代码
+window.$message.error('操作失败')
+window.$modal.confirm({
+  title: '确认删除？',
+  onOk: () => { /* ... */ },
+})
+window.$notification.success({ message: '已保存' })
+```
+
+修改 `AppProvider` 时须保留三个 **context holder** 与 `children` 的渲染顺序，否则静态 API 会丢失样式或上下文。

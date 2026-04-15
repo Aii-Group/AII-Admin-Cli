@@ -1,5 +1,6 @@
 {
-    "i18n-ally.localesPaths": ["src/locales"],
+    "i18n-ally.localesPaths": ["src/locales", "src/locales/business/*"],
+    "i18n-ally.pathMatcher": "{locale}.yaml",
     "i18n-ally.keystyle": "nested",
     "css.validate": false,
     "less.validate": false,

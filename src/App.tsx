@@ -5,6 +5,7 @@ import { XProvider } from '@ant-design/x'
 import { isMicroAppEnv } from '@/utils/micro'
 import AppProvider from '@/components/AppProvider'
 import { DrawerProvider } from '@/components/AiiDrawer'
+import { ModalProvider } from '@/components/AiiModal'
 import { RouterProvider } from '@tanstack/react-router'
 import { DEFAULT_ICON_CONFIGS, IconProvider } from '@icon-park/react'
 import { components } from './styleToken'
@@ -12,6 +13,7 @@ import { components } from './styleToken'
 import useTheme from './hooks/theme.hooks'
 import useLanguage from './hooks/language.hooks'
 import { useLanguageStore, useThemeStore, useUserStore } from './stores/system'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const IconConfig = { ...DEFAULT_ICON_CONFIGS, prefix: 'icon', size: 18 }
 
@@ -21,6 +23,8 @@ function App() {
     const { locale } = useLanguage()
     const { themeAlgorithm, color } = useTheme()
     const { userInfo, setUserInfo } = useUserStore()
+
+    const queryClient = new QueryClient()
 
     useEffect(() => {
         isMicroAppEnv &&
@@ -55,12 +59,16 @@ function App() {
         >
             <AppProvider>
                 <IconProvider value={IconConfig}>
-                    <DrawerProvider>
-                        <RouterProvider
-                            router={router}
-                            context={{ token: userInfo.token, permissions: userInfo.permissions }}
-                        />
-                    </DrawerProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <DrawerProvider>
+                            <ModalProvider>
+                                <RouterProvider
+                                    router={router}
+                                    context={{ token: userInfo.token, permissions: userInfo.permissions }}
+                                />
+                            </ModalProvider>
+                        </DrawerProvider>
+                    </QueryClientProvider>
                 </IconProvider>
             </AppProvider>
         </XProvider>

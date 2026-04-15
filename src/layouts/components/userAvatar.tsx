@@ -1,5 +1,4 @@
-import type { MenuProps } from 'antd'
-import { Avatar, Dropdown } from 'antd'
+import { Avatar, Dropdown, type MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import Logo from '@/assets/png/logo.png'
@@ -7,9 +6,10 @@ import { resetLogout } from '@/utils/system'
 import { Logout, User } from '@icon-park/react'
 import { useNavigate } from '@tanstack/react-router'
 
-const UserAvatar: React.FC = () => {
+export default function UserAvatar() {
     const { t } = useTranslation()
     const navigate = useNavigate()
+
     const items: MenuProps['items'] = [
         {
             key: 'userInfo',
@@ -22,6 +22,7 @@ const UserAvatar: React.FC = () => {
             label: t('Common.Logout'),
         },
     ]
+
     const onClick: MenuProps['onClick'] = ({ key }) => {
         switch (key) {
             case 'userInfo':
@@ -46,11 +47,8 @@ const UserAvatar: React.FC = () => {
         })
     }
     return (
-        <div>
-            <Dropdown menu={{ items, onClick }} placement="bottomLeft">
-                <Avatar size={32} src={<img src={Logo} alt="avatar" />} />
-            </Dropdown>
-        </div>
+        <Dropdown menu={{ items, onClick }} placement="bottomLeft">
+            <Avatar size={32} src={<img src={Logo} alt="avatar" />} />
+        </Dropdown>
     )
 }
-export default UserAvatar

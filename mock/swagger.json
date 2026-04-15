@@ -2,7 +2,7 @@
     "openapi": "3.0.3",
     "info": {
         "title": "AII-Admin-Cli API",
-        "description": "AII-Admin-Cli 管理系统 API 文档",
+        "description": "AII-Admin-Cli 管理系统 API 文档。\n\n**开发环境 Mock**：与 `vite-plugin-mock`（`mock/index.ts`）行为一致。测试账号 `admin` / `123456`。登录成功后请在请求头携带 `Authorization: Bearer <token>` 访问需鉴权接口（当前 Mock 服务端未校验 Token，仅作前端联调约定）。\n\n**统一响应体**：本 API 下所有 JSON 响应均为同一信封结构，见组件 `BaseResponse`（`code`、`msg`、`success`、可选 `timestamp`、可选 `data`）。成功时通常 `success: true`，`data` 为业务载荷；失败时 `success: false`，`data` 为 `null`。`code` 为业务语义状态（可能与 HTTP 状态码不一致，Mock 下部分错误仍为 HTTP 200）。",
         "version": "1.0.0",
         "contact": {
             "name": "API Support",
@@ -16,7 +16,7 @@
     "servers": [
         {
             "url": "/api/v1",
-            "description": "开发环境服务器"
+            "description": "相对路径（与 Vite 代理 / 同源一致）"
         }
     ],
     "paths": {
@@ -26,6 +26,7 @@
                 "summary": "用户登录",
                 "description": "用户登录接口，验证用户名和密码",
                 "operationId": "login",
+                "security": [],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -42,23 +43,11 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "登录成功",
+                        "description": "登录结果（与 mock 一致：HTTP 200；失败时 success=false 且 data=null）",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/BaseResponse"
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/LoginData"
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/LoginApiResponse"
                                 },
                                 "example": {
                                     "code": 200,
@@ -75,17 +64,31 @@
                         }
                     },
                     "401": {
-                        "description": "认证失败",
+                        "description": "认证失败：账号密码错误，或缺少用户名/密码（与当前 Mock 一致，均返回 HTTP 200 + 业务 code 401）",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/BaseResponse"
                                 },
-                                "example": {
-                                    "code": 401,
-                                    "msg": "Invalid username or password",
-                                    "success": false,
-                                    "data": null
+                                "examples": {
+                                    "invalidCredentials": {
+                                        "summary": "用户名或密码错误",
+                                        "value": {
+                                            "code": 401,
+                                            "msg": "Invalid username or password",
+                                            "success": false,
+                                            "data": null
+                                        }
+                                    },
+                                    "missingFields": {
+                                        "summary": "缺少用户名或密码",
+                                        "value": {
+                                            "code": 401,
+                                            "msg": "Username and password are required",
+                                            "success": false,
+                                            "data": null
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -110,22 +113,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/BaseResponse"
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/MenuItem"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/MenuApiResponse"
                                 },
                                 "example": {
                                     "code": 200,
@@ -136,10 +124,62 @@
                                             "key": "Dashboard",
                                             "label": "Dashboard",
                                             "icon": "dashboard",
-                                            "path": "/dashboard",
-                                            "filePath": "/dashboard/index"
+                                            "path": "/dashboard"
+                                        },
+                                        {
+                                            "key": "Tab",
+                                            "label": "Tab",
+                                            "icon": "tab",
+                                            "path": "/tab"
+                                        },
+                                        {
+                                            "key": "Table",
+                                            "label": "Table",
+                                            "icon": "table",
+                                            "path": "/table",
+                                            "children": []
+                                        },
+                                        {
+                                            "key": "External_Link",
+                                            "label": "External Link",
+                                            "icon": "link",
+                                            "path": "/iframe",
+                                            "children": [
+                                                {
+                                                    "key": "Baidu",
+                                                    "label": "Baidu",
+                                                    "path": "/iframe/Baidu",
+                                                    "link": "https://www.baidu.com/"
+                                                },
+                                                {
+                                                    "key": "React",
+                                                    "label": "React",
+                                                    "path": "/iframe/React",
+                                                    "link": "https://zh-hans.react.dev/"
+                                                }
+                                            ]
                                         }
                                     ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "未授权（正式环境常见；当前 Mock 不返回此 HTTP 状态）",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "无权限访问菜单接口",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
                                 }
                             }
                         }
@@ -178,23 +218,11 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "获取成功",
+                        "description": "获取成功（分页非法时与 mock 一致：HTTP 200 且 data=null）",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "allOf": [
-                                        {
-                                            "$ref": "#/components/schemas/BaseResponse"
-                                        },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "data": {
-                                                    "$ref": "#/components/schemas/PageResponse"
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/TableDataApiResponse"
                                 },
                                 "example": {
                                     "code": 200,
@@ -219,17 +247,27 @@
                         }
                     },
                     "401": {
-                        "description": "参数错误",
+                        "description": "业务失败：分页参数不合法（current 小于 1、pageSize 小于 1 或 pageSize 大于 100）。与 Mock 一致时为 HTTP 200 + 响应体 code 401",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
+                                    "$ref": "#/components/schemas/BaseResponse"
                                 },
                                 "example": {
                                     "code": 401,
                                     "msg": "Invalid pagination parameters",
                                     "success": false,
                                     "data": null
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
                                 }
                             }
                         }
@@ -241,23 +279,15 @@
     "components": {
         "schemas": {
             "BaseResponse": {
+                "title": "统一响应",
                 "type": "object",
-                "required": ["code", "msg", "success"],
+                "required": ["code", "msg", "success", "data"],
+                "description": "全站 JSON 接口统一信封，与 `mock/index.ts` 中 `BaseResponse<T>` 一致：`code`、`msg`、`success`、必有字段 `data`（失败时为 null）、可选 `timestamp`。",
                 "properties": {
                     "code": {
                         "type": "integer",
-                        "description": "响应状态码",
-                        "example": 200,
-                        "enum": [200, 400, 401, 403, 404, 500, 599],
-                        "x-enum-descriptions": {
-                            "200": "请求成功",
-                            "400": "请求参数错误",
-                            "401": "未授权访问",
-                            "403": "禁止访问",
-                            "404": "资源不存在",
-                            "500": "服务器内部错误",
-                            "599": "登录过期"
-                        }
+                        "description": "业务状态码，与 mock 中 RESPONSE_CODES 一致。常见：200 成功；401 未授权或参数错误；403 禁止；404 不存在；500 服务端错误；599 登录过期。",
+                        "example": 200
                     },
                     "msg": {
                         "type": "string",
@@ -274,13 +304,18 @@
                     "timestamp": {
                         "type": "string",
                         "format": "date-time",
-                        "description": "响应时间戳",
+                        "description": "响应时间戳（ISO8601）",
                         "example": "2024-01-15T10:30:00.000Z",
                         "readOnly": true
+                    },
+                    "data": {
+                        "nullable": true,
+                        "description": "业务数据。成功且语义成立时为对象或数组（见各接口 allOf 收窄）；失败或无效请求时为 null。"
                     }
                 }
             },
-            "ErrorResponse": {
+            "LoginApiResponse": {
+                "description": "POST /api/v1/login 的 JSON 体（具名 schema 便于生成器输出 `Types.LoginApiResponse`，避免内联交叉类型未加前缀）。",
                 "allOf": [
                     {
                         "$ref": "#/components/schemas/BaseResponse"
@@ -289,8 +324,55 @@
                         "type": "object",
                         "properties": {
                             "data": {
-                                "type": "null",
-                                "description": "错误时数据为空"
+                                "nullable": true,
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/LoginData"
+                                    }
+                                ],
+                                "description": "成功时为登录数据；失败时为 null"
+                            }
+                        }
+                    }
+                ]
+            },
+            "MenuApiResponse": {
+                "description": "GET /api/v1/getMenu 的 JSON 体。",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseResponse"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MenuItem"
+                                },
+                                "description": "菜单树，与 mockMenuData 一致"
+                            }
+                        }
+                    }
+                ]
+            },
+            "TableDataApiResponse": {
+                "description": "POST /api/v1/getTableData 的 JSON 体。",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/BaseResponse"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "data": {
+                                "nullable": true,
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/PageResponse"
+                                    }
+                                ],
+                                "description": "成功时为分页数据；分页参数非法时为 null"
                             }
                         }
                     }
@@ -348,15 +430,7 @@
                         "type": "array",
                         "items": {
                             "type": "string",
-                            "enum": [
-                                "Dashboard",
-                                "Basic_Table",
-                                "Advanced_Table",
-                                "Tab",
-                                "User_Management",
-                                "System_Settings"
-                            ],
-                            "description": "权限标识符"
+                            "description": "权限标识符（路由/菜单 key，mock 为 string[]，不限定枚举）"
                         },
                         "description": "用户权限列表",
                         "example": ["Dashboard", "Basic_Table", "Advanced_Table", "Tab"],
@@ -622,16 +696,16 @@
                     },
                     "createTime": {
                         "type": "string",
-                        "format": "date-time",
-                        "description": "创建时间",
-                        "example": "2024-01-15T10:30:00.000Z",
+                        "description": "创建时间（Mock 数据为本地格式 yyyy-MM-dd HH:mm:ss，非严格 ISO8601）",
+                        "example": "2024-01-15 10:30:00",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
                         "readOnly": true
                     },
                     "updateTime": {
                         "type": "string",
-                        "format": "date-time",
-                        "description": "更新时间",
-                        "example": "2024-01-15T10:30:00.000Z",
+                        "description": "更新时间（格式同 createTime）",
+                        "example": "2024-01-15 10:30:00",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
                         "readOnly": true
                     },
                     "status": {

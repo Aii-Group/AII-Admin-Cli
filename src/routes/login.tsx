@@ -1,24 +1,23 @@
 import { useTranslation } from 'react-i18next'
 import { Button, Checkbox, Flex, Form, Input } from 'antd'
 
-import apiClient from '@/utils/http'
+import { mockApiClient } from '@/utils/http'
 import Logo from '@/assets/png/logo.png'
 import { Lock, User } from '@icon-park/react'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
 import { LanguageButton, ThemeButton } from '@/layouts/components'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMenuStore, useThemeStore, useUserStore } from '@/stores/system'
+import menu from '@/utils/menu'
 
 export const Route = createFileRoute('/login')({
-    component: () => <Login />,
+    component: RouteComponent,
     staticData: {
-        code: 'Login',
-        langCode: 'Common.Login',
+        key: 'Login',
     },
 })
 
-const Login: React.FC = () => {
-    const [form] = Form.useForm()
+function RouteComponent() {
     const { t } = useTranslation()
     const { setUserInfo } = useUserStore()
     const { theme } = useThemeStore()
@@ -26,23 +25,18 @@ const Login: React.FC = () => {
     const navigate = useNavigate()
 
     const onFinish = async (values: any) => {
-        const loginRes = await apiClient.login(values)
+        const loginRes = await mockApiClient.login(values)
         if (loginRes.success && loginRes.data) {
             setUserInfo(loginRes.data)
-            getMenuData()
-        }
-    }
-    const getMenuData = async () => {
-        const menuRes = await apiClient.getMenu()
-        if (menuRes.success) {
-            appendMenu(menuRes.data ?? [])
+            appendMenu(menu)
             navigate({ to: '/dashboard' })
         }
     }
+
     return (
-        <div className="w-full min-w-960 h-[100vh] flex">
+        <div className="flex h-screen w-full min-w-240">
             <div
-                className="w-900 h-480 flex gap-10 m-auto rounded-[40px] bg-white dark:!bg-dark-colorBgContainer"
+                className="dark:bg-dark-colorBgContainer! m-auto flex h-120 w-225 gap-2.5 rounded-[40px] bg-white"
                 style={{
                     boxShadow:
                         theme === 'dark'
@@ -50,33 +44,33 @@ const Login: React.FC = () => {
                             : '-20px 20px 60px #cbcfd1, 20px -20px 60px #ffffff',
                 }}
             >
-                <div className="w-500 box-border">
-                    <div className="absolute top-16 left-16 flex items-center">
-                        <img src={Logo} className="w-36 h-36" />
-                        <span className="text-24 font-bold px-16">{t('System.System_Name')}</span>
+                <div className="box-border w-125">
+                    <div className="absolute top-4 left-4 flex items-center">
+                        <img src={Logo} className="h-9 w-9" />
+                        <span className="px-4 text-2xl font-bold">{t('System.System_Name')}</span>
                     </div>
-                    <div className="w-full h-full p-40 bg-slate-100 dark:!bg-black rounded-[40px]">
+                    <div className="h-full w-full rounded-[40px] bg-slate-100 p-10 dark:bg-black!">
                         <DotLottieReact src="/banner.json" autoplay loop />
                     </div>
                 </div>
-                <div className="w-400 box-border m-auto pr-10">
-                    <div className="absolute top-16 right-16">
+                <div className="m-auto box-border w-100 pr-2.5">
+                    <div className="absolute top-4 right-4">
                         <ThemeButton />
                         <LanguageButton />
                     </div>
-                    <div className="text-24 font-bold mb-60 text-center">{t('System.Welcome')}</div>
+                    <div className="mb-15 text-center text-2xl font-bold">{t('System.Welcome')}</div>
                     <Form
                         size="large"
                         name="login"
                         initialValues={{ remember: true }}
-                        className="!w-full box-border"
+                        className="box-border w-full!"
                         onFinish={onFinish}
                     >
                         <Form.Item
                             name="username"
                             rules={[{ required: true, message: t('Required.User_Name_Required') }]}
                         >
-                            <Input prefix={<User size={14} />} placeholder={t('Common.Name')} />
+                            <Input prefix={<User size={14} />} placeholder={t('Common.Username')} />
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -96,7 +90,7 @@ const Login: React.FC = () => {
                                 </Form.Item>
                                 <a href="">{t('Common.Forgot_Password')}</a>
                             </Flex>
-                            <Button className="my-4" block type="primary" htmlType="submit">
+                            <Button className="my-1" block type="primary" htmlType="submit">
                                 {t('Common.Log_In')}
                             </Button>
                             <div className="text-center">

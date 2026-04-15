@@ -1,0 +1,51 @@
+---
+description: SvgIcon 动态 SVG 与 assets/svg 命名约定（vite-plugin-svgr）
+globs: src/components/SvgIcon/**/*.tsx,src/assets/svg/**,src/utils/system.ts
+alwaysApply: false
+---
+
+# SvgIcon 使用约定
+
+`SvgIcon`（`@/components/SvgIcon`）按**文件名**懒加载 `src/assets/svg/{icon}.svg`，经 Vite `vite-plugin-svgr` 的 `?react` 转为 React 组件；`svgrOptions.icon: true` 已配置，适合小图标场景。
+
+## 1. API
+
+- **`icon: string`**：与 `assets/svg/` 下文件同名，**不含** `.svg` 与路径；空字符串时不发起加载。
+- **其余 props**：透传到根 `<svg>`（`className`、`style`、`width`、`height`、`aria-*` 等 `React.SVGAttributes<SVGSVGElement>`）。
+
+加载完成前或 `import` 失败（文件不存在等）时渲染 **`null`**。
+
+## 2. JSX 与命令式用法
+
+```tsx
+import SvgIcon from '@/components/SvgIcon'
+
+<SvgIcon icon="robot" className="size-5 text-primary" aria-hidden />
+
+// 菜单等无法用 JSX 时
+React.createElement(SvgIcon, { icon: 'dashboard' })
+```
+
+业务菜单图标字符串与后端/配置中的 `icon` 字段应对应 `assets/svg/{icon}.svg`（见 `renderMenuItems`：`@/utils/system.ts`）。
+
+## 3. 与静态 `?react` import 的取舍
+
+| 场景 | 推荐 |
+|------|------|
+| 图标名来自数据、菜单配置、运行时才知道 | `<SvgIcon icon={name} />` |
+| 固定资源、希望构建期确定依赖 | `import Robot from '@/assets/svg/robot.svg?react'` 直接使用 |
+
+## 4. 改组件或排查不显示时
+
+- 动态路径为 `` `../../assets/svg/${icon}.svg?react` ``（相对 `SvgIcon` 源文件）；新增目录层级时需同步调整。
+- 类型声明：`*.svg?react` 见 `src/types/declarations.d.ts`。
+- 不要在 `icon` 中传路径分隔符或扩展名，只传**裸文件名**。
+
+```tsx
+// ❌ BAD
+<SvgIcon icon="icons/home" />
+<SvgIcon icon="home.svg" />
+
+// ✅ GOOD
+<SvgIcon icon="home" />
+```

@@ -1,17 +1,32 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
-import enUsTrans from '@/locales/en.yaml'
-import zhCnTrans from '@/locales/zh.yaml'
-import { languageEnums } from '@/enums/languageEnum'
+import enSystem from '@/locales/en.yaml'
+import zhSystem from '@/locales/zh.yaml'
+import { languageEnums } from '@/enums'
+
+type YamlModule = { default: Record<string, unknown> }
+
+const mergeBusinessModules = (modules: Record<string, YamlModule>) =>
+    Object.values(modules).reduce<Record<string, unknown>>((acc, { default: chunk }) => ({ ...acc, ...chunk }), {})
+
+const enBusiness = mergeBusinessModules(
+    import.meta.glob('../locales/business/**/en.yaml', { eager: true }) as Record<string, YamlModule>,
+)
+const zhBusiness = mergeBusinessModules(
+    import.meta.glob('../locales/business/**/zh.yaml', { eager: true }) as Record<string, YamlModule>,
+)
+
+const enTranslation = { ...enSystem, ...enBusiness }
+const zhTranslation = { ...zhSystem, ...zhBusiness }
 
 i18n.use(initReactI18next).init({
     resources: {
         [languageEnums.EN]: {
-            translation: enUsTrans,
+            translation: enTranslation,
         },
         [languageEnums.ZH]: {
-            translation: zhCnTrans,
+            translation: zhTranslation,
         },
     },
     fallbackLng: languageEnums.ZH,

@@ -1,8 +1,8 @@
 {
     "input": "./mock/swagger.json",
-    "output": "./src/mockClient",
+    "output": "./src/api/mockApiClient",
     "baseURL": "/api/v1",
     "typePrefix": "",
-    "axiosInstance": "apiClient",
+    "axiosInstance": "mockApiClient",
     "generateClient": true
 }

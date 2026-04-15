@@ -6,6 +6,7 @@ import { useThemeStore } from '@/stores/system'
 
 export default function useTheme() {
     const { theme, color } = useThemeStore()
+
     useEffect(() => {
         const html = document.documentElement as HTMLElement
         const body = document.body

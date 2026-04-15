@@ -1,0 +1,97 @@
+---
+description: 项目 UI 规范（antd + Tailwind + 暗黑模式 + 可访问性）
+alwaysApply: true
+---
+
+# 项目 UI 规范（必须遵守）
+
+本项目 UI 栈以 `antd`（Design Token）为主，`Tailwind CSS v4` 为辅（快速布局与少量自定义样式），并支持暗黑模式（`darkMode: 'selector'`）。
+
+## 0) Token 与 Tailwind 映射（必须了解）
+
+项目已通过 `preset.js` 将 **antd 的 Design Token 合并进 Tailwind**，颜色以 CSS 变量形式注入，自动跟随亮/暗主题切换：
+
+- **token 类名直接使用**，例如 `bg-colorBgContainer`、`text-colorText`、`border-colorBorder`
+- 切换为暗黑模式时，`.dark` 选择器下的 CSS 变量自动替换为暗色值，**无需写 `dark:` 变体**
+
+要求：
+
+- **涉及颜色（背景/文字/边框/分割线/状态色）时，优先用 token 类名**，不要直接写 `bg-white` / `text-black` 等硬编码（除非明确是"纯白/纯黑"视觉且两套主题都合理）。
+- **不要用 Tailwind 覆盖 antd 组件内部视觉结构**（尤其是 `!` 强制覆盖）。如果必须覆盖，优先走 antd 的 props / token / `components` 主题能力。
+
+## 1) 设计一致性优先级（从高到低）
+
+- **优先使用 antd 组件与 Token**：颜色、字体、圆角、阴影、间距等优先从 antd 的 token / 主题体系获取或继承。
+- **Tailwind 只做布局与少量修饰**：网格/间距/对齐/溢出/响应式优先用 Tailwind；避免用 Tailwind "重绘" antd 组件的视觉（尤其是颜色、边框、阴影）。
+- **需要统一容器时用 `.wrapper`**：列表页、表单页、卡片式模块优先包一层带 `wrapper` class 的容器（见 `src/styles/global.css` 的 `@layer components .wrapper`）。
+
+## 2) 布局与间距（可读性、可扫描）
+
+- **页面结构**：`Header / Sidebar / Main / Content` 层级清晰；避免深层嵌套导致 padding 叠加。
+- **间距基线**：优先使用 4 的倍数（4/8/12/16/24/32）；同一页面同类模块间距保持一致。
+- **信息密度**：后台默认 14px 字号已在 `src/index.css` 设定；不要在局部随意改基础字号，必要时只做少量层级（如标题 16/18）。
+
+示例：
+
+```tsx
+// ✅ GOOD：统一容器 + 清晰分区 + 4 倍数间距
+export function Page() {
+  return (
+    <div className="wrapper space-y-4">
+      <SectionHeader />
+      <ContentBlock />
+    </div>
+  )
+}
+```
+
+```tsx
+// ❌ BAD：随意 padding/margin，且缺乏统一容器导致页面"散"
+export function Page() {
+  return <div className="p-[13px] mt-[7px] bg-white">...</div>
+}
+```
+
+## 3) 暗黑模式（必须可用）
+
+- **必须同时考虑 light/dark**：新增页面/组件时，保证暗黑模式下对比度、边界与文本可读。
+- **token 类名自动切换**：使用 `bg-colorBgContainer`、`text-colorText` 等 token 类名时，暗黑模式下 CSS 变量自动替换，无需额外 `dark:` 变体。
+- **避免硬编码颜色**：优先使用 token 语义色。确需硬编码时必须成对提供 dark 对应值（通过 `dark:` 变体），并说明原因（仅在 PR 描述/commit message 说明，不要写无意义注释）。
+
+## 4) 状态与反馈（用户可预期）
+
+- **加载**：列表/表单提交必须有 loading；避免静默等待。
+- **错误提示**：优先用 `window.$message` / `window.$notification` 做全局反馈（由 `AppProvider` 提供），表单校验错误用 antd Form 的错误提示。
+- **确认操作**：破坏性操作必须二次确认（`window.$modal.confirm` 或业务 `useModal`）。
+
+## 5) 可访问性（A11y）与可用性（必须达到）
+
+- **可点击区域**：小图标按钮需要足够点击面积（不小于 32x32 视觉/交互区域）。
+- **键盘可用**：弹窗/抽屉打开后焦点可用；可通过 Esc 关闭（遵循 antd 默认）。
+- **文案与图标**：仅图标按钮必须提供 `aria-label` 或 `tooltip`（二选一，但至少一个）。
+
+```tsx
+// ✅ GOOD：图标按钮提供可访问标签
+<Button type="text" aria-label="刷新" icon={<ReloadOutlined />} />
+```
+
+## 6) 动效与过渡（克制、服务于理解）
+
+- **默认克制**：避免大幅位移与长时间动画；优先 150–300ms 的轻量过渡。
+- **复用现有机制**：已有页面切换/进出场与折叠动效（如 `AiiSearch` 使用 `framer-motion`）；新增动效需与现有时长/曲线保持一致。
+
+## 7) 样式写法（可维护）
+
+- **尽量不用 `!important`**：除非与第三方样式冲突且无更好解法；如必须使用，限制在最小范围。
+- **避免"选择器打架"**：不要用过深的选择器链覆盖 antd 内部结构；优先通过 antd props、token、或在组件外层加 class 做样式隔离。
+- **类名约定**：页面级容器用语义类名（`wrapper`, `page-*`, `section-*`），不要到处复制粘贴随机 class 组合当"组件样式"。
+
+## 8) 组件封装与复用（项目已有组件优先）
+
+在写新页面前，先考虑复用现有封装组件/Provider：
+
+- `AiiTable` / `AiiSearch` / `AiiTab`
+- `AiiModal`（`useModal`）/ `AiiDrawer`（`useDrawer`）
+- `AppProvider`（`window.$message/$modal/$notification`）
+
+若已有组件满足需求，不要重新造轮子或直接在页面里拼出一套"相似但不一致"的 UI。

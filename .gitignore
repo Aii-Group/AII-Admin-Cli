@@ -110,3 +110,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Env files (keep non-secret .env/.env.development/.env.production in repo)
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc

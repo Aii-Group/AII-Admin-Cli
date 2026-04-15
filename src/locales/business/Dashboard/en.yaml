@@ -1,0 +1,32 @@
+Dashboard:
+    Title: AII Admin CLI
+    Subtitle: An admin-frontend scaffold and demo project. Built-in layout, routing, menu, tabs, theme, i18n, HTTP layer, Mock, and a table workbench—plus optional AI chat. Start here to understand the system and get productive fast.
+    Logo_Alt: AII Admin CLI
+    Open: Open
+    QuickEntry_Section_Label: Quick links
+    Badge_Antd: Ant Design
+    Badge_TailwindToken: Tokens + Tailwind
+    Badge_Router: TanStack Router
+    Badge_Table: Table Workbench
+    Badge_AI: AI Chat
+    QuickEntry_TableWorkbench_Title: Table workbench (full example)
+    QuickEntry_TableWorkbench_Desc: End-to-end usage of AiiTable + AiiSearch + useTable + Modal/Drawer. A good starting template for real pages.
+    QuickEntry_TabDemo_Title: Tabs demo
+    QuickEntry_TabDemo_Desc: AiiTab (page-level tabs) example, suitable for module-internal view switching.
+    QuickEntry_MenuAndRoute_Title: Menu & route conventions
+    QuickEntry_MenuAndRoute_Desc: Learn how menu key, route staticData.key, and i18n labels align to avoid 404s and title mismatches.
+    SystemOverview_Title: System overview (what you get)
+    SystemOverview_Point1: 'Unified layout & route tabs: Header/Sidebar/Main with tab behaviors (close policy, context menu, etc.).'
+    SystemOverview_Point2: 'Theme & dark mode: driven by antd tokens; Tailwind for layout and light styling only—consistent across themes.'
+    SystemOverview_Point3: 'i18n: i18next + YAML resources, merging system and business dictionaries with zh-CN / en support.'
+    SystemOverview_Point4: 'HTTP & Mock: Axios layer + 401 handling + vite-plugin-mock. You can run login/menu/list flows locally.'
+    HowToExtend_Title: Add a new feature page (shortest path)
+    HowToExtend_Step1: Add a file route under src/routes/_authentication and set staticData.key.
+    HowToExtend_Step2: Save and confirm routeTree.gen.ts generated the fullPath, matching the menu path exactly.
+    HowToExtend_Step3: Add Menu.{key} labels to src/locales/business/Menu/{zh,en}.yaml, keeping the key aligned with staticData.key.
+    HowToExtend_Step4: Make getMenu (or mock) return the item (key/path/icon/children/permission, etc.), then re-login to verify.
+    Docs_Title: Developer documentation
+    Docs_Lead: This page documents the scaffold (developer-oriented); content evolves with the repo—refer to source code.
+    Docs_MockLogin_Title: Local mock login
+    Docs_MockLogin_Body: Account admin / password 123456; menu from GET /api/v1/getMenu — edit mockMenuData in mock/index.ts for hierarchy and paths.
+    Docs_SectionNav: Sections (click to expand)

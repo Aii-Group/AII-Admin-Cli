@@ -1,3 +1,7 @@
+/**
+ * 本地 Mock 接口实现。路径、请求体、响应信封与 `mock/swagger.json`（OpenAPI）对齐；
+ * 修改接口时请同步更新 Swagger 并执行 `pnpm run swagger-mock` 以刷新 `src/api/mockApiClient`。
+ */
 import { MockMethod } from 'vite-plugin-mock'
 import Mock from 'mockjs'
 
@@ -162,51 +166,58 @@ const mockMenuData: MenuItem[] = [
         label: 'Dashboard',
         icon: 'dashboard',
         path: '/dashboard',
-        filePath: '/dashboard/index',
     },
     {
         key: 'Tab',
         label: 'Tab',
         icon: 'tab',
         path: '/tab',
-        filePath: '/tab/index',
     },
     {
         key: 'Table',
         label: 'Table',
         icon: 'table',
         path: '/table',
+        children: [],
+    },
+    {
+        key: 'External_Link',
+        label: 'External Link',
+        icon: 'link',
+        path: '/iframe',
         children: [
             {
-                key: 'Advanced_Table',
-                label: 'Advanced Table',
-                path: '/table/advanced',
-                filePath: '/table/advanced',
+                key: 'Baidu',
+                label: 'Baidu',
+                path: '/iframe/Baidu',
+                link: 'https://www.baidu.com/',
+            },
+            {
+                key: 'React',
+                label: 'React',
+                path: '/iframe/React',
+                link: 'https://zh-hans.react.dev/',
             },
         ],
     },
-    // {
-    //     key: 'External_Link',
-    //     label: 'External Link',
-    //     icon: 'link',
-    //     path: '/iframe',
-    //     children: [
-    //         {
-    //             key: 'Baidu',
-    //             label: 'Baidu',
-    //             path: '/iframe/Baidu',
-    //             link: 'https://www.baidu.com/',
-    //             filePath: '/iframe/index',
-    //         },
-    //         {
-    //             key: 'React',
-    //             label: 'React',
-    //             path: '/iframe/React',
-    //             link: 'https://zh-hans.react.dev/',
-    //             filePath: '/iframe/index',
-    //         },
-    //     ],
-    // },
+    {
+        key: 'Form',
+        label: 'Form',
+        icon: 'form',
+        path: '/form',
+        children: [
+            {
+                key: 'Basic_Form',
+                label: 'Basic Form',
+                path: '/form/basic-form',
+            },
+            {
+                key: 'Advanced_Form',
+                label: 'Advanced Form',
+                path: '/form/advanced-form',
+            },
+        ],
+    },
 ]
 
 // ==================== API Mock 定义 ====================
@@ -231,7 +242,15 @@ const mockApis: MockMethod[] = [
                     userId: '1008',
                     userName: 'admin',
                     token: Mock.Random.guid(),
-                    permissions: ['Dashboard', 'Basic_Table', 'Advanced_Table', 'Tab'],
+                    permissions: [
+                        'Dashboard',
+                        'Basic_Table',
+                        'Advanced_Table',
+                        'Tab',
+                        'Form',
+                        'Basic_Form',
+                        'Advanced_Form',
+                    ],
                     userInfo: {
                         avatar: 'https://example.com/avatar.jpg',
                         email: 'admin@example.com',

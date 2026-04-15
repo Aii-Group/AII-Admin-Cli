@@ -2,8 +2,6 @@ import { Button } from 'antd'
 
 import { Remind } from '@icon-park/react'
 
-const RemindButton: React.FC = () => {
+export default function RemindButton() {
     return <Button type="text" icon={<Remind />} />
 }
-
-export default RemindButton

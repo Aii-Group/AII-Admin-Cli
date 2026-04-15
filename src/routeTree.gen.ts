@@ -10,16 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as IframeRouteImport } from './routes/iframe'
 import { Route as AuthenticationRouteImport } from './routes/_authentication'
 import { Route as R403RouteImport } from './routes/403'
-import { Route as AuthenticationTableAdvancedRouteImport } from './routes/_authentication/table/advanced'
-import { Route as AuthenticationIframeNameRouteImport } from './routes/_authentication/iframe/$name'
-import { Route as AuthenticationTabTabRouteImport } from './routes/_authentication/_tab/tab'
-import { Route as AuthenticationDashboardDashboardRouteImport } from './routes/_authentication/_dashboard/dashboard'
+import { Route as IframeNameRouteImport } from './routes/iframe/$name'
+import { Route as AuthenticationTableRouteImport } from './routes/_authentication/table'
+import { Route as AuthenticationTabRouteImport } from './routes/_authentication/tab'
+import { Route as AuthenticationDashboardRouteImport } from './routes/_authentication/dashboard'
+import { Route as AuthenticationFormBasicFormRouteImport } from './routes/_authentication/form/basic-form'
+import { Route as AuthenticationFormAdvancedFormRouteImport } from './routes/_authentication/form/advanced-form'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IframeRoute = IframeRouteImport.update({
+  id: '/iframe',
+  path: '/iframe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticationRoute = AuthenticationRouteImport.update({
@@ -31,87 +39,115 @@ const R403Route = R403RouteImport.update({
   path: '/403',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticationTableAdvancedRoute =
-  AuthenticationTableAdvancedRouteImport.update({
-    id: '/table/advanced',
-    path: '/table/advanced',
-    getParentRoute: () => AuthenticationRoute,
-  } as any)
-const AuthenticationIframeNameRoute =
-  AuthenticationIframeNameRouteImport.update({
-    id: '/iframe/$name',
-    path: '/iframe/$name',
-    getParentRoute: () => AuthenticationRoute,
-  } as any)
-const AuthenticationTabTabRoute = AuthenticationTabTabRouteImport.update({
-  id: '/_tab/tab',
+const IframeNameRoute = IframeNameRouteImport.update({
+  id: '/$name',
+  path: '/$name',
+  getParentRoute: () => IframeRoute,
+} as any)
+const AuthenticationTableRoute = AuthenticationTableRouteImport.update({
+  id: '/table',
+  path: '/table',
+  getParentRoute: () => AuthenticationRoute,
+} as any)
+const AuthenticationTabRoute = AuthenticationTabRouteImport.update({
+  id: '/tab',
   path: '/tab',
   getParentRoute: () => AuthenticationRoute,
 } as any)
-const AuthenticationDashboardDashboardRoute =
-  AuthenticationDashboardDashboardRouteImport.update({
-    id: '/_dashboard/dashboard',
-    path: '/dashboard',
+const AuthenticationDashboardRoute = AuthenticationDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticationRoute,
+} as any)
+const AuthenticationFormBasicFormRoute =
+  AuthenticationFormBasicFormRouteImport.update({
+    id: '/form/basic-form',
+    path: '/form/basic-form',
+    getParentRoute: () => AuthenticationRoute,
+  } as any)
+const AuthenticationFormAdvancedFormRoute =
+  AuthenticationFormAdvancedFormRouteImport.update({
+    id: '/form/advanced-form',
+    path: '/form/advanced-form',
     getParentRoute: () => AuthenticationRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/403': typeof R403Route
+  '/iframe': typeof IframeRouteWithChildren
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticationDashboardDashboardRoute
-  '/tab': typeof AuthenticationTabTabRoute
-  '/iframe/$name': typeof AuthenticationIframeNameRoute
-  '/table/advanced': typeof AuthenticationTableAdvancedRoute
+  '/dashboard': typeof AuthenticationDashboardRoute
+  '/tab': typeof AuthenticationTabRoute
+  '/table': typeof AuthenticationTableRoute
+  '/iframe/$name': typeof IframeNameRoute
+  '/form/advanced-form': typeof AuthenticationFormAdvancedFormRoute
+  '/form/basic-form': typeof AuthenticationFormBasicFormRoute
 }
 export interface FileRoutesByTo {
   '/403': typeof R403Route
+  '/iframe': typeof IframeRouteWithChildren
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticationDashboardDashboardRoute
-  '/tab': typeof AuthenticationTabTabRoute
-  '/iframe/$name': typeof AuthenticationIframeNameRoute
-  '/table/advanced': typeof AuthenticationTableAdvancedRoute
+  '/dashboard': typeof AuthenticationDashboardRoute
+  '/tab': typeof AuthenticationTabRoute
+  '/table': typeof AuthenticationTableRoute
+  '/iframe/$name': typeof IframeNameRoute
+  '/form/advanced-form': typeof AuthenticationFormAdvancedFormRoute
+  '/form/basic-form': typeof AuthenticationFormBasicFormRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/403': typeof R403Route
   '/_authentication': typeof AuthenticationRouteWithChildren
+  '/iframe': typeof IframeRouteWithChildren
   '/login': typeof LoginRoute
-  '/_authentication/_dashboard/dashboard': typeof AuthenticationDashboardDashboardRoute
-  '/_authentication/_tab/tab': typeof AuthenticationTabTabRoute
-  '/_authentication/iframe/$name': typeof AuthenticationIframeNameRoute
-  '/_authentication/table/advanced': typeof AuthenticationTableAdvancedRoute
+  '/_authentication/dashboard': typeof AuthenticationDashboardRoute
+  '/_authentication/tab': typeof AuthenticationTabRoute
+  '/_authentication/table': typeof AuthenticationTableRoute
+  '/iframe/$name': typeof IframeNameRoute
+  '/_authentication/form/advanced-form': typeof AuthenticationFormAdvancedFormRoute
+  '/_authentication/form/basic-form': typeof AuthenticationFormBasicFormRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/403'
+    | '/iframe'
     | '/login'
     | '/dashboard'
     | '/tab'
+    | '/table'
     | '/iframe/$name'
-    | '/table/advanced'
+    | '/form/advanced-form'
+    | '/form/basic-form'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/403'
+    | '/iframe'
     | '/login'
     | '/dashboard'
     | '/tab'
+    | '/table'
     | '/iframe/$name'
-    | '/table/advanced'
+    | '/form/advanced-form'
+    | '/form/basic-form'
   id:
     | '__root__'
     | '/403'
     | '/_authentication'
+    | '/iframe'
     | '/login'
-    | '/_authentication/_dashboard/dashboard'
-    | '/_authentication/_tab/tab'
-    | '/_authentication/iframe/$name'
-    | '/_authentication/table/advanced'
+    | '/_authentication/dashboard'
+    | '/_authentication/tab'
+    | '/_authentication/table'
+    | '/iframe/$name'
+    | '/_authentication/form/advanced-form'
+    | '/_authentication/form/basic-form'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   R403Route: typeof R403Route
   AuthenticationRoute: typeof AuthenticationRouteWithChildren
+  IframeRoute: typeof IframeRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
@@ -122,6 +158,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/iframe': {
+      id: '/iframe'
+      path: '/iframe'
+      fullPath: '/iframe'
+      preLoaderRoute: typeof IframeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authentication': {
@@ -138,58 +181,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R403RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authentication/table/advanced': {
-      id: '/_authentication/table/advanced'
-      path: '/table/advanced'
-      fullPath: '/table/advanced'
-      preLoaderRoute: typeof AuthenticationTableAdvancedRouteImport
-      parentRoute: typeof AuthenticationRoute
-    }
-    '/_authentication/iframe/$name': {
-      id: '/_authentication/iframe/$name'
-      path: '/iframe/$name'
+    '/iframe/$name': {
+      id: '/iframe/$name'
+      path: '/$name'
       fullPath: '/iframe/$name'
-      preLoaderRoute: typeof AuthenticationIframeNameRouteImport
+      preLoaderRoute: typeof IframeNameRouteImport
+      parentRoute: typeof IframeRoute
+    }
+    '/_authentication/table': {
+      id: '/_authentication/table'
+      path: '/table'
+      fullPath: '/table'
+      preLoaderRoute: typeof AuthenticationTableRouteImport
       parentRoute: typeof AuthenticationRoute
     }
-    '/_authentication/_tab/tab': {
-      id: '/_authentication/_tab/tab'
+    '/_authentication/tab': {
+      id: '/_authentication/tab'
       path: '/tab'
       fullPath: '/tab'
-      preLoaderRoute: typeof AuthenticationTabTabRouteImport
+      preLoaderRoute: typeof AuthenticationTabRouteImport
       parentRoute: typeof AuthenticationRoute
     }
-    '/_authentication/_dashboard/dashboard': {
-      id: '/_authentication/_dashboard/dashboard'
+    '/_authentication/dashboard': {
+      id: '/_authentication/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticationDashboardDashboardRouteImport
+      preLoaderRoute: typeof AuthenticationDashboardRouteImport
+      parentRoute: typeof AuthenticationRoute
+    }
+    '/_authentication/form/basic-form': {
+      id: '/_authentication/form/basic-form'
+      path: '/form/basic-form'
+      fullPath: '/form/basic-form'
+      preLoaderRoute: typeof AuthenticationFormBasicFormRouteImport
+      parentRoute: typeof AuthenticationRoute
+    }
+    '/_authentication/form/advanced-form': {
+      id: '/_authentication/form/advanced-form'
+      path: '/form/advanced-form'
+      fullPath: '/form/advanced-form'
+      preLoaderRoute: typeof AuthenticationFormAdvancedFormRouteImport
       parentRoute: typeof AuthenticationRoute
     }
   }
 }
 
 interface AuthenticationRouteChildren {
-  AuthenticationDashboardDashboardRoute: typeof AuthenticationDashboardDashboardRoute
-  AuthenticationTabTabRoute: typeof AuthenticationTabTabRoute
-  AuthenticationIframeNameRoute: typeof AuthenticationIframeNameRoute
-  AuthenticationTableAdvancedRoute: typeof AuthenticationTableAdvancedRoute
+  AuthenticationDashboardRoute: typeof AuthenticationDashboardRoute
+  AuthenticationTabRoute: typeof AuthenticationTabRoute
+  AuthenticationTableRoute: typeof AuthenticationTableRoute
+  AuthenticationFormAdvancedFormRoute: typeof AuthenticationFormAdvancedFormRoute
+  AuthenticationFormBasicFormRoute: typeof AuthenticationFormBasicFormRoute
 }
 
 const AuthenticationRouteChildren: AuthenticationRouteChildren = {
-  AuthenticationDashboardDashboardRoute: AuthenticationDashboardDashboardRoute,
-  AuthenticationTabTabRoute: AuthenticationTabTabRoute,
-  AuthenticationIframeNameRoute: AuthenticationIframeNameRoute,
-  AuthenticationTableAdvancedRoute: AuthenticationTableAdvancedRoute,
+  AuthenticationDashboardRoute: AuthenticationDashboardRoute,
+  AuthenticationTabRoute: AuthenticationTabRoute,
+  AuthenticationTableRoute: AuthenticationTableRoute,
+  AuthenticationFormAdvancedFormRoute: AuthenticationFormAdvancedFormRoute,
+  AuthenticationFormBasicFormRoute: AuthenticationFormBasicFormRoute,
 }
 
 const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
   AuthenticationRouteChildren,
 )
 
+interface IframeRouteChildren {
+  IframeNameRoute: typeof IframeNameRoute
+}
+
+const IframeRouteChildren: IframeRouteChildren = {
+  IframeNameRoute: IframeNameRoute,
+}
+
+const IframeRouteWithChildren =
+  IframeRoute._addFileChildren(IframeRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   R403Route: R403Route,
   AuthenticationRoute: AuthenticationRouteWithChildren,
+  IframeRoute: IframeRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

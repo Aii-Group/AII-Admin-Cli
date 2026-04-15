@@ -1,0 +1,326 @@
+---
+description: AiiTable 与 useTable 使用文档（props、数据流、示例、注意事项）
+globs:
+  - src/components/AiiTable/index.tsx
+  - src/hooks/table.hooks.ts
+alwaysApply: false
+---
+
+# AiiTable 使用文档
+
+该组件是 `antd` `Table` 的封装：顶部工具栏 `toolbar`、右侧操作列 `operations`、底部分页 `pagination`（含 pageSize 下拉）、以及结合 `rowSelection` 的批量操作栏 `batchOperations`。表格本体固定传入 `pagination={false}`、`scroll={{ x: 'max-content' }}`、`sticky={{ offsetHeader: 0 }}`。
+
+**组件导出类型**：`AiiTableProps<T>`、`OperationButtonItem<T>`、`ToolbarProps`、`BatchOperationItemProps`。
+
+**列表数据 hook**（与本组件常一起用）：`src/hooks/table.hooks.ts` 的 `useTable`，导出还包含 `ApiMethod`、`PageData`、`CommonResult`、`TableResponse`。
+
+## 1. 组件泛型与基础必填项
+
+- 组件：`AiiTable<T>`
+- `T`：行数据类型
+- 继承 `antd` 的 `TableProps<T>`（如 `columns`、`dataSource`、`rowKey`、`rowSelection` 等）
+- 组件内部会解构使用（建议按需传入）：
+  - `rowKey`
+  - `columns`
+  - `dataSource`
+  - `loading`（可选）
+  - `rowSelection`（批量栏与「取消勾选」依赖此项）
+
+## 2. 额外 props（重点）
+
+### pagination（可选）
+
+用于渲染底部 `SimplePagination`：
+
+```ts
+pagination?: { total: number; current: number; pageSize: number }
+```
+
+回调：
+
+- `onPageChange?: (page: number) => void`
+- `onPageSizeChange?: (pageSize: number) => void`
+
+说明：
+
+- 仅当传入 `pagination` 时渲染底部分页；表格内部始终 `pagination={false}`。
+- pageSize 下拉固定选项：`10 / 20 / 50 / 100`（与 `pageSizeOptions` 一致）。
+
+### toolbar（可选）
+
+顶部右对齐的一组 `Button type="text"`：
+
+```ts
+toolbar?: ToolbarProps[]
+
+interface ToolbarProps {
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+}
+```
+
+注意：`label` 类型为 **`string`**（非 `React.ReactNode`）。
+
+### operations（可选）
+
+在列配置末尾追加「操作列」：标题为 i18n 的 `Action.Operate`，`fixed: 'right'`，默认 `width: 100`。
+
+```ts
+operations?: OperationButtonItem<T>[] | ((record: T) => OperationButtonItem<T>[])
+
+interface OperationButtonItem<T> {
+  key: string
+  icon?: React.ReactNode
+  label: string | React.ReactNode
+  danger?: boolean
+  onClick: (record: T) => void
+}
+```
+
+渲染规则：
+
+- 为函数时：每行 `record` 单独计算菜单项。
+- 为数组时：所有行共用同一组配置。
+- 菜单项数量 `> 2`：收起到 `Dropdown`（触发器为文本按钮 + `MoreOne` 图标）；否则多个 `Button type="text"` 横向排列。
+- 若解析后菜单为空：该行操作列单元格为 `null`（不渲染按钮）。
+
+列合并实现（与旧版文档不同）：
+
+- 内部在 `useMemo` 中执行 `const base = columns ? [...columns] : []`，需要时再 `push` 操作列，得到 `mergedColumns`。
+- **不会修改你传入的 `columns` 数组引用**。
+
+性能建议：
+
+- `operationColumn` 的 `useMemo` 依赖 `operations`，引用抖动会导致操作列配置重算；函数形式时建议 `useCallback`，数组形式可用 `useMemo` 稳定引用。
+
+### batchOperations（可选）
+
+在表头 `thead` 内插入一行（`components.header.wrapper`）：当 `rowSelection.selectedRowKeys.length > 0` 时显示批量操作区域。
+
+```ts
+batchOperations?: BatchOperationItemProps[]
+
+interface BatchOperationItemProps {
+  key: string
+  icon?: React.ReactNode
+  label: string | React.ReactNode
+  danger?: boolean
+  onClick: () => void
+}
+```
+
+说明：
+
+- `onClick` **无参数**；请用外部 state（如 `selectedRowKeys`、选中行缓存）在闭包中实现逻辑。
+- 「取消勾选」会调用 `rowSelection.onChange?.([], [], { type: 'none' })`。
+- 布局：当「数据列数 +（是否启用操作列 ? 1 : 0）」`<= 4` 时，批量栏占一行大 `colSpan`；列更多时拆成左/中/右三块（左右 `th` 为 `sticky`，用于宽表时避免布局抖动；实现上有意不随勾选反复改变列数，减轻表格闪烁）。
+
+## 3. `useTable`（服务端分页，与 AiiTable 对接）
+
+定义见 `src/hooks/table.hooks.ts`。
+
+### 签名
+
+```ts
+function useTable<T, P extends PaginationParams = PaginationParams>(
+  apiMethod: ApiMethod<T, P>,
+  transform?: (pageData: PageData<T>) => PageData<T>,
+)
+```
+
+返回值字段见下表（源码类型名为 `UseTableTypes<T, P>`，未导出）。
+
+- `PaginationParams`：`{ current: number; pageSize: number }`。
+- `ApiMethod<T, P>`：`(params: P) => Promise<CommonResult<PageData<T>>>`。请求参数里会合并 **搜索条件**（hook 内 `searchParams`）与 **分页**（`current` / `pageSize`）。
+- `CommonResult`：常见形态为 `{ data?: PageData<T>; success?: boolean; ... }`。`success === false`，或 `data` 为 `undefined` / `null`，视为失败，不更新表格数据。
+- `PageData<T>`：兼容多种后端字段——`list?`、`total?`、`pageNum?` 与 `current?`、`pageSize?`、`pages?` 与 `totalPages?`。内部经 `normalizePageData` 统一为完整分页结构。
+- `transform`（可选）：在首次规范化之后对 `PageData<T>` 再加工；返回值会再跑一遍数值字段规范化（页码、总数、每页条数等）。源码中类型名为 `NormalizeFn<T>`，未单独导出。
+
+### 返回值 → AiiTable props 映射
+
+| Hook 字段 | 接入方式 |
+|-----------|----------|
+| `loading` | `loading={loading}` |
+| `dataSource` | `dataSource={dataSource}` |
+| `pagination` | `pagination={pagination}`（形状为 `{ current, pageSize, total }`，与 AiiTable 一致） |
+| `onPageChange` | `onPageChange={onPageChange}` |
+| `onPageSizeChange` | `onPageSizeChange={onPageSizeChange}`（内部会将 `current` 置为 `1` 并请求） |
+| `selectedRowKeys` / `selectedRows` | 用于 `batchOperations` 闭包、导出等 |
+| `onSelectChange` | 接到 `rowSelection.onChange` 的前两个参数（见下） |
+| `queryTableData` | 首次进入、刷新、带筛选拉数；可选 `initParams`、`paginationOverride` |
+| `onSearch` | 合并 `Partial<P>` 为搜索条件，`current` 重置为 `1` 后请求 |
+| `onSetDataSource` | 仅前端覆盖展示数据；**下一次** `queryTableData` / 翻页 / 搜索 / 改 pageSize 会 `setManualDataSource(null)` 恢复走接口 |
+
+### 行为要点
+
+- 使用 `@tanstack/react-query` 的 `useMutation`；`loading` 对应 `fetchMutation.isPending`。
+- 单次请求返回后，若实际耗时不足 **500ms**，会补延迟到至少 500ms 再结束 loading（`LOADING_MIN_MS`），避免闪烁。
+- `queryTableData(initParams?, paginationOverride?)`：若传入 `initParams`，会与已有 `searchParams` 合并并写回；`paginationOverride` 可临时指定本次请求的页码/每页条数（并可能同步 `paginationState`）。
+- 请求失败会在控制台 `console.error`，并返回 `undefined`。
+- **首屏请求**：`useEffect(() => { void queryTableData() }, [])` 即可。不要把 `queryTableData` 放进依赖数组：其引用会随 `pagination` / `searchParams` 等更新而变，容易造成**重复请求**。
+
+### `rowSelection` 与 hook 同步
+
+批量栏「取消勾选」依赖 `rowSelection.onChange`；必须把 antd 的勾选回调接到 `onSelectChange`，否则 hook 里的 `selectedRowKeys` / `selectedRows` 不会更新。
+
+```tsx
+import type { Key } from 'react'
+
+const rowSelection = useMemo(
+  () => ({
+    selectedRowKeys,
+    onChange: (keys: Key[], rows: User[]) => {
+      onSelectChange(keys, rows)
+    },
+  }),
+  [selectedRowKeys, onSelectChange],
+)
+```
+
+（`antd` 的 `onChange` 还有第三个参数 `info`，无需传给 hook。）
+
+## 4. 最小示例（本地 state，无请求）
+
+```tsx
+import { TableProps } from 'antd'
+import { useCallback, useMemo, useState } from 'react'
+import AiiTable, { OperationButtonItem } from '@/components/AiiTable'
+
+type User = {
+  id: number
+  name: string
+  status: 'active' | 'disabled'
+}
+
+export default function UserList() {
+  const [loading, setLoading] = useState(false)
+  const [pagination, setPagination] = useState({ total: 0, current: 1, pageSize: 10 })
+  const [selectedKeys, setSelectedKeys] = useState<number[]>([])
+
+  const baseColumns: TableProps<User>['columns'] = useMemo(
+    () => [
+      { title: 'Name', dataIndex: 'name', key: 'name' },
+      { title: 'Status', dataIndex: 'status', key: 'status' },
+    ],
+    [],
+  )
+
+  const operations = useCallback(
+    (record: User): OperationButtonItem<User>[] => [
+      { key: 'edit', label: '编辑', onClick: () => console.log('edit', record.id) },
+      { key: 'del', label: '删除', danger: true, onClick: () => console.log('del', record.id) },
+    ],
+    [],
+  )
+
+  const rowSelection: TableProps<User>['rowSelection'] = useMemo(
+    () => ({
+      selectedRowKeys: selectedKeys,
+      onChange: (keys) => setSelectedKeys(keys as number[]),
+    }),
+    [selectedKeys],
+  )
+
+  return (
+    <AiiTable<User>
+      rowKey="id"
+      loading={loading}
+      columns={baseColumns}
+      dataSource={[]}
+      pagination={pagination}
+      onPageChange={(page) => setPagination((p) => ({ ...p, current: page }))}
+      onPageSizeChange={(pageSize) => setPagination((p) => ({ ...p, pageSize, current: 1 }))}
+      toolbar={[{ icon: null, label: '新增', onClick: () => console.log('add') }]}
+      operations={operations}
+      rowSelection={rowSelection}
+      batchOperations={[
+        { key: 'export', label: '导出', onClick: () => console.log('export', selectedKeys) },
+        { key: 'batchDel', label: '批量删除', danger: true, onClick: () => console.log('batch del', selectedKeys) },
+      ]}
+    />
+  )
+}
+```
+
+## 5. 示例：`useTable` + `AiiTable`（服务端列表）
+
+```tsx
+import type { Key } from 'react'
+import { useEffect, useMemo } from 'react'
+import { TableProps } from 'antd'
+import AiiTable from '@/components/AiiTable'
+import useTable, { type ApiMethod } from '@/hooks/table.hooks'
+
+type User = { id: number; name: string }
+
+type ListParams = { current: number; pageSize: number; keyword?: string }
+
+const fetchUserPage: ApiMethod<User, ListParams> = async (params) => {
+  return {
+    data: {
+      list: [],
+      total: 0,
+      pageNum: params.current,
+      pageSize: params.pageSize,
+    },
+  }
+}
+
+export default function UserListPage() {
+  const {
+    loading,
+    dataSource,
+    pagination,
+    queryTableData,
+    onPageChange,
+    onPageSizeChange,
+    onSearch,
+    selectedRowKeys,
+    onSelectChange,
+  } = useTable<User, ListParams>(fetchUserPage)
+
+  useEffect(() => {
+    void queryTableData()
+  }, [])
+
+  const columns: TableProps<User>['columns'] = useMemo(
+    () => [{ title: 'Name', dataIndex: 'name', key: 'name' }],
+    [],
+  )
+
+  const rowSelection = useMemo(
+    () => ({
+      selectedRowKeys,
+      onChange: (keys: Key[], rows: User[]) => onSelectChange(keys, rows),
+    }),
+    [selectedRowKeys, onSelectChange],
+  )
+
+  return (
+    <AiiTable<User>
+      rowKey="id"
+      loading={loading}
+      columns={columns}
+      dataSource={dataSource}
+      pagination={pagination}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      toolbar={[{ icon: null, label: '搜索', onClick: () => onSearch({ keyword: 'x' }) }]}
+      rowSelection={rowSelection}
+      batchOperations={[
+        { key: 'export', label: '导出', onClick: () => console.log(selectedRowKeys) },
+      ]}
+    />
+  )
+}
+```
+
+## 6. 给 AI 的使用约束（写代码时优先遵守）
+
+1. `columns` 可被内部拷贝后再追加操作列，**无需**再为「防止 push 污染引用」而强制 `columns={[...base]}`；仍建议用 `useMemo` 定义 `baseColumns`，减少无意义重算。
+2. `operations` 建议稳定引用（`useCallback` / `useMemo`），避免操作列配置频繁重建。
+3. `toolbar[].label` 必须是字符串。
+4. `batchOperations.onClick` 不接收 record：用闭包或外部 state（如 hook 的 `selectedRowKeys` / `selectedRows`）处理选中数据。
+5. **服务端分页列表**优先 `useTable` + `AiiTable`：`apiMethod` 的 `P` 需包含 `current` 与 `pageSize`，并与后端/网关约定一致；首屏在 `useEffect` 中 `void queryTableData()`，依赖数组用 `[]`（勿依赖 `queryTableData` 本身，见上文「首屏请求」）。
+6. 使用 `useTable` 时，`rowSelection.onChange` 必须转发到 `onSelectChange`，否则批量栏与勾选状态不一致。

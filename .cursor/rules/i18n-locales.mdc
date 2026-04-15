@@ -1,0 +1,67 @@
+---
+description: i18n 初始化、YAML 文案目录与双语维护约定（react-i18next）
+globs:
+  - src/utils/i18n.ts
+  - src/locales/**/*.yaml
+alwaysApply: true
+---
+
+# i18n 与文案（`src/utils/i18n.ts` + `src/locales`）
+
+## 加载方式
+
+- 系统文案：直接 `import` `src/locales/en.yaml`、`zh.yaml`，与业务文案合并后作为 `translation` 资源。
+- 业务文案：两个 `import.meta.glob`，分别匹配 `../locales/business/**/en.yaml` 与 `../locales/business/**/zh.yaml`，`{ eager: true }`；各文件 `default` 对象**浅合并**进同一命名空间（后加载覆盖同名键）。
+- 语言码与 `resources` 的 key 必须与 `@/enums` 的 `languageEnums` 一致（当前 `en` → `languageEnums.EN`，`zh-CN` → `languageEnums.ZH`）。`fallbackLng` 为 `languageEnums.ZH`。
+- 非新增语言、非调整合并/回退策略时，不要改 `i18n.ts`。
+
+## 文件分工
+
+| 路径 | 用途 |
+|------|------|
+| `src/locales/en.yaml`、`zh.yaml` | 全站通用：`System`、`Common`、`Message`、`Tips`、`Action` 等分组 |
+| `src/locales/business/<模块>/en.yaml`、`zh.yaml` | 页面/业务模块专用文案，与系统 YAML **同级键合并** |
+
+## YAML 与代码中的 key
+
+- **层级限制**：仅允许 **最多两层**（`Group.Key`）。也就是说，代码里只允许 `t('Menu.Dashboard')` 这种形式；**禁止**出现第三层及以上，例如 `t('Menu.Dashboard.Title')`、`t('Table.Column.Name')`。
+  - 若确实需要表达更细的语义，请把含义合并到第二层 key 中（用 `_` 分词），或提升为新的一级分组。
+  - ✅ `t('Dashboard.Welcome_Title')`
+  - ✅ `t('Table.Column_Name')`
+  - ✅ `t('Form.Advanced_Submit_Tips')`
+  - ❌ `t('Dashboard.Welcome.Title')`
+  - ❌ `t('Table.Column.Name')`
+  - ❌ `t('Form.Advanced.Submit.Tips')`
+
+- **键名格式**：仅允许 **首字母大写的英文单词 + 下划线** 组合——每个单词首字母大写，单词之间用 `_` 连接；单词内其余字符用小写字母或数字（如 `User_Name2`）。禁止全小写 `snake_case`、camelCase、连字符、空格。
+- 单词只有一个时无需下划线，例如 `Menu`、`Dashboard`。
+- 点号 `.` 仅作 i18next 层级分隔符，**不得**出现在某一层的「单词」内部。例如 `t('Menu.Dashboard')`、`t('Message.Operation_Success')` 对应：
+
+```yaml
+Menu:
+    Dashboard: Dashboard
+Message:
+    Operation_Success: Operation Success
+```
+
+- 插值仍用 i18next，例如 `Thought: Thought for {{time}} s`（键名 `Thought` 符合单单词大写起头）。
+- **禁止**：`menu`、`operation_success`、`OperationSuccess`、`Operation-Success` 等不符合「每词首字母大写 + 下划线分词」的写法。
+- **例外**：纯数字键（如 `Error_Status` 下的 `400`、`404`）允许保留，用于状态码等映射表。
+
+## 新增或修改文案时
+
+1. **中英文同步**：同一逻辑键必须在 `en.yaml` 与 `zh.yaml`（同一目录）同时增删改，避免单侧缺失。
+2. 优先复用已有分组（如 `Common`、`Message`、`Action`）；仅当整块业务独立时再建新分组或新 `business/<模块>/` 目录。
+3. 组件内使用 `useTranslation()` 的 `t('...')`，勿硬编码用户可见字符串。
+
+## 反例
+
+```tsx
+// ❌ 硬编码
+<button>提交</button>
+
+// ✅
+<button>{t('Action.Submit')}</button>
+```
+
+仅在 `en.yaml` 增加键而忘记 `zh.yaml` → 另一种语言会回退或显示 key，应避免。

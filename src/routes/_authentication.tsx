@@ -1,27 +1,10 @@
-import { useEffect } from 'react'
-
 import Layouts from '@/layouts/index'
-import { useTabStore } from '@/stores/system'
-import { createFileRoute, redirect, useMatches } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
+/** 认证区内路由，与登录后工作台共用壳层（侧栏/页签），路由树独立于 `__root`。 */
 export const Route = createFileRoute('/_authentication')({
-    component: () => {
-        const { addTab } = useTabStore()
-        const match = useMatches().find((item) => item.pathname === location.pathname)
-        useEffect(() => {
-            if (match) {
-                addTab({
-                    code: match.staticData.code === 'Iframe' ? match.params.name : match.staticData.code,
-                    path: match.pathname,
-                    closeable: match.staticData.code !== 'Dashboard',
-                    link: match.staticData.code === 'Iframe' ? match.search.url : '',
-                })
-            }
-        }, [match, location.pathname])
-        return <Layouts />
-    },
-    beforeLoad: ({ context, matches, location }) => {
+    component: Layouts,
+    beforeLoad: () => {
         // 根据需求自定义 throw redirect({ to: xxx })
-        console.log('<router beforeLoad>', context, matches, location)
     },
 })

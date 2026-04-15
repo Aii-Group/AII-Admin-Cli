@@ -1,6 +1,11 @@
 {
     "version": 1,
     "skills": {
+        "antd": {
+            "source": "ant-design/ant-design-cli",
+            "sourceType": "github",
+            "computedHash": "70daad5bdc945872cd738b9912d62108b66118b16820e847a3bd9f8591324c49"
+        },
         "ui-ux-pro-max": {
             "source": "nextlevelbuilder/ui-ux-pro-max-skill",
             "sourceType": "github",

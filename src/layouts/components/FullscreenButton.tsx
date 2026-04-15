@@ -5,7 +5,7 @@ import { Button } from 'antd'
 import { useFullscreenStore } from '@/stores/system'
 import { FullScreenOne, OffScreenOne } from '@icon-park/react'
 
-const FullscreenButton: React.FC = () => {
+export default function FullscreenButton() {
     const { fullscreen, setFullscreen } = useFullscreenStore()
 
     useEffect(() => {
@@ -45,5 +45,3 @@ const FullscreenButton: React.FC = () => {
         <Button type="text" icon={fullscreen ? <OffScreenOne /> : <FullScreenOne />} onClick={handleFullscreenToggle} />
     )
 }
-
-export default FullscreenButton

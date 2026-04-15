@@ -1,0 +1,49 @@
+---
+description: AiiSearch 高级搜索表单布局、items 约定与 onSearch 行为
+globs: src/**/*.tsx,src/components/AiiSearch/**
+alwaysApply: false
+---
+
+# AiiSearch 使用文档
+
+`AiiSearch`（`@/components/AiiSearch`）基于 `antd` `Form`，用 **`Form.Item` 数组** 拼出筛选区：内置「搜索 / 重置」、**超过 4 项时首行展示 4 项、其余可展开/收起**（`framer-motion`），文案走 `react-i18next`（`Action.Search` / `Action.Reset` / `Action.Expand` / `Action.Collapse`）。
+
+导出类型：`AiiSearchValues` 即 `Record<string, unknown>`，与 `onSearch` 入参一致。
+
+## 1. Props
+
+| 属性 | 说明 |
+|------|------|
+| `items` | **必填**。`React.ReactElement<typeof Form.Item>[]`，每项须为 `Form.Item` 且建议带 `name`，以便提交与重置 |
+| `onSearch` | 可选。表单 `onFinish` 成功后调用；**未传时**仍可点搜索按钮，但不会回调业务 |
+| `wrapper` | 默认 `true`。为外层 `div` 增加 `wrapper` class（与全局样式配合）；嵌在 Tab 等已有容器内可设 `false` |
+| `className` / `style` | 透传外层容器 |
+
+**注意**：类型里曾预留 `cols`，**当前实现未使用**；栅格固定为每项 `Col span={6}`（每行最多 4 项）。
+
+## 2. 提交与重置行为
+
+- 内部 `Form` 固定 `name="advanced_search"`。
+- `onSearch` 收到的对象中，**值为 `undefined` 的字段会被归一成空字符串 `''`**，便于与列表查询参数拼接。
+- 「重置」仅 `form.resetFields()`，不自动触发 `onSearch`。
+
+## 3. 与 `useTable` 搭配
+
+列表页常把 `useTable` 返回的 `onSearch` 直接传给 `AiiSearch`，与 `AiiTable` 同页使用。
+
+```tsx
+<AiiSearch items={searchItem} onSearch={onSearch} />
+```
+
+## 4. 嵌套场景（去掉外层 wrapper）
+
+```tsx
+<AiiSearch items={searchItem} wrapper={false} />
+```
+
+## 5. 实现要点（改组件或排查 UI 时）
+
+- **少于 4 个** `items`：单行排完字段 + 操作区；**不少于 4 个**：第二行起在可动画折叠区域内，操作区始终在底部一行。
+- 展开时 `motion.div` 使用 `pointerEvents`，收起时避免误触内部控件。
+
+参考：`src/routes/_authentication/table/advanced.tsx`、`src/routes/_authentication/_tab/tab.tsx`。

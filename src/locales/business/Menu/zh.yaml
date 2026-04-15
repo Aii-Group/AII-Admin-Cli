@@ -1,0 +1,12 @@
+# 侧栏/标签等菜单展示文案，对应 t('Menu.{key}')
+
+Menu:
+    Dashboard: 首页
+    Table: 表格
+    Form: 表单
+    Basic_Form: 基础表单
+    Advanced_Form: 高级表单
+    External_Link: 外部链接
+    Baidu: 百度
+    React: React
+    Tab: 选项卡

@@ -5,7 +5,7 @@ import { CSSTransition, SwitchTransition } from 'react-transition-group'
 
 import { getRouterContext, Outlet, useLocation } from '@tanstack/react-router'
 
-const AnimatedOutlet = forwardRef<HTMLDivElement>(() => {
+export default forwardRef<HTMLDivElement>(function AnimatedOutlet() {
     const { pathname } = useLocation()
 
     const nodeRef = useRef(null)
@@ -44,5 +44,3 @@ const AnimatedOutlet = forwardRef<HTMLDivElement>(() => {
         </SwitchTransition>
     )
 })
-
-export default AnimatedOutlet

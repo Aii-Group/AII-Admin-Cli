@@ -1,4 +1,3 @@
-export { default as AIButton } from './AIButton'
 export { default as FullscreenButton } from './FullscreenButton'
 export { default as LanguageButton } from './LanguageButton'
 export { default as RemidButton } from './RemidButton'

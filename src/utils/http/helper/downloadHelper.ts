@@ -1,32 +1,5 @@
 import { AxiosResponse } from 'axios'
-
-export const downloadTypes: string[] = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/octet-stream',
-    'application/pdf',
-    'application/zip',
-    'application/msword',
-    'application/vnd.ms-excel',
-    'application/vnd.ms-powerpoint',
-    'text/csv',
-    'image/',
-]
-
-export const typeToExt: Record<string, string> = {
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-    'application/vnd.ms-excel': 'xls',
-    'application/pdf': 'pdf',
-    'application/zip': 'zip',
-    'application/msword': 'doc',
-    'application/vnd.ms-powerpoint': 'ppt',
-    'text/csv': 'csv',
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'image/jpg': 'jpg',
-    'image/svg+xml': 'svg',
-    'image/gif': 'gif',
-    'application/octet-stream': 'bin',
-}
+import { TypeToExtEnum } from '@/enums'
 
 export const downloadFile = async (response: AxiosResponse) => {
     const contentType = response.headers['content-type'] || response.headers['Content-Type'] || ''
@@ -35,7 +8,7 @@ export const downloadFile = async (response: AxiosResponse) => {
 
     // 根据content-type确定文件扩展名
     if (contentType) {
-        for (const [type, e] of Object.entries(typeToExt)) {
+        for (const [type, e] of Object.entries(TypeToExtEnum)) {
             if (contentType.includes(type)) {
                 ext = e
                 break

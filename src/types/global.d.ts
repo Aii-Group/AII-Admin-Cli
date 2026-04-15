@@ -62,7 +62,7 @@ declare global {
         }
         interface Tab {
             requiredAuth?: boolean
-            code: string
+            key: string
             path: string
             closeable?: boolean
             link?: string

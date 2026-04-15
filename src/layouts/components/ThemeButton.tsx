@@ -3,7 +3,7 @@ import { Button } from 'antd'
 import { Moon, SunOne } from '@icon-park/react'
 import { useThemeStore } from '@/stores/system'
 
-const ThemeButton: React.FC = () => {
+export default function ThemeButton() {
     const { theme, setTheme } = useThemeStore()
     const enableTransitions = () =>
         'startViewTransition' in document && window.matchMedia('(prefers-reduced-motion: no-preference)').matches
@@ -41,5 +41,3 @@ const ThemeButton: React.FC = () => {
 
     return <Button type="text" icon={icon} onClick={handleThemeToggle} />
 }
-
-export default ThemeButton

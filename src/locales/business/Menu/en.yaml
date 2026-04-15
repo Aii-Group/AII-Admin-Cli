@@ -1,0 +1,12 @@
+# Menu labels: t('Menu.{key}')
+
+Menu:
+    Dashboard: Dashboard
+    Table: Table
+    Form: Form
+    Basic_Form: Basic Form
+    Advanced_Form: Advanced Form
+    External_Link: External Link
+    Baidu: Baidu
+    React: React
+    Tab: Tab

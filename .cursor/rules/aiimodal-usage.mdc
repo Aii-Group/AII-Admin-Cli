@@ -1,0 +1,58 @@
+---
+description: AiiModal（ModalProvider）与 useModal / useModalContext 使用约定
+globs: src/**/*.tsx,src/hooks/modal.hooks.ts
+alwaysApply: false
+---
+
+# AiiModal 使用文档
+
+`ModalProvider`（`@/components/AiiModal`）在应用根部（如 `App.tsx`）包裹子树后，子树内可用 `useModal` 或 `useModalContext` 管理**多个具名弹窗槽位**（按 `id` 注册，底层为 `antd` `Modal`）。
+
+类型与上下文定义在 `@/hooks/modal.hooks`；`ModalOptions` 继承 `antd` 的 `ModalProps`，并扩展：
+
+- `content?: ReactNode` — 弹窗主体
+- `onOk?: () => void | Promise<void>` — 确定；若返回 `Promise`，组件会自动处理 `confirmLoading`（`finally` 时结束 loading）
+- `onCancel?: () => void` — 用户回调；**关闭弹窗由内部在 `onCancel` 后调用 `closeModal(id)` 完成**，一般无需在 `onCancel` 里再调 `closeModal`（除非业务要提前关或重复关也无害）
+
+## 1. 推荐：`useModal`
+
+先约定一组稳定的 `id`（字符串），再按 key 取控制器：
+
+```tsx
+const modalIds = ['create', 'edit'] as const
+const modal = useModal([...modalIds])
+
+modal.create.openModal({
+  title: '创建',
+  content: <YourForm />,
+  onOk: async () => {
+    await submit()
+    modal.create.closeModal()
+  },
+})
+
+modal.edit.openModal({ title: '编辑', content: <YourForm /> })
+modal.edit.updateModal({ title: '新标题' })
+modal.edit.closeModal()
+```
+
+每个槽位上的 API：`isOpen`、`modalOptions`、`openModal`、`closeModal`、`updateModal`。
+
+## 2. 底层：`useModalContext`
+
+需要按动态 `id` 或封装库时使用：
+
+```tsx
+const { openModal, closeModal, updateModal } = useModalContext()
+openModal('someId', { title: '…', content: <></> })
+```
+
+## 3. 与命令式 `Modal.useModal` 的区别
+
+`AppProvider` 等处的 `Modal.useModal()`（`$modal.confirm` 等）适合轻量确认/提示；**复杂表单、多步骤内容**优先 `useModal` + `content` 槽位，与 `ModalProvider` 注册的实例一致。
+
+## 4. 实现注意（改 `AiiModal` 时）
+
+- `open` 由 Provider 控制，不要与外部重复套一层受控 `Modal` 抢同一实例。
+- `onOk` 未定义时，确定按钮无业务逻辑（仍可按 `ModalProps` 行为处理）。
+- `confirmLoading`：`options.confirmLoading` 与异步 `onOk` 触发的内部 loading 会合并（任一为真即 loading）。

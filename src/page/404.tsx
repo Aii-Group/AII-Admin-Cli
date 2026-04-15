@@ -1,24 +1,21 @@
 import { Button, Result } from 'antd'
-import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import Page404 from '@/assets/svg/404.svg?react'
 
-const Error404: React.FC = () => {
-    const navigate = useNavigate()
+import Page404 from '@/assets/svg/404.svg?react'
+import { useRouter } from '@tanstack/react-router'
+
+export default function Error404() {
+    const router = useRouter()
     const { t } = useTranslation()
     return (
-        <div className="w-full h-[100vh] flex justify-center items-center">
-            <Result
-                icon={<Page404 className="w-[28vw] h-[28vh]" />}
-                subTitle={t('Error_Status.404')}
-                extra={
-                    <Button type="primary" onClick={() => navigate({ to: '/dashboard' })}>
-                        {t('Action.Back')}
-                    </Button>
-                }
-            />
-        </div>
+        <Result
+            icon={<Page404 className="mx-auto h-1/4 w-1/4" />}
+            subTitle={t('Error_Status.404')}
+            extra={
+                <Button type="primary" onClick={() => router.history.back()}>
+                    {t('Action.Back')}
+                </Button>
+            }
+        />
     )
 }
-
-export default Error404

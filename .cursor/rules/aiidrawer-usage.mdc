@@ -1,0 +1,54 @@
+---
+description: AiiDrawer（DrawerProvider）与 useDrawer 单实例抽屉使用约定
+globs: src/**/*.tsx,src/hooks/drawer.hooks.ts,src/components/AiiDrawer/**
+alwaysApply: false
+---
+
+# AiiDrawer 使用文档
+
+`DrawerProvider`（`@/components/AiiDrawer`）在应用根部包裹子树后（见 `App.tsx`：`DrawerProvider` 包在 `ModalProvider` 外层），子树内通过 `useDrawer`（`@/hooks/drawer.hooks`）操作**全局唯一**的 `antd` `Drawer`：**同一时间只展示一块内容**，适合侧栏详情、聊天、表单等宽面板场景。需要多个并列弹层时仍用 `useModal` 等多槽位方案。
+
+类型：`AiiDrawerProps` 即 `antd` 的 `DrawerProps`；`showDrawer` 第二参为 `Partial<AiiDrawerProps>`。
+
+## 1. API：`useDrawer`
+
+```tsx
+const { showDrawer, closeDrawer } = useDrawer()
+
+showDrawer(<YourPanel />, {
+  title: '标题或 ReactNode',
+  size: 800,
+  placement: 'right', // 默认 right
+})
+
+closeDrawer()
+```
+
+- **内容**：第一个参数为 `ReactNode`（或 `null` 清空语义由内部 `closeDrawer` 处理）。
+- **尺寸**：传入数字 `size` 会同步到内部状态，并与 `resizable.onResize` 联动；未传时默认 `600`。
+- **关闭**：遮罩、关闭按钮等触发的 `onClose` 由 Provider **固定**为 `closeDrawer`，会清空 `content` 与 `drawerProps`；业务无需再包一层受控 `Drawer` 抢同一实例。
+
+## 2. 与 `AiiModal` 的取舍
+
+| 场景           | 推荐        |
+|----------------|-------------|
+| 多表单/多流程、需同时记多个打开状态 | `useModal` + 具名 `id` |
+| 全宽侧栏、聊天、单页级辅助面板     | `useDrawer`（单实例）   |
+
+## 3. 实现行为（改 `AiiDrawer` 或排查表现时）
+
+- **懒挂载**：首次 `showDrawer` 前 `Drawer` 不渲染（`drawerMounted`），减轻首屏成本。
+- **打开 loading**：每次 `showDrawer` 后约 **1000ms** 内内部 `loading` 为 `true`，随后为 `false`；`Drawer` 上 `loading={loading}` 写在 `{...drawerProps}` 之后，**会覆盖**调用方传入的 `loading`。
+- **样式**：`styles.section` 会与默认圆角 `16px 0 0 16px`（右侧）合并，避免完全覆盖时丢失圆角。
+- **可调整宽度**：内置 `resizable`，用户拖拽会更新内部 `size`。
+
+## 4. 示例（项目内）
+
+```tsx
+showDrawer(<AiiChat />, {
+  title: <Welcome /* ... */ />,
+  size: 800,
+})
+```
+
+参考：`src/layouts/components/AIButton.tsx`、`src/routes/_authentication/table/advanced.tsx`。

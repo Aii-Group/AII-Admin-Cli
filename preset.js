@@ -1,117 +1,80 @@
 import { theme } from 'antd'
-import { ThemeEnum } from './src/enums/themeEnum'
+import plugin from 'tailwindcss/plugin'
+import { ThemeEnum } from './src/enums'
 
 const { getDesignToken } = theme
 
-// 定义基本颜色
-const color = {
+const brandColor = {
     colorPrimary: ThemeEnum.colorPrimary,
     colorSuccess: ThemeEnum.colorSuccess,
     colorWarning: ThemeEnum.colorWarning,
     colorError: ThemeEnum.colorError,
 }
 
-// 获取 dark 和 light 的主题设计令牌
-const darkGlobalToken = getDesignToken({
-    token: { ...color },
-    algorithm: theme.darkAlgorithm,
+const sharedConfig = { token: brandColor }
+
+const lightGlobalToken = getDesignToken({ ...sharedConfig, algorithm: theme.defaultAlgorithm })
+const darkGlobalToken = getDesignToken({ ...sharedConfig, algorithm: theme.darkAlgorithm })
+
+const extractByPrefix = (tokens, prefix, appendPx = false) =>
+    Object.fromEntries(
+        Object.entries(tokens)
+            .filter(([key]) => key.startsWith(prefix))
+            .map(([key, value]) => [key, appendPx && typeof value === 'number' ? `${value}px` : value]),
+    )
+
+const lightColors = extractByPrefix(lightGlobalToken, 'color')
+const darkColors = extractByPrefix(darkGlobalToken, 'color')
+
+const toCssVar = (key) => `--antd-${key}`
+
+/**
+ * 注入 CSS 变量：:root 对应亮色 token，.dark 对应暗色 token。
+ * Tailwind colors 引用变量后，text-colorPrimary 可自动跟随主题切换。
+ */
+export const antdTokenPlugin = plugin(({ addBase }) => {
+    addBase({
+        ':root': Object.fromEntries(Object.entries(lightColors).map(([key, value]) => [toCssVar(key), value])),
+        '.dark': Object.fromEntries(Object.entries(darkColors).map(([key, value]) => [toCssVar(key), value])),
+    })
 })
 
-const lightGlobalToken = getDesignToken({
-    token: { ...color },
-    algorithm: theme.defaultAlgorithm,
-})
-
-// 提取颜色
-const extractColors = (tokens) => {
-    const colors = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('color')) {
-            colors[key] = tokens[key]
-        }
-    })
-    return colors
-}
-
-// 提取字体
-const extractFonts = (tokens) => {
-    const fontSize = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('fontSize')) {
-            fontSize[key] = tokens[key]
-        }
-    })
-    return fontSize
-}
-
-// 提取圆角
-const extractRadius = (tokens) => {
-    const radius = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('borderRadius')) {
-            radius[key] = tokens[key]
-        }
-    })
-    return radius
-}
-
-// 提取阴影
-const extractShadows = (tokens) => {
-    const shadows = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('boxShadow')) {
-            shadows[key] = tokens[key]
-        }
-    })
-    return shadows
-}
-
-// 提取动画和过渡
-const extractAnimationsDuration = (tokens) => {
-    const duration = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('motionDuration')) {
-            duration[key] = tokens[key]
-        }
-    })
-    return duration
-}
-
-const extractAnimationsTimingFunction = (tokens) => {
-    const timingFunction = {}
-    Object.keys(tokens).forEach((key) => {
-        if (key.startsWith('motionEase')) {
-            timingFunction[key] = tokens[key]
-        }
-    })
-    return timingFunction
-}
-
-// 提取所有设计令牌
-const extractDesignTokens = (tokens) => {
-    return {
-        colors: extractColors(tokens),
-        fontSize: extractFonts(tokens),
-        radius: extractRadius(tokens),
-        shadows: extractShadows(tokens),
-        duration: extractAnimationsDuration(tokens),
-        timingFunction: extractAnimationsTimingFunction(tokens),
-    }
-}
-
-const lightTokens = extractDesignTokens(lightGlobalToken)
-const darkTokens = extractDesignTokens(darkGlobalToken)
+const t = lightGlobalToken
 
 const preset = {
-    colors: {
-        light: lightTokens.colors,
-        dark: darkTokens.colors,
+    // CSS 变量自动跟随主题切换，用法：bg-colorPrimary / text-colorText
+    colors: Object.fromEntries(Object.keys(lightColors).map((key) => [key, `var(${toCssVar(key)})`])),
+
+    fontSize: extractByPrefix(t, 'fontSize', true),
+    lineHeight: extractByPrefix(t, 'lineHeight'),
+    fontWeight: {
+        strong: t.fontWeightStrong, // 600
     },
-    fontSize: lightTokens.fontSize || darkTokens.fontSize,
-    borderRadius: lightTokens.radius || darkTokens.radius,
-    boxShadow: lightTokens.shadows || darkTokens.shadows,
-    transitionDuration: lightTokens.duration || darkTokens.duration,
-    transitionTimingFunction: lightTokens.timingFunction || darkTokens.timingFunction,
+
+    borderRadius: extractByPrefix(t, 'borderRadius', true),
+
+    boxShadow: extractByPrefix(t, 'boxShadow'),
+
+    transitionDuration: extractByPrefix(t, 'motionDuration'),
+    transitionTimingFunction: extractByPrefix(t, 'motionEase'),
+
+    spacing: {
+        ...extractByPrefix(t, 'size', true),
+        ...extractByPrefix(t, 'padding', true),
+        ...extractByPrefix(t, 'margin', true),
+    },
+
+    height: extractByPrefix(t, 'controlHeight', true),
+
+    zIndex: {
+        base: String(t.zIndexBase), // 0
+        popup: String(t.zIndexPopupBase), // 1000
+    },
+
+    opacity: {
+        image: String(t.opacityImage), // 1
+        loading: String(t.opacityLoading), // 0.65
+    },
 }
 
 export default preset

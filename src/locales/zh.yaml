@@ -1,26 +1,15 @@
 System:
     System_Name: 管理系统
-    Welcome: 登录
+    Welcome: 欢迎登录
     zh: 中文
     en: 英文
 
-Menu:
-    Dashboard: 首页
-    Form: 表单
-    Basic_Form: 基础表单
-    Step_Form: 分步表单
-    Table: 表格
-    Basic_Table: 基础表格
-    Advanced_Table: 高级表格
-    External_Link: 外部链接
-    Baidu: 百度
-    React: React
-    Tab: 选项卡
-
 Common:
     User_Info: 用户信息
+    User_Name: 用户名
+    Username: 用户名
     ID: ID
-    Name: 姓名
+    Name: 名称
     Password: 密码
     Email: 电子邮件
     Phone: 电话
@@ -49,6 +38,40 @@ Common:
     Close_All: 关闭所有
     Close_Left: 关闭左侧
     Close_Right: 关闭右侧
+    Invalid_Link: 外链地址无效或缺失（仅支持 http/https）
+    Loading: 加载中…
+    No_Data: 暂无数据
+    Yes: 是
+    No: 否
+    All: 全部
+    Remark: 备注
+    Description: 描述
+    Keyword: 关键词
+    Start_Date: 开始日期
+    End_Date: 结束日期
+    Items: 条
+    Serial_Number: 序号
+    Gender: 性别
+    Age: 年龄
+    Department: 部门
+    Sort: 排序
+    Enabled: 已启用
+    Disabled: 已禁用
+    Active: 启用
+    Inactive: 停用
+    Fullscreen: 全屏
+    Exit_Fullscreen: 退出全屏
+    Theme: 主题
+    Language: 语言
+    Search_Placeholder: 请输入关键词
+    Page: 页
+    Jump_To: 跳转至
+    Created_By: 创建人
+    Updated_By: 更新人
+    Type: 类型
+    Category: 分类
+    Attachment: 附件
+    Preview: 预览
 
 Message:
     Success: 成功
@@ -69,9 +92,26 @@ Message:
     Export_Failed: 导出失败
     Import_Success: 导入成功
     Import_Failed: 导入失败
+    Add_Success: 添加成功
+    Add_Failed: 添加失败
+    Operation_Success: 操作成功
+    Operation_Failed: 操作失败
+    Save_Success: 保存成功
+    Save_Failed: 保存失败
+    Query_Failed: 数据加载失败
+    Network_Error: 网络异常，请稍后重试
+    No_Selection: 请至少选择一项
+    Upload_Success: 上传成功
+    Upload_Failed: 上传失败
+    Download_Success: 下载成功
+    Download_Failed: 下载失败
+    Validation_Failed: 请检查表单后重试
 
 Tips:
     Logout_Tips: 确定要登出吗？
+    Delete_Tips: 确定要删除这条记录吗？
+    Batch_Delete_Tips: 确定删除所选记录吗？此操作不可恢复。
+    Unsaved_Tips: 当前有未保存的更改，确定离开吗？
 
 Error_Status:
     400: 请求失败！请您稍后重试
@@ -84,12 +124,18 @@ Error_Status:
     502: 网关错误！
     503: 服务不可用！
     504: 网关超时！
+    422: 请求参数有误！
+    429: 请求过于频繁，请稍后再试
 
 Required:
     User_Name_Required: 请输入您的用户名
     User_Password_Required: 请输入您的密码
+    Email_Required: 请输入邮箱
+    Phone_Required: 请输入手机号
+    Required_Generic: 此项为必填
 
 Action:
+    Add: 添加
     Delete: 删除
     Edit: 编辑
     Search: 搜索
@@ -115,11 +161,33 @@ Action:
     Operate: 操作
     Filter: 筛选
     Batch_Operate: 批量操作
+    Download: 下载
+    Import: 导入
+    Batch_Import: 批量导入
+    Save: 保存
+    View: 查看
+    More: 更多
+    Select_All: 全选
+    Deselect_All: 取消全选
+    Upload: 上传
+    Clear: 清空
+    Print: 打印
+    Send: 发送
 
 AI:
+    Copilot_Title: AI 助手
+    New_Chat: 新对话
+    Suggested_Title: 推荐提问
     Welcome: 您好，我是 AI 助手，很高兴为您服务。
     Description: 您可以在这里向我提问，我会尽力回答您的问题。
+    Config_Missing: 未配置大模型接口环境变量（VITE_ALIYUN_AI_URL / VITE_ALIYUN_AI_KEY），无法对话。
     Think: 深度思考
     Thinking: 思考中...
     Thought: 已深度思考（用时 {{time}} 秒）
     Thinking_Stopped: 思考已停止
+    Stop_Reply: 停止生成
+    Chat_Placeholder: 输入问题，Enter 发送；Shift+Enter 换行
+    Empty_Hint: 在下方输入框开始对话，我会尽力协助你。
+    Prompt_AntdX_Update: Ant Design X 最近有哪些更新？
+    Prompt_AntdX_Assets: Ant Design X 包含哪些组件与能力？
+    Prompt_Rich_Paradigm: 什么是 RICH 设计范式？

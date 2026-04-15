@@ -1,24 +1,27 @@
-import React, { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import type { Key } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
-// 分页数据结构
+/** 后端分页常见字段 */
 interface PageData<T> {
     list?: T[]
     total?: number
     pageNum?: number
+    current?: number
     pageSize?: number
     pages?: number
+    totalPages?: number
 }
 
-// 通用结果结构
 interface CommonResult<T> {
     code?: number
     message?: string
+    msg?: string
     data?: T
     success?: boolean
-    timestamp?: number
+    timestamp?: number | string
 }
 
-// 表格响应结构
 interface TableResponse<T> {
     datalist: T[]
     pageNum: number
@@ -26,21 +29,19 @@ interface TableResponse<T> {
     total: number
 }
 
-// 分页参数基础接口
 interface PaginationParams {
     current: number
     pageSize: number
 }
 
-// API方法类型
 type ApiMethod<T, P extends PaginationParams = PaginationParams> = (params: P) => Promise<CommonResult<PageData<T>>>
 
-// 分页参数结构
 interface Pagination {
     current: number
     pageSize: number
     total: number
 }
+
 interface UseTableTypes<T, P extends PaginationParams = PaginationParams> {
     loading: boolean
     dataSource: T[]
@@ -51,121 +52,200 @@ interface UseTableTypes<T, P extends PaginationParams = PaginationParams> {
     onSearch: (initParams?: Partial<P>) => void
     onSetDataSource: (data: T[]) => void
     selectedRows: T[]
-    selectedRowKeys: React.Key[]
-    onSelectChange: (selectedRowKeys: React.Key[], selectedRows: T[]) => void
+    selectedRowKeys: Key[]
+    onSelectChange: (selectedRowKeys: Key[], selectedRows: T[]) => void
+}
+
+type NormalizeFn<T> = (response: PageData<T>) => PageData<T>
+
+function isCommonResultOk<T>(res: CommonResult<T> | undefined): res is CommonResult<T> & { data: T } {
+    if (!res || res.data === undefined || res.data === null) {
+        return false
+    }
+    if (res.success === false) {
+        return false
+    }
+    return true
+}
+
+function normalizePageData<T>(data: PageData<T>, transform?: NormalizeFn<T>): Required<PageData<T>> {
+    const pageSize = Math.max(1, data.pageSize ?? 10)
+    const total = data.total ?? 0
+    const pageNum = data.pageNum ?? data.current ?? 1
+    const pages = data.pages ?? data.totalPages ?? Math.ceil(total / pageSize)
+
+    const normalized: Required<PageData<T>> = {
+        list: data.list ?? [],
+        total,
+        pageNum,
+        current: pageNum,
+        pageSize,
+        pages,
+        totalPages: pages,
+    }
+    const transformed = transform ? transform(normalized) : normalized
+
+    const tPageSize = Math.max(1, transformed.pageSize ?? 10)
+    const tTotal = transformed.total ?? 0
+    const tPageNum = transformed.pageNum ?? transformed.current ?? 1
+    const tPages = transformed.pages ?? transformed.totalPages ?? Math.ceil(tTotal / tPageSize)
+
+    return {
+        list: transformed.list ?? [],
+        total: tTotal,
+        pageNum: tPageNum,
+        current: tPageNum,
+        pageSize: tPageSize,
+        pages: tPages,
+        totalPages: tPages,
+    }
+}
+
+function toTableResponse<T>(data: Required<PageData<T>>): TableResponse<T> {
+    return {
+        datalist: data.list,
+        pageNum: data.pageNum,
+        pageSize: data.pageSize,
+        total: data.total,
+    }
+}
+
+const LOADING_MIN_MS = 500
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 function useTable<T, P extends PaginationParams = PaginationParams>(
     apiMethod: ApiMethod<T, P>,
-    cb?: (response: PageData<T>) => PageData<T>,
+    transform?: NormalizeFn<T>,
 ): UseTableTypes<T, P> {
-    const [loading, setLoading] = useState(false)
-    const [dataSource, setDataSource] = useState<T[]>([])
-    const [pagination, setPagination] = useState<Pagination>({
-        current: 1,
-        pageSize: 10,
-        total: 0,
-    })
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+    const [paginationState, setPaginationState] = useState<Pagination>({ current: 1, pageSize: 10, total: 0 })
+    const [searchParams, setSearchParams] = useState<Partial<P>>({} as Partial<P>)
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([])
     const [selectedRows, setSelectedRows] = useState<T[]>([])
-    const [params, setParams] = useState<Record<string, unknown>>({})
+    const [manualDataSource, setManualDataSource] = useState<T[] | null>(null)
+    const [pageData, setPageData] = useState<Required<PageData<T>> | null>(null)
 
-    function queryTableData(
-        initParams?: Partial<P>,
-        paginationOverride?: Pagination,
-    ): Promise<TableResponse<T> | undefined> {
-        setLoading(true)
-        const mergedParams = {
-            ...(params || {}),
-            ...(initParams || {}),
-            current: paginationOverride?.current ?? pagination.current,
-            pageSize: paginationOverride?.pageSize ?? pagination.pageSize,
-        } as P
+    const fetchMutation = useMutation({
+        mutationKey: ['useTable', 'fetch'],
+        mutationFn: async (params: P) => {
+            const startedAt = Date.now()
+            const response = await apiMethod(params)
+            const elapsed = Date.now() - startedAt
+            const remaining = Math.max(0, LOADING_MIN_MS - elapsed)
+            if (remaining > 0) {
+                await delay(remaining)
+            }
+            return response
+        },
+    })
 
-        if (initParams) setParams((prev) => ({ ...prev, ...initParams }))
+    const pagination = useMemo<Pagination>(
+        () => ({
+            current: pageData?.pageNum ?? paginationState.current,
+            pageSize: pageData?.pageSize ?? paginationState.pageSize,
+            total: pageData?.total ?? paginationState.total,
+        }),
+        [pageData, paginationState],
+    )
 
-        return apiMethod(mergedParams)
-            .then((res: CommonResult<PageData<T>>) => {
-                return new Promise<TableResponse<T> | undefined>((resolve) => {
-                    setTimeout(() => {
-                        setLoading(false)
-                        const newRes = res as CommonResult<PageData<T>>
-                        if (newRes.success && newRes.data) {
-                            const apiData = newRes.data
-                            const { list = [], total = 0, pageNum = 1, pageSize = 10, pages } = apiData
-                            let processedData: PageData<T> = {
-                                list: list as T[],
-                                total,
-                                pageNum,
-                                pageSize,
-                                pages: pages ?? Math.ceil(total / pageSize),
-                            }
-                            if (cb) {
-                                processedData = cb(processedData)
-                            }
-                            setDataSource(processedData.list ?? [])
-                            setPagination((prev) => ({
-                                ...prev,
-                                current: processedData.pageNum ?? pageNum,
-                                pageSize: processedData.pageSize ?? pageSize,
-                                total: processedData.total ?? total,
-                            }))
-                        }
-                        resolve(newRes as TableResponse<T>)
-                    }, 500)
+    const dataSource = manualDataSource ?? pageData?.list ?? []
+
+    const runFetch = useCallback(
+        async (params: P): Promise<TableResponse<T> | undefined> => {
+            try {
+                const response = await fetchMutation.mutateAsync(params)
+                if (!isCommonResultOk<PageData<T>>(response)) {
+                    return undefined
+                }
+                const normalized = normalizePageData(response.data, transform)
+                setPageData(normalized)
+                setPaginationState({
+                    current: normalized.pageNum,
+                    pageSize: normalized.pageSize,
+                    total: normalized.total,
                 })
-            })
-            .catch((error: any) => {
-                setLoading(false)
+                return toTableResponse(normalized)
+            } catch (error) {
                 console.error('Table data query failed:', error)
-                return Promise.resolve(undefined)
-            })
-    }
-
-    function onPageChange(current: number) {
-        setPagination((prev) => {
-            const newPagination = {
-                ...prev,
-                current: current,
+                return undefined
             }
-            queryTableData(undefined, newPagination)
-            return newPagination
-        })
-    }
+        },
+        [fetchMutation, transform],
+    )
 
-    function onPageSizeChange(pageSize: number) {
-        setPagination((prev) => {
-            const newPagination = {
-                ...prev,
-                pageSize,
+    const queryTableData = useCallback(
+        async (initParams?: Partial<P>, paginationOverride?: Pagination): Promise<TableResponse<T> | undefined> => {
+            setManualDataSource(null)
+            const nextSearch = initParams ? { ...searchParams, ...initParams } : { ...searchParams }
+            if (initParams) {
+                setSearchParams(nextSearch)
             }
-            queryTableData(undefined, newPagination)
-            return newPagination
-        })
-    }
 
-    function onSearch(initParams: Partial<P> = {} as Partial<P>) {
-        setPagination((prev) => {
-            const newPagination = {
-                ...prev,
-                current: 1,
+            const mergedPag: Pagination = {
+                current: paginationOverride?.current ?? pagination.current,
+                pageSize: paginationOverride?.pageSize ?? pagination.pageSize,
+                total: pagination.total,
             }
-            queryTableData(initParams, newPagination)
-            return newPagination
-        })
-    }
+            if (paginationOverride) {
+                setPaginationState((prev) => ({ ...prev, ...mergedPag }))
+            }
 
-    function onSetDataSource(data: T[]) {
-        setDataSource(data)
-    }
+            const params = {
+                ...nextSearch,
+                current: mergedPag.current,
+                pageSize: mergedPag.pageSize,
+            } as P
 
-    function onSelectChange(newSelectedRowKeys: React.Key[], newSelectedRows: T[]) {
-        setSelectedRowKeys(newSelectedRowKeys)
-        setSelectedRows(newSelectedRows)
-    }
+            return runFetch(params)
+        },
+        [pagination, runFetch, searchParams],
+    )
+
+    const onPageChange = useCallback(
+        (current: number) => {
+            setManualDataSource(null)
+            const params = { ...searchParams, current, pageSize: paginationState.pageSize } as P
+            setPaginationState((prev) => ({ ...prev, current }))
+            void runFetch(params)
+        },
+        [paginationState.pageSize, runFetch, searchParams],
+    )
+
+    const onPageSizeChange = useCallback(
+        (pageSize: number) => {
+            setManualDataSource(null)
+            const params = { ...searchParams, current: 1, pageSize } as P
+            setPaginationState((prev) => ({ ...prev, current: 1, pageSize }))
+            void runFetch(params)
+        },
+        [runFetch, searchParams],
+    )
+
+    const onSearch = useCallback(
+        (initParams: Partial<P> = {} as Partial<P>) => {
+            setManualDataSource(null)
+            const nextSearch = { ...searchParams, ...initParams }
+            const params = { ...nextSearch, current: 1, pageSize: paginationState.pageSize } as P
+            setSearchParams(nextSearch)
+            setPaginationState((prev) => ({ ...prev, current: 1 }))
+            void runFetch(params)
+        },
+        [paginationState.pageSize, runFetch, searchParams],
+    )
+
+    const onSetDataSource = useCallback((data: T[]) => {
+        setManualDataSource(data)
+    }, [])
+
+    const onSelectChange = useCallback((nextSelectedRowKeys: Key[], nextSelectedRows: T[]) => {
+        setSelectedRowKeys(nextSelectedRowKeys)
+        setSelectedRows(nextSelectedRows)
+    }, [])
 
     return {
-        loading,
+        loading: fetchMutation.isPending,
         dataSource,
         pagination,
         queryTableData,

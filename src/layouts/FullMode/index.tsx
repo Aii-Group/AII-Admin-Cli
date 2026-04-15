@@ -1,18 +1,17 @@
+import Main from '@/layouts/Main'
+import Header from '@/layouts/Header'
+import Sidebar from '@/layouts/Sidebar'
 import { isMicroAppEnv } from '@/utils/micro.ts'
 import { useMenuCollapseStore } from '@/stores/system'
 
-import Main from '../Main'
-import Header from '../Header'
-import Sidebar from '../Sidebar'
-
-const FullMode: React.FC = () => {
+export default function FullMode() {
     const { collapsed } = useMenuCollapseStore()
     return (
         <>
             {!isMicroAppEnv ? (
                 <>
                     <Header />
-                    <div className="flex gap-10 p-10">
+                    <div className="flex gap-2.5 p-2.5">
                         <Sidebar />
                         <div
                             style={{
@@ -31,4 +30,3 @@ const FullMode: React.FC = () => {
         </>
     )
 }
-export default FullMode

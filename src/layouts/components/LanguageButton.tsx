@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Earth } from '@icon-park/react'
 import { useLanguageStore } from '@/stores/system'
 
-const LanguageButton: React.FC = () => {
+export default function LanguageButton() {
     const { t } = useTranslation()
     const { language, setLanguage } = useLanguageStore()
 
@@ -26,5 +26,3 @@ const LanguageButton: React.FC = () => {
         </Dropdown>
     )
 }
-
-export default LanguageButton

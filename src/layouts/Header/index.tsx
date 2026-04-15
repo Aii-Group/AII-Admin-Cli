@@ -1,30 +1,28 @@
 import { Divider } from 'antd'
 
-import { importImg } from '@/utils/common'
+import { importImg } from '@/utils/utils'
 import { useLanguageStore, useThemeStore } from '@/stores/system'
 
-import { AIButton, FullscreenButton, LanguageButton, RemindButton, ThemeButton, UserAvatar } from '../components'
+import { FullscreenButton, LanguageButton, RemindButton, ThemeButton, UserAvatar } from '@/layouts/components'
 
-const Header: React.FC = () => {
+export default function Header() {
     const { theme } = useThemeStore()
     const { language } = useLanguageStore()
     const Logo = importImg('png', `asiainfo-${theme}-${language}.png`)
 
     return (
-        <div className="flex items-center justify-between box-border w-full h-60 px-24 py-10 dark:!bg-dark-colorBgContainer dark:!border-b dark:!border-dark-colorBorder">
-            <div className="flex items-center gap-4">
-                <img src={Logo} alt="logo" className="h-40" />
+        <div className="dark:bg-colorBgContainer! dark:border-colorBorder! box-border flex h-15 w-full items-center justify-between px-6 py-2.5 dark:border-b!">
+            <div className="flex items-center">
+                <img src={Logo} alt="logo" className="h-10" />
             </div>
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-2.5">
                 <RemindButton />
                 <ThemeButton />
                 <LanguageButton />
                 <FullscreenButton />
-                <AIButton />
                 <Divider vertical />
                 <UserAvatar />
             </div>
         </div>
     )
 }
-export default Header

@@ -44,16 +44,16 @@ const AiiTab = (props: AiiTabProps) => {
     }, [activeTabKey])
 
     return (
-        <motion.div className="w-full h-full relative">
-            <div ref={navRef} className="relative flex items-center gap-10 mb-10">
+        <motion.div className="relative h-full w-full">
+            <div ref={navRef} className="relative mb-2.5 flex items-center gap-2.5">
                 {tabs.map((item) => (
                     <div
                         key={item.key}
                         ref={activeTabKey === item.key ? activeTabRef : null}
                         className={clsx(
-                            'flex items-center cursor-pointer z-10 h-38 px-16 py-8 rounded-borderRadiusLG relative bg-transparent transition-all duration-300 hover:text-light-colorPrimary dark:hover:text-dark-colorPrimary',
+                            'rounded-borderRadiusLG! hover:text-colorPrimary relative z-10 flex h-9 cursor-pointer items-center bg-transparent px-4 py-2 transition-all duration-300',
                             {
-                                'text-light-colorPrimary dark:text-dark-colorPrimary': activeTabKey === item.key,
+                                'text-colorPrimary': activeTabKey === item.key,
                             },
                         )}
                         onClick={() => handleTabClick(item.key, item.label)}
@@ -65,7 +65,7 @@ const AiiTab = (props: AiiTabProps) => {
                     </div>
                 ))}
                 <motion.div
-                    className="absolute z-0 top-0 h-38 rounded-borderRadiusLG bg-light-colorPrimaryBg dark:bg-dark-colorPrimaryBg"
+                    className="rounded-borderRadiusLG bg-colorPrimaryBg absolute top-0 z-0 h-9"
                     layoutId="activeTabIndicator"
                     animate={{
                         left: indicatorPosition.left,

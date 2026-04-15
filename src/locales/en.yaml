@@ -4,21 +4,10 @@ System:
     zh: Chinese
     en: English
 
-Menu:
-    Dashboard: Dashboard
-    Form: Form
-    Basic_Form: Basic Form
-    Step_Form: Step Form
-    Table: Table
-    Basic_Table: Basic Table
-    Advanced_Table: Advanced Table
-    External_Link: External Link
-    Baidu: Baidu
-    React: React
-    Tab: Tab
-
 Common:
     User_Info: User Info
+    User_Name: User Name
+    Username: Username
     ID: ID
     Name: Name
     Password: Password
@@ -49,6 +38,40 @@ Common:
     Close_All: Close All
     Close_Left: Close Left
     Close_Right: Close Right
+    Invalid_Link: Invalid or missing link (http/https only)
+    Loading: Loading...
+    No_Data: No data
+    Yes: Yes
+    No: No
+    All: All
+    Remark: Remark
+    Description: Description
+    Keyword: Keyword
+    Start_Date: Start Date
+    End_Date: End Date
+    Items: Items
+    Serial_Number: No.
+    Gender: Gender
+    Age: Age
+    Department: Department
+    Sort: Sort
+    Enabled: Enabled
+    Disabled: Disabled
+    Active: Active
+    Inactive: Inactive
+    Fullscreen: Fullscreen
+    Exit_Fullscreen: Exit Fullscreen
+    Theme: Theme
+    Language: Language
+    Search_Placeholder: Enter keywords
+    Page: Page
+    Jump_To: Jump to
+    Created_By: Created By
+    Updated_By: Updated By
+    Type: Type
+    Category: Category
+    Attachment: Attachment
+    Preview: Preview
 
 Message:
     Success: Success
@@ -69,9 +92,26 @@ Message:
     Export_Failed: Export Failed
     Import_Success: Import Success
     Import_Failed: Import Failed
+    Add_Success: Add Success
+    Add_Failed: Add Failed
+    Operation_Success: Operation Success
+    Operation_Failed: Operation Failed
+    Save_Success: Saved successfully
+    Save_Failed: Save failed
+    Query_Failed: Failed to load data
+    Network_Error: Network error. Please try again
+    No_Selection: Please select at least one item
+    Upload_Success: Upload succeeded
+    Upload_Failed: Upload failed
+    Download_Success: Download succeeded
+    Download_Failed: Download failed
+    Validation_Failed: Please check the form and try again
 
 Tips:
     Logout_Tips: Are you sure you want to log out?
+    Delete_Tips: Are you sure you want to delete this record?
+    Batch_Delete_Tips: Delete the selected items? This action cannot be undone.
+    Unsaved_Tips: You have unsaved changes. Leave this page?
 
 Error_Status:
     400: Request failed! Please try again later
@@ -84,12 +124,18 @@ Error_Status:
     502: Gateway error!
     503: Service unavailable!
     504: Gateway timeout!
+    422: Invalid request parameters!
+    429: Too many requests! Please try again later
 
 Required:
     User_Name_Required: Please input your username
     User_Password_Required: Please input your password
+    Email_Required: Please enter your email
+    Phone_Required: Please enter your phone number
+    Required_Generic: This field is required
 
 Action:
+    Add: Add
     Delete: Delete
     Edit: Edit
     Search: Search
@@ -115,11 +161,33 @@ Action:
     Operate: Operate
     Filter: Filter
     Batch_Operate: Batch Operate
+    Download: Download
+    Import: Import
+    Batch_Import: Batch Import
+    Save: Save
+    View: View
+    More: More
+    Select_All: Select All
+    Deselect_All: Deselect All
+    Upload: Upload
+    Clear: Clear
+    Print: Print
+    Send: Send
 
 AI:
+    Copilot_Title: AI Assistant
+    New_Chat: New chat
+    Suggested_Title: Suggested questions
     Welcome: "Hello, I'm AI Assistant"
     Description: "I'm here to help you with your tasks."
+    Config_Missing: 'LLM env vars are missing (VITE_ALIYUN_AI_URL / VITE_ALIYUN_AI_KEY). Chat is unavailable.'
     Think: Think
     Thinking: Thinking...
     Thought: Thought for {{time}} s
     Thinking_Stopped: Thinking Stopped
+    Stop_Reply: Stop generating
+    Chat_Placeholder: Type a message. Enter to send, Shift+Enter for newline.
+    Empty_Hint: Start the conversation below—I will do my best to help.
+    Prompt_AntdX_Update: What is new in Ant Design X?
+    Prompt_AntdX_Assets: What components and capabilities does Ant Design X offer?
+    Prompt_Rich_Paradigm: What is the RICH design paradigm?

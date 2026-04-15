@@ -1,16 +1,18 @@
+import { useEffect, useRef, useState } from 'react'
+
+import clsx from 'clsx'
+import { Dropdown, MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { useTabStore } from '@/stores/system'
 import { CloseOutlined } from '@ant-design/icons'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
-import { Dropdown, MenuProps } from 'antd'
-import { CloseOne, ArrowLeft, ArrowRight, CloseSmall } from '@icon-park/react'
+import { ArrowLeft, ArrowRight, CloseOne, CloseSmall } from '@icon-park/react'
 
-const TabBar: React.FC = () => {
+export default function TabBar() {
     const { t } = useTranslation()
     const location: Location = useLocation()
-    const { tabs, removeTab, setTabs, closeAllTabs, closeLeftTabs, closeRightTabs } = useTabStore()
+    const { tabs, removeTab, closeAllTabs, closeLeftTabs, closeRightTabs } = useTabStore()
     const navigate = useNavigate()
     const tabBarRef = useRef<HTMLDivElement>(null)
     const activeTabRef = useRef<HTMLDivElement>(null)
@@ -21,7 +23,7 @@ const TabBar: React.FC = () => {
     const handleRemoveTab = (tab: System.Tab) => {
         removeTab(tab)
         if (tabs.length > 0) {
-            const currentIndex = tabs.findIndex((t) => t.code === tab.code)
+            const currentIndex = tabs.findIndex((t) => t.key === tab.key)
             const lastTab = tabs[currentIndex - 1]
 
             if (lastTab && tab.path === location.pathname) {
@@ -84,7 +86,7 @@ const TabBar: React.FC = () => {
         if (activeTabRef.current) {
             scrollToTargetTab(activeTabRef.current)
         }
-    }, [location.pathname, tabs])
+    }, [location.pathname, tabs, t])
 
     const dropdownMenu: MenuProps['items'] = [
         {
@@ -131,19 +133,19 @@ const TabBar: React.FC = () => {
     return (
         <div
             ref={tabBarRef}
-            className="w-full px-4 mb-10 py-4 h-48 flex flex-nowrap rounded-borderRadiusLG bg-light-colorBgContainer dark:!bg-dark-colorBgContainer dark:!border dark:!border-dark-colorBorder overflow-x-auto whitespace-nowrap"
+            className="rounded-borderRadiusLG bg-colorBgContainer dark:border-colorBorder! mb-2.5 flex h-9 w-full flex-nowrap overflow-x-auto px-1 py-2.5 whitespace-nowrap dark:border!"
         >
             {tabs.map((tab, index) => {
                 return (
                     <Dropdown
-                        key={tab.code}
+                        key={tab.key}
                         trigger={['contextMenu']}
-                        open={dropdownVisible && contextMenuTab?.code === tab.code}
+                        open={dropdownVisible && contextMenuTab?.key === tab.key}
                         onOpenChange={(open) => {
                             setDropdownVisible(open)
                             if (open) {
                                 setContextMenuTab(tab)
-                            } else if (contextMenuTab?.code === tab.code) {
+                            } else if (contextMenuTab?.key === tab.key) {
                                 setContextMenuTab(null)
                             }
                         }}
@@ -158,21 +160,23 @@ const TabBar: React.FC = () => {
                                         tabRefs.current[tab.path] = el
                                     }
                                 }}
-                                className={`w-full h-full leading-[40px] box-border px-16 relative cursor-pointer rounded-tl-[8px] rounded-tr-[8px] transition-all duration-300 ease-in-out flex-shrink-0 whitespace-nowrap inline-block ${
+                                className={clsx(
+                                    'rounded-tl-borderRadiusLG rounded-tr-borderRadiusLG relative box-border inline-block h-full w-full shrink-0 cursor-pointer px-4 leading-[40px] whitespace-nowrap transition-all duration-300 ease-in-out',
                                     tab.path === location.pathname
-                                        ? "text-light-colorPrimary dark:!text-dark-colorPrimary border-b-light-colorPrimary dark:!border-b-dark-colorPrimary bg-light-colorPrimaryBg dark:!bg-dark-colorPrimaryBg before:content-[''] before:absolute before:bottom-0 before:h-2 before:bg-light-colorPrimary dark:before:!bg-dark-colorPrimary before:w-[calc(50%)] before:transition-all before:duration-300 before:ease-in-out before:left-1/2 before:origin-right after:content-[''] after:absolute after:bottom-0 after:h-2 after:bg-light-colorPrimary dark:after:!bg-dark-colorPrimary after:w-[calc(50%)] after:transition-all after:duration-300 after:ease-in-out after:right-1/2 after:origin-left"
-                                        : "before:content-[''] before:absolute before:bottom-0 before:h-2 before:w-0 before:bg-transparent before:transition-all before:duration-300 before:ease-in-out before:left-1/2 after:content-[''] after:absolute after:bottom-0 after:h-2 after:w-0 after:bg-transparent after:transition-all after:duration-300 after:ease-in-out after:right-1/2"
-                                } hover:text-light-colorPrimary dark:hover:!text-dark-colorPrimary`}
+                                        ? "text-colorPrimary border-b-colorPrimary bg-colorPrimaryBg before:bg-colorPrimary after:bg-colorPrimary before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-[calc(50%)] before:origin-right before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:right-1/2 after:bottom-0 after:h-2 after:w-[calc(50%)] after:origin-left after:transition-all after:duration-300 after:ease-in-out after:content-['']"
+                                        : "before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-0 before:bg-transparent before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:right-1/2 after:bottom-0 after:h-2 after:w-0 after:bg-transparent after:transition-all after:duration-300 after:ease-in-out after:content-['']",
+                                    'hover:text-colorPrimary',
+                                )}
                                 onContextMenu={(e) => {
                                     e.preventDefault()
                                     setContextMenuTab(tab)
                                     setDropdownVisible(true)
                                 }}
                             >
-                                <span className="px-10">{t(`Menu.${tab.code}`)}</span>
+                                <span className="px-10">{t(`Menu.${tab.key}`)}</span>
                                 {tab.closeable && (
                                     <CloseOutlined
-                                        className="w-0 h-0 transform origin-center transition-all duration-300 ease-in-out hover:w-14 hover:h-14"
+                                        className="h-0 w-0 origin-center transform transition-all duration-300 ease-in-out hover:h-14 hover:w-14"
                                         onClick={(event) => {
                                             event.preventDefault()
                                             event.stopPropagation()
@@ -188,5 +192,3 @@ const TabBar: React.FC = () => {
         </div>
     )
 }
-
-export default TabBar

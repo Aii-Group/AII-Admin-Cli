@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { ThemeEnum } from '@/enums/themeEnum'
+import { ThemeEnum } from '@/enums'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 const storagePrefix = `[${import.meta.env.VITE_TITLE || 'AII'}]`
@@ -90,7 +90,7 @@ export const useTabStore = create<System.TabState>()(
             tabs: [],
             addTab: (tab: System.Tab) =>
                 set((state) => {
-                    const existingTab = state.tabs.find((t) => t.code === tab.code)
+                    const existingTab = state.tabs.find((t) => t.key === tab.key)
                     if (existingTab) {
                         return state
                     }
@@ -99,9 +99,9 @@ export const useTabStore = create<System.TabState>()(
             removeTab: (tab: System.Tab) =>
                 set((state) => {
                     const currentTabs = state.tabs
-                    const currentIndex = currentTabs.findIndex((t) => t.code === tab.code)
+                    const currentIndex = currentTabs.findIndex((t) => t.key === tab.key)
                     if (currentIndex !== -1) {
-                        const newTabs = currentTabs.filter((t) => t.code !== tab.code)
+                        const newTabs = currentTabs.filter((t) => t.key !== tab.key)
                         return { tabs: newTabs }
                     }
                     return { tabs: currentTabs }
@@ -114,7 +114,7 @@ export const useTabStore = create<System.TabState>()(
                 }),
             closeLeftTabs: (targetTab: System.Tab) =>
                 set((state) => {
-                    const currentIndex = state.tabs.findIndex((tab) => tab.code === targetTab.code)
+                    const currentIndex = state.tabs.findIndex((tab) => tab.key === targetTab.key)
                     if (currentIndex > 0) {
                         const rightTabs = state.tabs.slice(currentIndex)
                         const uncloseableLeftTabs = state.tabs.filter(
@@ -126,7 +126,7 @@ export const useTabStore = create<System.TabState>()(
                 }),
             closeRightTabs: (targetTab: System.Tab) =>
                 set((state) => {
-                    const currentIndex = state.tabs.findIndex((tab) => tab.code === targetTab.code)
+                    const currentIndex = state.tabs.findIndex((tab) => tab.key === targetTab.key)
                     if (currentIndex < state.tabs.length - 1) {
                         const leftTabs = state.tabs.slice(0, currentIndex + 1)
                         const uncloseableRightTabs = state.tabs.filter(
@@ -138,7 +138,7 @@ export const useTabStore = create<System.TabState>()(
                 }),
         }),
         {
-            name: `${storagePrefix}-tab-storage`,
+            name: `${storagePrefix}-tab-storage-v2`,
             storage: createJSONStorage(() => sessionStorage),
         },
     ),
