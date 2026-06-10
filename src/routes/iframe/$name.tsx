@@ -22,7 +22,7 @@ function RouteComponent() {
 
     if (!url) {
         return (
-            <div className="flex h-full min-h-120 items-center justify-center">
+            <div className="min-h-120 flex h-full items-center justify-center">
                 <Empty description={t('Common.Invalid_Link')} />
             </div>
         )
@@ -32,7 +32,7 @@ function RouteComponent() {
         <iframe
             title={name}
             src={url}
-            className="rounded-borderRadiusLG bg-colorBgContainer box-border h-full min-h-120 w-full border-0"
+            className="min-h-120 box-border h-full w-full rounded-borderRadiusLG border-0 bg-colorBgContainer"
             referrerPolicy="no-referrer-when-downgrade"
         />
     )

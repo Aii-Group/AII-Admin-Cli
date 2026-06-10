@@ -1,79 +1,67 @@
 import { theme } from 'antd'
-import plugin from 'tailwindcss/plugin'
-import { ThemeEnum } from './src/enums'
+import { ThemeEnum } from './src/enums/index.ts'
 
-const { getDesignToken } = theme
+const { getDesignToken, defaultAlgorithm, darkAlgorithm } = theme
 
-const brandColor = {
+const seedToken = {
     colorPrimary: ThemeEnum.colorPrimary,
     colorSuccess: ThemeEnum.colorSuccess,
     colorWarning: ThemeEnum.colorWarning,
     colorError: ThemeEnum.colorError,
 }
 
-const sharedConfig = { token: brandColor }
+const lightGlobalToken = getDesignToken({ token: seedToken, algorithm: defaultAlgorithm })
+const darkGlobalToken = getDesignToken({ token: seedToken, algorithm: darkAlgorithm })
 
-const lightGlobalToken = getDesignToken({ ...sharedConfig, algorithm: theme.defaultAlgorithm })
-const darkGlobalToken = getDesignToken({ ...sharedConfig, algorithm: theme.darkAlgorithm })
+const toPx = (value) => (typeof value === 'number' ? `${value}px` : value)
+const toString = (value) => String(value)
 
-const extractByPrefix = (tokens, prefix, appendPx = false) =>
+const extractByPrefix = (tokens, prefixes, transform = (value) => value) =>
     Object.fromEntries(
         Object.entries(tokens)
-            .filter(([key]) => key.startsWith(prefix))
-            .map(([key, value]) => [key, appendPx && typeof value === 'number' ? `${value}px` : value]),
+            .filter(([key]) => [prefixes].flat().some((prefix) => key.startsWith(prefix)))
+            .map(([key, value]) => [key, transform(value)]),
     )
+
+const toCssVarName = (key) => `--antd-${key}`
+const toCssVarValue = (key) => `var(${toCssVarName(key)})`
+const toCssVarMap = (tokens) =>
+    Object.fromEntries(Object.entries(tokens).map(([key, value]) => [toCssVarName(key), value]))
 
 const lightColors = extractByPrefix(lightGlobalToken, 'color')
 const darkColors = extractByPrefix(darkGlobalToken, 'color')
 
-const toCssVar = (key) => `--antd-${key}`
-
-/**
- * 注入 CSS 变量：:root 对应亮色 token，.dark 对应暗色 token。
- * Tailwind colors 引用变量后，text-colorPrimary 可自动跟随主题切换。
- */
-export const antdTokenPlugin = plugin(({ addBase }) => {
-    addBase({
-        ':root': Object.fromEntries(Object.entries(lightColors).map(([key, value]) => [toCssVar(key), value])),
-        '.dark': Object.fromEntries(Object.entries(darkColors).map(([key, value]) => [toCssVar(key), value])),
-    })
-})
-
-const t = lightGlobalToken
+export const antdTokenPlugin = {
+    handler({ addBase }) {
+        addBase({
+            ':root': toCssVarMap(lightColors),
+            '.dark': toCssVarMap(darkColors),
+        })
+    },
+}
 
 const preset = {
-    // CSS 变量自动跟随主题切换，用法：bg-colorPrimary / text-colorText
-    colors: Object.fromEntries(Object.keys(lightColors).map((key) => [key, `var(${toCssVar(key)})`])),
-
-    fontSize: extractByPrefix(t, 'fontSize', true),
-    lineHeight: extractByPrefix(t, 'lineHeight'),
+    colors: Object.fromEntries(Object.keys(lightColors).map((key) => [key, toCssVarValue(key)])),
+    fontSize: extractByPrefix(lightGlobalToken, 'fontSize', toPx),
+    lineHeight: extractByPrefix(lightGlobalToken, 'lineHeight'),
     fontWeight: {
-        strong: t.fontWeightStrong, // 600
+        strong: lightGlobalToken.fontWeightStrong,
     },
-
-    borderRadius: extractByPrefix(t, 'borderRadius', true),
-
-    boxShadow: extractByPrefix(t, 'boxShadow'),
-
-    transitionDuration: extractByPrefix(t, 'motionDuration'),
-    transitionTimingFunction: extractByPrefix(t, 'motionEase'),
-
+    borderRadius: extractByPrefix(lightGlobalToken, 'borderRadius', toPx),
+    boxShadow: extractByPrefix(lightGlobalToken, 'boxShadow'),
+    transitionDuration: extractByPrefix(lightGlobalToken, 'motionDuration'),
+    transitionTimingFunction: extractByPrefix(lightGlobalToken, 'motionEase'),
     spacing: {
-        ...extractByPrefix(t, 'size', true),
-        ...extractByPrefix(t, 'padding', true),
-        ...extractByPrefix(t, 'margin', true),
+        ...extractByPrefix(lightGlobalToken, ['size', 'padding', 'margin'], toPx),
     },
-
-    height: extractByPrefix(t, 'controlHeight', true),
-
+    height: extractByPrefix(lightGlobalToken, 'controlHeight', toPx),
     zIndex: {
-        base: String(t.zIndexBase), // 0
-        popup: String(t.zIndexPopupBase), // 1000
+        base: toString(lightGlobalToken.zIndexBase),
+        popup: toString(lightGlobalToken.zIndexPopupBase),
     },
-
     opacity: {
-        image: String(t.opacityImage), // 1
-        loading: String(t.opacityLoading), // 0.65
+        image: toString(lightGlobalToken.opacityImage),
+        loading: toString(lightGlobalToken.opacityLoading),
     },
 }
 

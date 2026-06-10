@@ -64,7 +64,7 @@ const SearchOperationsBar = memo(function SearchOperationsBar({
                         <Tooltip title={expand ? t('Action.Collapse') : t('Action.Expand')}>
                             <span
                                 className={clsx(
-                                    'hover:text-colorPrimary flex items-center transition-all duration-300 ease-in-out',
+                                    'flex items-center transition-all duration-300 ease-in-out hover:text-colorPrimary',
                                     { 'rotate-180': expand, 'rotate-0': !expand },
                                 )}
                                 onClick={onToggleExpand}

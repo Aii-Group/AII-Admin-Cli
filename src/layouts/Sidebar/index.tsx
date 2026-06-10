@@ -28,9 +28,9 @@ export default function Sidebar() {
     }, [menu, location.pathname, collapsed, t])
 
     return (
-        <div className="rounded-borderRadiusLG dark:border-colorBorder! relative box-border h-[calc(100vh-80px)] dark:border!">
+        <div className="relative box-border h-[calc(100vh-80px)] rounded-borderRadiusLG dark:!border dark:!border-colorBorder">
             <Menu
-                className="border-0!"
+                className="!border-0"
                 style={{
                     width: collapsed ? 50 : 240,
                     height: '100%',

@@ -34,9 +34,9 @@ function RouteComponent() {
     }
 
     return (
-        <div className="flex h-screen w-full min-w-240">
+        <div className="min-w-240 flex h-screen w-full">
             <div
-                className="dark:bg-dark-colorBgContainer! m-auto flex h-120 w-225 gap-2.5 rounded-[40px] bg-white"
+                className="h-120 w-225 m-auto flex gap-2.5 rounded-[40px] bg-colorBgContainer"
                 style={{
                     boxShadow:
                         theme === 'dark'
@@ -44,17 +44,17 @@ function RouteComponent() {
                             : '-20px 20px 60px #cbcfd1, 20px -20px 60px #ffffff',
                 }}
             >
-                <div className="box-border w-125">
-                    <div className="absolute top-4 left-4 flex items-center">
+                <div className="w-125 box-border">
+                    <div className="absolute left-4 top-4 flex items-center">
                         <img src={Logo} className="h-9 w-9" />
                         <span className="px-4 text-2xl font-bold">{t('System.System_Name')}</span>
                     </div>
-                    <div className="h-full w-full rounded-[40px] bg-slate-100 p-10 dark:bg-black!">
+                    <div className="h-full w-full rounded-[40px] bg-slate-100 p-10 dark:!bg-black">
                         <DotLottieReact src="/banner.json" autoplay loop />
                     </div>
                 </div>
-                <div className="m-auto box-border w-100 pr-2.5">
-                    <div className="absolute top-4 right-4">
+                <div className="w-100 m-auto box-border pr-2.5">
+                    <div className="absolute right-4 top-4">
                         <ThemeButton />
                         <LanguageButton />
                     </div>
@@ -63,7 +63,7 @@ function RouteComponent() {
                         size="large"
                         name="login"
                         initialValues={{ remember: true }}
-                        className="box-border w-full!"
+                        className="box-border !w-full"
                         onFinish={onFinish}
                     >
                         <Form.Item

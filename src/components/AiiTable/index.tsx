@@ -105,12 +105,8 @@ const BatchOperationRow = memo(
             if (!isVisible) return null
             if (computeColumnsLength <= 4) {
                 return (
-                    <th
-                        style={thStyle}
-                        colSpan={computeColumnsLength + 1}
-                        className="dark:bg-colorBgContainer! bg-white!"
-                    >
-                        <div className="bg-colorPrimaryBg grid h-15 w-full items-center">
+                    <th style={thStyle} colSpan={computeColumnsLength + 1} className="!bg-colorBgContainer">
+                        <div className="h-15 grid w-full items-center !bg-colorPrimaryBg">
                             <div className="flex w-1/2 flex-row items-center gap-4 px-2.5">
                                 <div>{`${t('Common.Choosed')}: ${selectedCount}`}</div>
                                 <Button className="primary-text-btn" type="text" onClick={onDeselect}>
@@ -136,8 +132,8 @@ const BatchOperationRow = memo(
             }
             return (
                 <>
-                    <th colSpan={3} style={leftThStyleSticky} className="dark:bg-colorBgContainer! bg-white!">
-                        <div className="bg-colorPrimaryBg grid h-15 items-center">
+                    <th colSpan={3} style={leftThStyleSticky} className="!bg-colorBgContainer">
+                        <div className="grid h-16 items-center bg-colorPrimaryBg">
                             <div className="flex items-center gap-4 px-2.5">
                                 <div>{`${t('Common.Choosed')}: ${selectedCount}`}</div>
                                 <Button className="primary-text-btn" type="text" onClick={onDeselect}>
@@ -149,12 +145,12 @@ const BatchOperationRow = memo(
                     <th
                         colSpan={computeColumnsLength - 5}
                         style={middleThStyleZ}
-                        className="ant-table-cell dark:bg-colorBgContainer! bg-white!"
+                        className="ant-table-cell !bg-colorBgContainer"
                     >
-                        <div className="bg-colorPrimaryBg grid h-15 items-center" />
+                        <div className="grid h-16 items-center bg-colorPrimaryBg" />
                     </th>
-                    <th colSpan={3} style={rightThStyleSticky} className="dark:bg-colorBgContainer! bg-white!">
-                        <div className="bg-colorPrimaryBg grid h-15 items-center">
+                    <th colSpan={3} style={rightThStyleSticky} className="!bg-colorBgContainer">
+                        <div className="grid h-16 items-center bg-colorPrimaryBg">
                             <div className="flex justify-end px-2.5">
                                 {batchOperations?.map((item) => (
                                     <Button
@@ -371,7 +367,7 @@ export default function AiiTable<T>(props: AiiTableProps<T>): React.ReactElement
                 pagination={false}
                 columns={mergedColumns}
                 dataSource={dataSource}
-                rowSelection={rowSelection}
+                rowSelection={{ ...rowSelection, columnWidth: 55 }}
                 scroll={{ x: 'max-content' }}
                 sticky={{ offsetHeader: 0 }}
             />

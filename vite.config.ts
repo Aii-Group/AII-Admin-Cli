@@ -7,7 +7,6 @@ import viteImagemin from 'vite-plugin-imagemin'
 import react from '@vitejs/plugin-react-swc'
 import ViteYaml from '@modyfi/vite-plugin-yaml'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -19,7 +18,7 @@ export default defineConfig(({ mode }) => {
         base,
         server: {
             host: '0.0.0.0',
-            port: 8989,
+            port: 9090,
             open: true,
             cors: true,
             proxy: {},
@@ -38,7 +37,6 @@ export default defineConfig(({ mode }) => {
                 autoCodeSplitting: true,
             }),
             react(),
-            tailwindcss(),
             ViteYaml(),
             viteMockServe({
                 mockPath: './mock/',

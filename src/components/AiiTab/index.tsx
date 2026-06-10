@@ -51,7 +51,7 @@ const AiiTab = (props: AiiTabProps) => {
                         key={item.key}
                         ref={activeTabKey === item.key ? activeTabRef : null}
                         className={clsx(
-                            'rounded-borderRadiusLG! hover:text-colorPrimary relative z-10 flex h-9 cursor-pointer items-center bg-transparent px-4 py-2 transition-all duration-300',
+                            'relative z-10 flex h-9 cursor-pointer items-center !rounded-borderRadiusLG bg-transparent px-4 py-2 transition-all duration-300 hover:text-colorPrimary',
                             {
                                 'text-colorPrimary': activeTabKey === item.key,
                             },
@@ -65,7 +65,7 @@ const AiiTab = (props: AiiTabProps) => {
                     </div>
                 ))}
                 <motion.div
-                    className="rounded-borderRadiusLG bg-colorPrimaryBg absolute top-0 z-0 h-9"
+                    className="absolute top-0 z-0 h-9 rounded-borderRadiusLG bg-colorPrimaryBg"
                     layoutId="activeTabIndicator"
                     animate={{
                         left: indicatorPosition.left,

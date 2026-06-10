@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import preset, { antdTokenPlugin } from './preset'
 export default {
-    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
             ...preset,

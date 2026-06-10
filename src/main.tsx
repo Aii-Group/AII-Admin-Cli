@@ -8,7 +8,6 @@ import 'normalize.css'
 import '@/utils/i18n.ts'
 
 import './index.css'
-import '../preset.js'
 
 if (isMicroAppEnv) {
     console.log(
@@ -22,4 +21,4 @@ if (isMicroAppEnv) {
     )
 }
 
-createRoot(document.getElementById('root')!).render(<App />)
+createRoot(document.getElementById('aii-admin-cli')!).render(<App />)

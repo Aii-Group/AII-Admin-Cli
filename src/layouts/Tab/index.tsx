@@ -133,7 +133,7 @@ export default function TabBar() {
     return (
         <div
             ref={tabBarRef}
-            className="rounded-borderRadiusLG bg-colorBgContainer dark:border-colorBorder! mb-2.5 flex h-9 w-full flex-nowrap overflow-x-auto px-1 py-2.5 whitespace-nowrap dark:border!"
+            className="mb-2.5 flex h-9 w-full flex-nowrap overflow-x-auto whitespace-nowrap rounded-borderRadiusLG bg-colorBgContainer px-1 py-2.5 dark:!border dark:!border-colorBorder"
         >
             {tabs.map((tab, index) => {
                 return (
@@ -161,10 +161,10 @@ export default function TabBar() {
                                     }
                                 }}
                                 className={clsx(
-                                    'rounded-tl-borderRadiusLG rounded-tr-borderRadiusLG relative box-border inline-block h-full w-full shrink-0 cursor-pointer px-4 leading-[40px] whitespace-nowrap transition-all duration-300 ease-in-out',
+                                    'relative box-border inline-block h-full w-full shrink-0 cursor-pointer whitespace-nowrap rounded-tl-borderRadiusLG rounded-tr-borderRadiusLG px-4 leading-[40px] transition-all duration-300 ease-in-out',
                                     tab.path === location.pathname
-                                        ? "text-colorPrimary border-b-colorPrimary bg-colorPrimaryBg before:bg-colorPrimary after:bg-colorPrimary before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-[calc(50%)] before:origin-right before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:right-1/2 after:bottom-0 after:h-2 after:w-[calc(50%)] after:origin-left after:transition-all after:duration-300 after:ease-in-out after:content-['']"
-                                        : "before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-0 before:bg-transparent before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:right-1/2 after:bottom-0 after:h-2 after:w-0 after:bg-transparent after:transition-all after:duration-300 after:ease-in-out after:content-['']",
+                                        ? "border-b-colorPrimary bg-colorPrimaryBg text-colorPrimary before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-[calc(50%)] before:origin-right before:bg-colorPrimary before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:bottom-0 after:right-1/2 after:h-2 after:w-[calc(50%)] after:origin-left after:bg-colorPrimary after:transition-all after:duration-300 after:ease-in-out after:content-['']"
+                                        : "before:absolute before:bottom-0 before:left-1/2 before:h-2 before:w-0 before:bg-transparent before:transition-all before:duration-300 before:ease-in-out before:content-[''] after:absolute after:bottom-0 after:right-1/2 after:h-2 after:w-0 after:bg-transparent after:transition-all after:duration-300 after:ease-in-out after:content-['']",
                                     'hover:text-colorPrimary',
                                 )}
                                 onContextMenu={(e) => {

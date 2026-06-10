@@ -11,7 +11,7 @@ export default function Header() {
     const Logo = importImg('png', `asiainfo-${theme}-${language}.png`)
 
     return (
-        <div className="dark:bg-colorBgContainer! dark:border-colorBorder! box-border flex h-15 w-full items-center justify-between px-6 py-2.5 dark:border-b!">
+        <div className="h-15 box-border flex w-full items-center justify-between px-6 py-2.5 dark:!border-b dark:!border-colorBorder dark:!bg-colorBgContainer">
             <div className="flex items-center">
                 <img src={Logo} alt="logo" className="h-10" />
             </div>
