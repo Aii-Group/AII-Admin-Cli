@@ -147,7 +147,7 @@ pnpm swagger-mock
 - **暗黑模式必须可用**：新增页面同时保证 light/dark 对比度
 - **统一容器**：列表页/表单页等建议使用 `.wrapper`（见 `src/styles/global.css`）
 
-（更完整规范见：`.cursor/rules/ui-guidelines.mdc`）
+（更完整规范见：`.agents/rules/ui-guidelines.md`）
 
 ### 状态与全局反馈
 

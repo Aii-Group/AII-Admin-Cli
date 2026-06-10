@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Quick CRUD Page'
+    short_description: 'Build server-paged CRUD list pages fast'
+    default_prompt: 'Use $quick-crud-page to scaffold a server-paginated CRUD list page with AiiTable and AiiSearch.'

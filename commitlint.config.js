@@ -5,21 +5,17 @@ export default {
             2,
             'always',
             [
-                'feat', // 新功能
-                'fix', // 修复 bug
-                'fixbug', // 修复 bug（兼容旧版）
-                'refactor', // 重构
-                'perf', // 性能优化
-                'optimize', // 优化
-                'style', // 代码格式
-                'docs', // 文档
-                'test', // 测试
-                'chore', // 构建/工具
-                'ci', // CI 配置
-                'revert', // 回滚
-                'i18n', // 国际化
-                'build', // 构建
-                'release', // 发布
+                'feat', // New feature
+                'fix', // Bug fix
+                'docs', // Documentation only
+                'style', // Formatting/style (no logic)
+                'refactor', // Code refactor (no feature/fix)
+                'perf', // Performance improvement
+                'test', // Add/update tests
+                'build', // Build system/dependencies
+                'ci', // CI/config changes
+                'chore', // Maintenance/misc
+                'revert', // Revert commit
             ],
         ],
         'type-case': [0],

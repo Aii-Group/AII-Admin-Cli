@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Ant Design'
+    short_description: 'Ant Design API lookup and migration helper'
+    default_prompt: 'Use $antd to inspect Ant Design APIs, demos, and migration details before changing antd code.'

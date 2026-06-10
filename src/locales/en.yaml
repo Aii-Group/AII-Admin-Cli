@@ -173,21 +173,3 @@ Action:
     Clear: Clear
     Print: Print
     Send: Send
-
-AI:
-    Copilot_Title: AI Assistant
-    New_Chat: New chat
-    Suggested_Title: Suggested questions
-    Welcome: "Hello, I'm AI Assistant"
-    Description: "I'm here to help you with your tasks."
-    Config_Missing: 'LLM env vars are missing (VITE_ALIYUN_AI_URL / VITE_ALIYUN_AI_KEY). Chat is unavailable.'
-    Think: Think
-    Thinking: Thinking...
-    Thought: Thought for {{time}} s
-    Thinking_Stopped: Thinking Stopped
-    Stop_Reply: Stop generating
-    Chat_Placeholder: Type a message. Enter to send, Shift+Enter for newline.
-    Empty_Hint: Start the conversation below—I will do my best to help.
-    Prompt_AntdX_Update: What is new in Ant Design X?
-    Prompt_AntdX_Assets: What components and capabilities does Ant Design X offer?
-    Prompt_Rich_Paradigm: What is the RICH design paradigm?

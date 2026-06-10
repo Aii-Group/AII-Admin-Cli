@@ -1,0 +1,4 @@
+interface:
+    display_name: 'Menu Auth Routes'
+    short_description: 'Generate authentication routes and menu i18n'
+    default_prompt: 'Use $menu-auth-routes to generate TanStack Router pages and Menu i18n from a menu tree.'

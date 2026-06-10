@@ -361,10 +361,10 @@ function ListPage() {
 
 ## 组件细则（按需查阅）
 
-- `AiiTable` / `useTable` → `.cursor/rules/aiitable-usage.mdc`
-- `AiiSearch` → `.cursor/rules/aiisearch-usage.mdc`
-- `useModal` → `.cursor/rules/aiimodal-usage.mdc`
-- `useDrawer` → `.cursor/rules/aiidrawer-usage.mdc`
+- `AiiTable` / `useTable` → `.agents/rules/aiitable-usage.md`
+- `AiiSearch` → `.agents/rules/aiisearch-usage.md`
+- `useModal` → `.agents/rules/aiimodal-usage.md`
+- `useDrawer` → `.agents/rules/aiidrawer-usage.md`
 
 ## 常见陷阱
 

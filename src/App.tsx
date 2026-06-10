@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
+import { ConfigProvider } from 'antd'
 import router from '@/utils/router'
-import { XProvider } from '@ant-design/x'
 import { isMicroAppEnv } from '@/utils/micro'
 import AppProvider from '@/components/AppProvider'
 import { DrawerProvider } from '@/components/AiiDrawer'
@@ -17,14 +17,40 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const IconConfig = { ...DEFAULT_ICON_CONFIGS, prefix: 'icon', size: 18 }
 
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: false,
+            refetchOnWindowFocus: false,
+        },
+        mutations: {
+            retry: false,
+        },
+    },
+})
+
 function App() {
-    const { setTheme, setColor } = useThemeStore()
-    const { setLanguage } = useLanguageStore()
+    const setTheme = useThemeStore((state) => state.setTheme)
+    const setColor = useThemeStore((state) => state.setColor)
+    const setLanguage = useLanguageStore((state) => state.setLanguage)
     const { locale } = useLanguage()
     const { themeAlgorithm, color } = useTheme()
-    const { userInfo, setUserInfo } = useUserStore()
+    const userInfo = useUserStore((state) => state.userInfo)
+    const setUserInfo = useUserStore((state) => state.setUserInfo)
 
-    const queryClient = new QueryClient()
+    const theme = useMemo(
+        () => ({
+            token: { ...color, borderRadius: 8 },
+            algorithm: themeAlgorithm,
+            components,
+        }),
+        [color, themeAlgorithm],
+    )
+
+    const routerContext = useMemo(
+        () => ({ token: userInfo.token, permissions: userInfo.permissions }),
+        [userInfo.token, userInfo.permissions],
+    )
 
     useEffect(() => {
         isMicroAppEnv &&
@@ -37,7 +63,7 @@ function App() {
                 }
                 if (data.userInfo) {
                     setUserInfo({
-                        ...userInfo,
+                        ...useUserStore.getState().userInfo,
                         ...data.userInfo,
                         permissions: data.permissionsButton ?? [],
                     })
@@ -46,32 +72,22 @@ function App() {
                     setColor(data.brandColor)
                 }
             }, true)
-    }, [])
+    }, [setLanguage, setTheme, setColor, setUserInfo])
 
     return (
-        <XProvider
-            locale={locale}
-            theme={{
-                token: { ...color, borderRadius: 8 },
-                algorithm: themeAlgorithm,
-                components,
-            }}
-        >
+        <ConfigProvider locale={locale} theme={theme}>
             <AppProvider>
                 <IconProvider value={IconConfig}>
                     <QueryClientProvider client={queryClient}>
                         <DrawerProvider>
                             <ModalProvider>
-                                <RouterProvider
-                                    router={router}
-                                    context={{ token: userInfo.token, permissions: userInfo.permissions }}
-                                />
+                                <RouterProvider router={router} context={routerContext} />
                             </ModalProvider>
                         </DrawerProvider>
                     </QueryClientProvider>
                 </IconProvider>
             </AppProvider>
-        </XProvider>
+        </ConfigProvider>
     )
 }
 

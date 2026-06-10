@@ -6,6 +6,12 @@
             "sourceType": "github",
             "computedHash": "70daad5bdc945872cd738b9912d62108b66118b16820e847a3bd9f8591324c49"
         },
+        "git-commit": {
+            "source": "github/awesome-copilot",
+            "sourceType": "github",
+            "skillPath": "skills/git-commit/SKILL.md",
+            "computedHash": "2607fc60629b82b257136dd2a7a373f0a4466c0b49df7746d845d59313c99b21"
+        },
         "ui-ux-pro-max": {
             "source": "nextlevelbuilder/ui-ux-pro-max-skill",
             "sourceType": "github",

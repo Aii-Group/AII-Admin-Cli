@@ -173,21 +173,3 @@ Action:
     Clear: 清空
     Print: 打印
     Send: 发送
-
-AI:
-    Copilot_Title: AI 助手
-    New_Chat: 新对话
-    Suggested_Title: 推荐提问
-    Welcome: 您好，我是 AI 助手，很高兴为您服务。
-    Description: 您可以在这里向我提问，我会尽力回答您的问题。
-    Config_Missing: 未配置大模型接口环境变量（VITE_ALIYUN_AI_URL / VITE_ALIYUN_AI_KEY），无法对话。
-    Think: 深度思考
-    Thinking: 思考中...
-    Thought: 已深度思考（用时 {{time}} 秒）
-    Thinking_Stopped: 思考已停止
-    Stop_Reply: 停止生成
-    Chat_Placeholder: 输入问题，Enter 发送；Shift+Enter 换行
-    Empty_Hint: 在下方输入框开始对话，我会尽力协助你。
-    Prompt_AntdX_Update: Ant Design X 最近有哪些更新？
-    Prompt_AntdX_Assets: Ant Design X 包含哪些组件与能力？
-    Prompt_Rich_Paradigm: 什么是 RICH 设计范式？

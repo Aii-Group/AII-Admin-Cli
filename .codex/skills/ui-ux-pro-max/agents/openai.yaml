@@ -1,0 +1,4 @@
+interface:
+    display_name: 'UI UX Pro Max'
+    short_description: 'Design system search for UI and layout work'
+    default_prompt: 'Use $ui-ux-pro-max to pick a design system and implementation guidance for a UI task.'

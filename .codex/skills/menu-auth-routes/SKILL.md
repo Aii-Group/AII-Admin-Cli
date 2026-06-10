@@ -33,23 +33,23 @@ interface MenuItem {
 
 ### `MenuItem` 书写约定（用户输入须满足的格式）
 
-- **`key`**：[i18n-locales](../../rules/i18n-locales.mdc) 的 **Pascal_Snake**（如 `Basic_Form`、`External_Link`），与 `Menu.{key}`、路由 `staticData.key` 一致。
+- **`key`**：[i18n-locales](../../rules/i18n-locales.md) 的 **Pascal_Snake**（如 `Basic_Form`、`External_Link`），与 `Menu.{key}`、路由 `staticData.key` 一致。
 - **`path`**：以 `/` 开头；站内多级路径与文件路由一致，段名用 **kebab-case**（如 `/form/basic-form`）。外链子项仍写 `path`（如 `/iframe/Baidu`）并配合 **`link`**（http(s)）。
 - **`label`**：展示用字符串；落地 i18n 时作 `Menu.*` 缺省文案参考。
 - **`icon`**：与 `src/assets/svg/{icon}.svg` **文件名**一致（小写、无后缀，仅裸文件名）。
 - **`children`**：有子菜单时必填数组；无子菜单的叶子可省略 **`children`**，或写 **`children: []`**。
 - **对象字段顺序**（可读性建议，非强制）：`key` → `label` → `icon` → `path` → `children` / `link`（子节点中 `link` 仅在需要时出现）。
 
-| 字段 | 作用 |
-|------|------|
-| `key` | 侧栏文案 `t('Menu.${key}')`、与路由 `staticData.key` **必须一致** |
-| `path` | 站内路由 URL；菜单 `Link` 的 `to` 与此一致 |
-| `label` | 接口/配置展示用；**页面标题以 i18n 为准**，生成 YAML 时可用作英文默认文案参考 |
-| `icon` | 对应 `src/assets/svg/{icon}.svg` 文件名（无后缀） |
-| `filePath` | 可选；若后端用于资源/文件映射，与文件路由落地无强关联时可忽略 |
-| `link` | 外链；http(s) 会走 `/iframe/$name` + `search.url`，**不要**为其在 `_authentication` 下建页面 |
-| `children` | 子菜单；仅 **叶子且站内 path** 需要真实路由文件（目录节点可只有菜单、无页面） |
-| `order` / `hidden` / `disabled` / `permission` | 排序、展示、权限等；**落地路由与 i18n 时以 `key` / `path` / `children` / `link` 为主** |
+| 字段                                           | 作用                                                                                         |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `key`                                          | 侧栏文案 `t('Menu.${key}')`、与路由 `staticData.key` **必须一致**                            |
+| `path`                                         | 站内路由 URL；菜单 `Link` 的 `to` 与此一致                                                   |
+| `label`                                        | 接口/配置展示用；**页面标题以 i18n 为准**，生成 YAML 时可用作英文默认文案参考                |
+| `icon`                                         | 对应 `src/assets/svg/{icon}.svg` 文件名（无后缀）                                            |
+| `filePath`                                     | 可选；若后端用于资源/文件映射，与文件路由落地无强关联时可忽略                                |
+| `link`                                         | 外链；http(s) 会走 `/iframe/$name` + `search.url`，**不要**为其在 `_authentication` 下建页面 |
+| `children`                                     | 子菜单；仅 **叶子且站内 path** 需要真实路由文件（目录节点可只有菜单、无页面）                |
+| `order` / `hidden` / `disabled` / `permission` | 排序、展示、权限等；**落地路由与 i18n 时以 `key` / `path` / `children` / `link` 为主**       |
 
 路径解析与渲染：`src/utils/system.ts`（`resolveMenuItemPath`、`renderMenuItems`）。
 
@@ -59,14 +59,14 @@ interface MenuItem {
 - 子路由：放在 **`src/routes/_authentication/`** 下，由 `@tanstack/router-plugin/vite` 生成 `src/routeTree.gen.ts`。
 - **URL ↔ 文件**（layout 子级）：`/foo` → `src/routes/_authentication/foo.tsx`；`/foo/bar` → `src/routes/_authentication/foo/bar.tsx`（多级目录与 TanStack 文件路由约定一致）。
 - `createFileRoute` 的第一个参数为 **文件路由全 id**，与磁盘路径对应，例如：
-  - 文件 `src/routes/_authentication/table.tsx` → `createFileRoute('/_authentication/table')`
-  - 文件 `src/routes/_authentication/order/list.tsx` → `createFileRoute('/_authentication/order/list')`
+    - 文件 `src/routes/_authentication/table.tsx` → `createFileRoute('/_authentication/table')`
+    - 文件 `src/routes/_authentication/order/list.tsx` → `createFileRoute('/_authentication/order/list')`
 - **`path` 必须与菜单项 `path` 一致**，否则侧栏 `Link` 无法命中。
 
 ### 路由文件名：kebab-case 与目录
 
 - **磁盘文件名**一律 **全小写 + 连字符**（kebab-case），如 `basic-form.tsx`、`order-list.tsx`；**不要**使用 `Basic_Form.tsx`、`AdvancedForm.tsx` 等与 URL 不一致的混写。
-- **菜单 `key`** 仍用 [i18n-locales](../../rules/i18n-locales.mdc) 的 **Pascal_Snake**（如 `Basic_Form`），写在路由 **`staticData.key`** 与 **`Menu.{key}`**；**URL `path`** 与文件名对齐，如 `/form/basic-form` → `form/basic-form.tsx`。
+- **菜单 `key`** 仍用 [i18n-locales](../../rules/i18n-locales.md) 的 **Pascal_Snake**（如 `Basic_Form`），写在路由 **`staticData.key`** 与 **`Menu.{key}`**；**URL `path`** 与文件名对齐，如 `/form/basic-form` → `form/basic-form.tsx`。
 - **带子路由的段**：叶子文件直接放在 **`{segment}/`** 子目录下即可，**不要**额外创建 **`{segment}.tsx`** 父级占位文件，也不要在子目录里放 `route.tsx`、`index.tsx` 等。子页路由均直接挂在 `_authentication` 下。示例：`form/basic-form.tsx` + `form/advanced-form.tsx`（**`form/` 外不建 `form.tsx`**）。
 
 ## 生成单页的最小模板
@@ -101,7 +101,7 @@ Menu:
     Menu_Key: 中文或英文展示文案
 ```
 
-- **键名**须符合仓库 [i18n-locales](../../rules/i18n-locales.mdc)：**每词首字母大写、词间下划线**（如 `Order_List`、`External_Link`），与菜单 `key`、`staticData.key` 一致。
+- **键名**须符合仓库 [i18n-locales](../../rules/i18n-locales.md)：**每词首字母大写、词间下划线**（如 `Order_List`、`External_Link`），与菜单 `key`、`staticData.key` 一致。
 - **必须中英同步**：同一 `key` 在两个文件同时增改。
 - 若已有 `Menu:` 节点，**合并**新键，勿删无关旧键（除非用户要求清理）。
 - **业务文案目录（必须）**：每个一级菜单 `key`（含有子菜单的父项）**必须**在 `src/locales/business/<菜单 key>/` 下创建 **`en.yaml`** 与 **`zh.yaml`**，根命名空间与菜单 `key` 一致（如 `Form:`、`Tab:`）。叶子菜单视业务需要按需创建（若只用 `Menu.*` 文案可不建）。
