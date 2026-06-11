@@ -56,6 +56,8 @@ export interface BatchOperationRowProps {
     hasOperations: boolean
 }
 
+const ROW_SELECTION_COLUMN_WIDTH = 55
+
 const pageSizeOptions: MenuProps['items'] = [
     {
         key: '10',
@@ -357,6 +359,11 @@ export default function AiiTable<T>(props: AiiTableProps<T>): React.ReactElement
         [rowSelection, columns, batchOperations, hasOperations, onDeselect, t],
     )
 
+    const mergedRowSelection = useMemo(
+        () => (rowSelection ? { ...rowSelection, columnWidth: ROW_SELECTION_COLUMN_WIDTH } : undefined),
+        [rowSelection],
+    )
+
     return (
         <div className="aii-table">
             {hasToolbar && Toolbar}
@@ -367,7 +374,7 @@ export default function AiiTable<T>(props: AiiTableProps<T>): React.ReactElement
                 pagination={false}
                 columns={mergedColumns}
                 dataSource={dataSource}
-                rowSelection={{ ...rowSelection, columnWidth: 55 }}
+                rowSelection={mergedRowSelection}
                 scroll={{ x: 'max-content' }}
                 sticky={{ offsetHeader: 0 }}
             />
